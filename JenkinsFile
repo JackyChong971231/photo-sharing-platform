@@ -1,0 +1,121 @@
+/*
+Installed plugins:
+    1. Git plugin
+    2. NodeJS Plugin
+        Setup:
+            1. Manage Jenkins > Tools
+            2. Look for "NodeJS installations"
+            3. Set Name to 21.4.0 and selection Version to "NodeJS 21.4.0"
+    3. Publish Over SSH
+        Setup:
+            1. Manage Jenkins > System
+            2. Look for Publish over SSH
+                3. Enter the remote server password in Passphrase
+                4. Set name of SSH Server to "digital-ocean"
+                5. Hostname is server ip
+                6. Username is server username (e.g. root)
+                7. Leave the Remote Directory empty
+*/
+
+pipeline {
+    agent any
+    
+    tools {nodejs '21.4.0'}
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    // Print the selected branch
+                    echo 'Selected branch: ${params.BRANCH}'
+
+                    // Checkout the code from GitHub
+                    def repositoryUrl = 'https://github.com/JackyChong971231/ikea-clone.git'
+                    git url: repositoryUrl, branch: params.BRANCH
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // Set CI to false to avoid treating warnings as errors
+                script {
+                    withEnv(["CI=false"]) {
+                        // Navigate to the frontend directory
+                        dir('frontend') {
+                            // Install Node.js dependencies
+                            sh 'npm install'
+                            sh 'npx update-browserslist-db@latest'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    withEnv([
+                        'CI=false',
+                        'REACT_APP_SERVER_IP=${params.SERVER_IP}'
+                    ]) {
+                        // Navigate to the frontend directory
+                        dir('frontend') {
+                            // Build the React app
+                            sh 'npm run build'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Publish & Deploy') {
+            steps {
+                script {
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'digital-ocean', 
+                                transfers: [
+                                    sshTransfer(
+                                        cleanRemote: false, 
+                                        excludes: '', 
+                                        execCommand: '''
+                                            pm2 delete ikea-clone-frontend
+                                            cd /var/www/build-artifacts/ikea-clone-frontend
+                                            pm2 serve ./ 5001 --name ikea-clone-frontend --spa
+                                        ''', 
+                                        execTimeout: 120000, 
+                                        flatten: false, 
+                                        makeEmptyDirs: false, 
+                                        noDefaultExcludes: false, 
+                                        patternSeparator: '[, ]+', 
+                                        remoteDirectory: '//var/www/build-artifacts/ikea-clone-frontend', 
+                                        remoteDirectorySDF: false, 
+                                        removePrefix: 'frontend/build/', 
+                                        sourceFiles: 'frontend/build/**/*'
+                                    )
+                                ], 
+                                usePromotionTimestamp: false, 
+                                useWorkspaceInPromotion: false, 
+                                verbose: false
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+
+        // Add more stages as needed (e.g., testing, deployment)
+
+    post {
+        success {
+            echo 'Build successful! Do additional tasks if needed.'
+        }
+        failure {
+            echo 'Build failed! Take necessary actions.'
+        }
+    }
+}                        // sh 'npx update-browserslist-db@latest'
+
