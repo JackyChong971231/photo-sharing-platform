@@ -1,0 +1,179 @@
+.album-component-outer-container {
+  display: flex;
+  height: 100%;
+}
+
+/* Base styles for the folder tree */
+.folder-tree {
+  list-style-type: none; /* Remove default bullet points */
+  margin: 0;
+  position: relative;
+  width: 100%;
+}
+
+/* Add vertical lines to connect items, but NOT for the first layer */
+.folder-tree:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.6rem;
+  bottom: 0;
+  width: 1px;
+  background-color: #ccc; /* Light gray line */
+}
+
+/* Style individual folder items */
+.folder-item {
+  position: relative;
+  padding-left: 20px; /* Spacing for folder icon */
+  margin: 5px 0;
+}
+
+.folder-item-0 {
+  padding-left: 0px; /* Spacing for folder icon */
+}
+
+/* Add horizontal connector line to each folder item, but NOT for the first layer */
+.folder-tree:not(:first-child) .folder-item::before {
+  content: "";
+  position: absolute;
+  top: 12px; /* Align with folder icon */
+  left: 1.5rem;
+  width: 10px;
+  height: 1px;
+  background-color: #ccc; /* Light gray line */
+}
+
+/* Folder label styling */
+.folder-label {
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Prevent text from overflowing */
+  text-overflow: ellipsis; /* Add "..." for truncated text */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.folder-label span {
+  max-width: 300px; /* Set a maximum width for truncation */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.folder-label span:hover {
+  cursor: pointer;
+}
+
+/* Optional: Tooltip styling */
+.folder-label span[title] {
+  position: relative;
+}
+
+.folder-label span[title]:hover::after {
+  content: attr(title); /* Display full text from the title attribute */
+  position: absolute;
+  left: 0;
+  bottom: 125%; /* Position the tooltip above the text */
+  background: #333;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  border-radius: 4px;
+  z-index: 10;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.folder-icon {
+  margin-right: 8px; /* Spacing between icon and text */
+}
+
+.file-structure-container {
+    flex-shrink: 0; /* prevent shrinking */
+    overflow-y: auto; /* scroll if too tall */
+    overflow-x: hidden;
+    padding-top: 1rem;
+}
+
+.gallery-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  padding-bottom: 20rem;
+  /* flex-grow: 1; */
+  overflow: auto;
+}
+
+.empty-folder-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.empty-folder-container > h3 {
+  margin-top: 1rem;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.empty-folder-container > p {
+  color: rgb(138, 138, 138);
+}
+
+.empty-folder-container > button {
+  background-color: var(--text-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding-block: 0.4rem;
+}
+
+.folder-option-menu {
+  position: absolute;
+  right: 0rem;
+  top: 0rem;
+  padding-top: 2rem;
+  z-index: 10000;
+}
+
+.folder-option-menu--show {
+  visibility: visible;
+}
+
+.folder-option-menu--hide {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
+
+.folder-option-menu-ul {
+  list-style-type: none; /* Remove default bullet points */
+  padding: 0;
+  background-color: white;
+  border-radius: 0.3rem;
+  padding-inline: 0.3rem;
+  padding-block: 0.7rem;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.folder-option-menu-ul > li {
+  cursor: pointer;
+  padding-inline: 0.7rem;
+  padding-block: 0.3rem;
+  border-radius: 0.3rem;
+}
+
+.folder-option-menu-ul > li:hover {
+  background-color: #f0f0f0;
+}
+
+.folder-option-menu-ul > li > p {
+  margin: 0;
+}

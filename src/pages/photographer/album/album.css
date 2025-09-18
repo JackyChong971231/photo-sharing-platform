@@ -1,0 +1,37 @@
+.photographer-album-detail-container {
+    color: var(--text-color);
+    overflow-x: auto;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.photographer-album-detail {
+    margin-right: 4rem;
+}
+
+.photographer-album-detail > p {
+    margin: 0;
+}
+
+.photographer-album-detail-title {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.photographer-album-detail--customer {
+    min-width: 18rem;
+}
+
+.photographer-album-detail--album {
+    min-width: 25rem;
+}
+
+.album-component-outer-container {
+    height: 100%; /* fill parent */
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.photographer-album-title-container {
+    position: sticky;
+}

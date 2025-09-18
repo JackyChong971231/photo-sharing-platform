@@ -1,0 +1,42 @@
+.dashboard-content {
+    border: 1px solid black;
+    overflow-x: scroll;
+    outline: none;
+    border: none;
+}
+
+.dashboard-header {
+    color: var(--text-color);
+}
+
+.all-galleries > h2 {
+    color: var(--text-color);
+    font-weight: 400;
+}
+
+.dashboard-gallery {
+    position: relative;
+    /* width: 8rem; */
+    cursor: pointer;
+}
+
+.galleries-container {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.dashboard-gallery > img {
+    object-fit: cover; /* maintain aspect ratio */
+    width: 10rem;   /* fixed width */
+    height: 10rem;  /* fixed height */
+}
+
+.dashboard-gallery-description > p{
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.dashboard-gallery-description > div {
+    font-size: small;
+}
