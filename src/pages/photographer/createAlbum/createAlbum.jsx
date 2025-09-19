@@ -11,14 +11,20 @@ import { Album } from '../album/album';
 import { AlbumComponent } from '../../../components/albumComponent/albumComponent';
 
 
+const photographer_list = [
+    'Select photographer','abc','def','ghi'
+]
+
 export const CreateAlbum = () => {
     const [formData, setFormData] = useState({
         client_first_name: '',
         client_last_name: '',
         photo_shoot_location: '',
         photo_shoot_date: '',
-        album_creation_date: ''
+        album_creation_date: '',
+        photographers: []
     })
+    const [photographerComponent, setPhotographerComponent] = useState([])
 
     const handleInputChange = (e) => {
         setFormData({
@@ -43,13 +49,47 @@ export const CreateAlbum = () => {
         });
     };
 
+    const handlePhotographerChange = (e) => {
+        if (!photographer_list.includes(e.target.value)) {return}
+        const photographer = photographer_list.find((photographer) => photographer === e.target.value);
+        setFormData({
+            ...formData,
+            photographers: [...formData.photographers, photographer]
+        })
+    };
+
+    useEffect(() => {
+        let photographerComponent_temp = []
+        for (let i=0; i <= formData.photographers.length; i++) {
+            photographerComponent_temp.push(
+                <div className="d-flex align-items-center gap-3 mb-2">
+                    <label>{i+1}.</label>
+                    <select
+                        name="photographer_name"
+                        value={formData.photographers[i]?formData.photographers[i]:''}
+                        onChange={handlePhotographerChange}
+                        className="form-select"
+                        style={{width: '15rem'}}
+                    >
+                        {photographer_list.map((photographer) => (
+                        <option value={photographer}>
+                            {photographer}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+            )
+        }
+        setPhotographerComponent(photographerComponent_temp)
+    }, [formData.photographers])
+
     return (
         <div className='p-0'>
             <div className='d-flex flex-column vh-100'>
                 <div className='sticky-top flex-shrink-0 border-bottom p-4'
                     style={{maxHeight: '40%', overflow: 'auto'}}>
                     <div className='mx-4 mt-1'>
-                        <input className='album_title_input px-3' placeholder='Untitled Album' style={{fontSize: '2.5rem'}}/>
+                        <input className='album_title_input px-3 bg-transparent' placeholder='Untitled Album' style={{fontSize: '2.5rem'}}/>
                     </div>
                     <div className='mx-4 mt-3'>
                         <p className='custom-bold-text'>Client Information</p>
@@ -150,7 +190,10 @@ export const CreateAlbum = () => {
                                 <label className='form-label ms-2'><small>Phone Number</small></label>
                             </div>
                         </div>
-                        <p className='ms-3 mt-3'>Photographers:</p>
+                        <div className='ms-3 mt-3'>
+                            <p>Photographers:</p>
+                            {photographerComponent}
+                        </div>
                     </div>
                 </div>
                 <div className='w-100 flex-grow-1 d-flex flex-column overflow-hidden vh-50'>

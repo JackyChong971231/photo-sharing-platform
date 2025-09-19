@@ -14,6 +14,7 @@ import album_thumbnail_4 from '../../../assets/dummy/album_thumbnail_4.jpeg';
 import chart_img from '../../../assets/dummy/chart.png'
 
 import './dashboard.css'
+import { getAllAlbumsByStudioID } from '../../../apiCalls/photographer/albumService';
 
 // dummy data
 const dummy = [
@@ -49,8 +50,14 @@ const dummy = [
 
 
 export const Dashboard = () => {
-    const {dummyStr, setDummyStr} = useSharedContext();
     const navigate = useNavigate();
+    const [allAlbums, setAllAlbums] = useState([])
+
+    useEffect(() => {
+        const dummy_studio_id = 123;
+        const apiResult = getAllAlbumsByStudioID(dummy_studio_id);
+        setAllAlbums(apiResult)
+    }, [])
 
     const handleClick = (albumId) => {
         navigate("/album/"+albumId); // relative to base
@@ -73,7 +80,7 @@ export const Dashboard = () => {
                 <h2>Recent Galleries</h2>
                 <div className='galleries-container'>
                     {
-                        dummy.map(album_info => (
+                        allAlbums.map(album_info => (
                             <div className='dashboard-gallery'
                             onClick={() => {handleClick(album_info.albumId)}}>
                                 <img src={album_info.thumbnail}></img>
