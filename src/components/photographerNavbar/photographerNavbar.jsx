@@ -54,7 +54,7 @@ const PhotographerNavbar = () => {
               <FontAwesomeIcon icon={faCamera} />
               <p>Create Gallery</p>
             </NavLink>
-            <NavLink className='navLink-container-button' to="/" activeClassName="active-link">
+            <NavLink className='navLink-container-button' to="/settings" activeClassName="active-link">
               <FontAwesomeIcon icon={faGear} />
               <p>Settings</p>
             </NavLink>

@@ -57,13 +57,16 @@ const PhotographerLayout = ({ children }) => {
 
       {/* Divider */}
       <div
-          className="divider"
+          className="divider position-absolute"
           style={{
           cursor: "col-resize",
-          paddingInline: '0.5rem'
+          paddingInline: '0.5rem',
+          left: sidebarWidth + "px",
+          transform: 'translate(-50%, 0%)',
+          height: '100%',
+          zIndex: '100000'
           }}
           onMouseDown={handleMouseDown}
-
       >
         <div 
           className="divider"
@@ -78,7 +81,7 @@ const PhotographerLayout = ({ children }) => {
       <div className="main-content" 
         style={{
           flex: 1,
-          background: "#fff",
+          background: "#f8f8f8ff",
           overflowX: "hidden",  // scroll if content overflows
         }}
       >{children}</div>

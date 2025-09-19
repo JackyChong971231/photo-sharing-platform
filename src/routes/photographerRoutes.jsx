@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Dashboard } from '../pages/photographer/dashboard/dashboard';
 import { Album } from '../pages/photographer/album/album';
 import { CreateAlbum } from '../pages/photographer/createAlbum/createAlbum';
+import { Settings } from '../pages/photographer/settings/settings';
 
 
 export const PhotographerRoutes = () => {
@@ -19,6 +20,7 @@ export const PhotographerRoutes = () => {
                 <Route path='/' element={<Dashboard />} />
                 <Route path='/album/:albumId' element={<Album />} />
                 <Route path='/create-album' element={<CreateAlbum />} />
+                <Route path='/settings' element={<Settings />} />
             </Routes>
         </PhotographerLayout>
         
