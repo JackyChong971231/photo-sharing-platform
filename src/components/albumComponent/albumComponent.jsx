@@ -333,7 +333,7 @@ export const AlbumComponent = ({albumId}) => {
                 }}/>
             </div>
             <div className='d-flex flex-column flex-grow-1'>
-              <div className='px-3 py-3 d-flex justify-content-between'>
+              <div className='px-3 py-3 d-flex justify-content-between position-sticky top-0'>
                 <div className='d-flex align-items-center gap-2'>
                   <FontAwesomeIcon icon={faImage} style={{fontSize: '0.7rem'}}/>
                   <input
@@ -364,7 +364,7 @@ export const AlbumComponent = ({albumId}) => {
                   }}/>
                 </div>
               </div>
-              <div className='gallery-container pt-3 px-3'
+              <div className='gallery-container px-3'
                 ref={galleryRef}
                 onMouseDown={(e) => {
                   if (e.button !== 0) return;
@@ -460,10 +460,12 @@ export const AlbumComponent = ({albumId}) => {
                 {(imagesInFolder.length===0)?
                   // When there is NO images
                   <div className='empty-folder-container'>
-                    <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
-                    <h3>No photos yet</h3>
-                    <p>Create the first folder or drag or drop photos to get started</p>
-                    <button>+ Create Your First Folder</button>
+                    <div className='no-photos-yet-container'>
+                      <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
+                      <h3>No photos yet</h3>
+                      <p>Create the first folder or drag or drop photos to get started</p>
+                      <button>+ Create Your First Folder</button>
+                    </div>
                   </div>
                 :
                   // When there is images
