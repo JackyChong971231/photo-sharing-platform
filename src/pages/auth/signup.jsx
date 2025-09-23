@@ -2,16 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPhone, faEnvelope, faLock, faShieldHalved, faEarthAmericas, faCircleQuestion, faCircleInfo, faChevronRight } from "@fortawesome/free-solid-svg-icons"
-import { useSharedContext } from '../SharedContext';
-import useRouteParams from '../hooks/useRouteParams';
+import { useSharedContext } from '../../SharedContext';
 
 
-export const AlbumClient = () => {
-    const { albumId } = useRouteParams(); // Extract 'albumId' from the URL
-
+export const Signup = () => {
     return (
         <div>
-            <p>Customer Album: {albumId}</p>
+            <h1>Sign Up: </h1>
+            <p>Email</p>
         </div>
         
     )

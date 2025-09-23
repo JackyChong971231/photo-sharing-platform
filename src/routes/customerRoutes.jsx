@@ -9,8 +9,6 @@ import useRouteParams from '../hooks/useRouteParams';
 
 
 export const CustomerRoutes = () => {
-    const {dummyStr, setDummyStr} = useSharedContext();
-
     return (
         <div>
             <Routes>

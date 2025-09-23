@@ -30,7 +30,7 @@ function AppRoutes() {
   }
 
   // Render role-specific routes
-  return user.role === "photographer" ? <PhotographerRoutes /> : <CustomerRoutes />;
+  return user.role === "photographper" ? <PhotographerRoutes /> : <CustomerRoutes />;
 }
 
 function App() {
