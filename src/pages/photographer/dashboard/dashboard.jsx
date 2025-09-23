@@ -14,49 +14,18 @@ import album_thumbnail_4 from '../../../assets/dummy/album_thumbnail_4.jpeg';
 import chart_img from '../../../assets/dummy/chart.png'
 
 import './dashboard.css'
-import { getAllAlbumsByStudioID } from '../../../apiCalls/photographer/albumService';
-
-// dummy data
-const dummy = [
-    {
-        name: 'Tom & Jerry',
-        date: 'Aug 14, 2025',
-        photo_count: 1235,
-        thumbnail: album_thumbnail_1,
-        albumId: 1234
-    },
-    {
-        name: 'Konie & Thomas',
-        date: 'May 16, 2025',
-        photo_count: 562,
-        thumbnail: album_thumbnail_2,
-        albumId: 2345
-    },
-    {
-        name: 'Jessica & Johnny',
-        date: 'Feb 23, 2025',
-        photo_count: 2347,
-        thumbnail: album_thumbnail_3,
-        albumId: 3456
-    },
-    {
-        name: 'Sabrina & Alex',
-        date: 'Dec 31, 2024',
-        photo_count: 5673,
-        thumbnail: album_thumbnail_4,
-        albumId: 4567
-    },
-]
-
+import { getAllAlbumsByStudioID, getMetadataByStudioID } from '../../../apiCalls/photographer/albumService';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
-    const [allAlbums, setAllAlbums] = useState([])
+    const [allAlbums, setAllAlbums] = useState([]);
+    const [metadata, setMetadata] = useState([]);
 
     useEffect(() => {
         const dummy_studio_id = 123;
-        const apiResult = getAllAlbumsByStudioID(dummy_studio_id);
-        setAllAlbums(apiResult)
+        setMetadata(getMetadataByStudioID(dummy_studio_id));
+        const albums = getAllAlbumsByStudioID(dummy_studio_id);
+        setAllAlbums(albums)
     }, [])
 
     const handleClick = (albumId) => {
@@ -70,11 +39,16 @@ export const Dashboard = () => {
                 <p>Manage your client galleries and share beautiful moments</p>
             </div>
             <div className='dashboard-content p-2 d-flex'>
-                <MetadataCard title='Total Albums' value='126' description='Active client albums'/>
-                <MetadataCard title='Total Photos' value='53,300' description='Photos shared with clients'/>
-                <MetadataCard title='Total Clients' value='72' description='Clients'/>
-                <MetadataCard title='Total Photographers' value='12' description='Active photographers'/>
-                <MetadataCard title='Client Growth' value='+30%' description='Compared to last month' graph={chart_img}/>
+                {
+                    metadata.map(eachMetadata => (
+                        <MetadataCard 
+                            title={eachMetadata.title} 
+                            value={eachMetadata.value} 
+                            description={eachMetadata.subtitle}
+                            graph={eachMetadata.graph}
+                        />
+                    ))
+                }
             </div>
             <div className='all-galleries mt-4'>
                 <h2>Recent Galleries</h2>

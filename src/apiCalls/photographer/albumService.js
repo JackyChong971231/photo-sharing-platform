@@ -3,6 +3,44 @@ import album_thumbnail_2 from '../../assets/dummy/album_thumbnail_2.jpg';
 import album_thumbnail_3 from '../../assets/dummy/album_thumbnail_3.jpg';
 import album_thumbnail_4 from '../../assets/dummy/album_thumbnail_4.jpeg';
 
+import chart_img from '../../assets/dummy/chart.png'
+
+export const getMetadataByStudioID = (studioID) => {
+    const dummy = [
+        {
+            title: 'Total Albums',
+            value: '126',
+            subtitle: 'Active client albums',
+            graph: null
+        },
+        {
+            title: 'Total Photos',
+            value: '53,300',
+            subtitle: 'Photos shared with clients',
+            graph: null
+        },
+        {
+            title: 'Total Clients',
+            value: '72',
+            subtitle: 'Clients',
+            graph: null
+        },
+        {
+            title: 'Total Photographers',
+            value: '12',
+            subtitle: 'Active photographers',
+            graph: null
+        },
+        {
+            title: 'Client Growth',
+            value: '+30%',
+            subtitle: 'Compared to last month',
+            graph: chart_img
+        },
+    ]
+    return dummy
+}
+
 export const getAllAlbumsByStudioID = (studioID) => {
 
     const dummy = [
