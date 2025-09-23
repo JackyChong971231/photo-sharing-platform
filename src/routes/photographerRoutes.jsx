@@ -12,8 +12,6 @@ import { Settings } from '../pages/photographer/settings/settings';
 
 
 export const PhotographerRoutes = () => {
-    const {dummyStr, setDummyStr} = useSharedContext();
-
     return (
         <PhotographerLayout>
             <Routes>

@@ -1,61 +1,80 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
+import { jwtDecode } from "jwt-decode";
 
 const SharedContext = createContext();
 
 export const SharedProvider = ({ children }) => {
-  // dummy
-  const [dummyStr, setDummyStr] = useState('dummy hihihi');
-
-  // website metadata
-  const [role, setRole] = useState('photographer');
   const [user, setUser] = useState({
-    isAuthenticated: true, // Replace with actual authentication logic
-    role: 'photographer', // Replace with dynamic role ('photographer' or 'customer')
+    isAuthenticated: false,
+    role: null,
+    id: null,
+    name: null,
   });
 
-  // User Info
-  const [userDetail, setUserDetail] = useState(() => {
-    const savedData = localStorage.getItem('userDetail');
-    if (savedData) {
-      try{
-        const jsonParsedSavedData = JSON.parse(savedData);
-        return jsonParsedSavedData
-      }
-      catch {
-        return {}
-      }
-    } else {
-      return {}
-    }
-    // return savedData? JSON.parse(savedData): {};
-  });
-  const [jwtToken, setJwtToken] = useState(() => {
-    const savedData = localStorage.getItem('jwtToken');
-    if (savedData) {
-      return savedData
-    } else {
-      return ""
-    }
-  })
+  const login = async (credentials) => {
+    // 1. Call your backend login API
+    // const response = await fetch("/api/auth/login", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(credentials),
+    // });
+
+    // if (!response.ok) {
+    //   throw new Error("Invalid login");
+    // }
+    
+
+    // const { token } = await response.json();
+    const dummy_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIzNDcsIm5hbWUiOiJUb20gSG9sbGFuZCIsInJvbGUiOiJwaG90b2dyYXBocGVyIiwiZXhwIjo0MTAyNDQ0ODAwfQ.dummy-signature";
+
+    // 2. Save token
+    localStorage.setItem("token", dummy_token);
+
+    // 3. Decode token to get user info
+    const decoded = jwtDecode(dummy_token);
+    console.log(decoded)
+
+    setUser({
+      isAuthenticated: true,
+      role: decoded.role,
+      id: decoded.sub, // typical JWT user id claim
+      name: decoded.name,
+    });
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser({ isAuthenticated: false, role: null, id: null, name: null });
+  };
 
   useEffect(() => {
-    localStorage.setItem('userDetail', JSON.stringify(userDetail));
-  },[userDetail])
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
 
-  useEffect(() => {
-    localStorage.setItem('jwtToken', jwtToken);
-  },[jwtToken])
+        // Optionally check expiration
+        if (decoded.exp * 1000 > Date.now()) {
+          setUser({
+            isAuthenticated: true,
+            role: decoded.role,
+            id: decoded.sub,
+            name: decoded.name,
+          });
+        } else {
+          logout(); // token expired
+        }
+      } catch (e) {
+        console.error("Invalid token", e);
+        logout();
+      }
+    }
+  }, []);
 
 
   return (
     <SharedContext.Provider value={{
-      role, setRole,
-      user, setUser,
-
-      userDetail, setUserDetail,
-      jwtToken, setJwtToken,
-      dummyStr, setDummyStr
+      user, setUser, login, logout
       }}
     >
       {children}
