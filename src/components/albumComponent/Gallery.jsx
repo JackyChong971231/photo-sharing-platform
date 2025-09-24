@@ -7,10 +7,12 @@ import { useSharedContext } from '../../SharedContext';
 
 
 import './albumComponent.css'
+import './gallery.css'
 import useRouteParams from '../../hooks/useRouteParams';
 import { getAllImagesByFolderID } from '../../apiCalls/photographer/albumService';
 
 export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelectedImages}) => {
+    
     const galleryRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -18,6 +20,11 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
     const imgRefs = useRef([]);
     const clickThreshold = 5;
     const [imagesInFolder, setImagesInFolder] = useState([]);
+
+    const dragCounter = useRef(0);
+    const [dragOverFiles, setDragOverFiles] = useState([]);
+    const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+    const [isFilesDragging, setIsFilesDragging] = useState(false);
 
     useEffect(() => {
         if (currentFolderID) {
@@ -35,19 +42,46 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         }
     }, [currentFolderID])
 
+    const handleDragEnter = (e) => {
+        e.preventDefault();
+        dragCounter.current += 1;
+        
+        if (e.dataTransfer?.items?.length) {
+            const files = Array.from(e.dataTransfer.items)
+            setDragOverFiles(files);
+        }
+        setIsFilesDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        dragCounter.current -= 1;
+        if (dragCounter.current === 0) {
+            setIsFilesDragging(false);
+            setDragOverFiles([]);
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+
     const handleDrop = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        setIsFilesDragging(false);
 
         const files = Array.from(e.dataTransfer.files);
         if (files.length > 0) {
-            const fileNames = files.map(f => f.name);
-            alert("Dropped images:\n" + fileNames.join("\n"));
+        const fileNames = files.map(f => f.name);
+        alert("Dropped images:\n" + fileNames.join("\n"));
 
-            // optional: show preview
-            const newImageURLs = files.map(f => URL.createObjectURL(f));
-            setImagesInFolder(prev => [...prev, ...newImageURLs]);
+        // optional: show preview
+        const newImageURLs = files.map(f => URL.createObjectURL(f));
+        setImagesInFolder(prev => [...prev, ...newImageURLs]);
         }
+        setDragOverFiles([]);
     };
 
     const handleMouseDown = (e) => {
@@ -141,13 +175,15 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
 
     return (
         <div className='gallery-container px-3'
-        ref={galleryRef}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        style={{ position: "relative", userSelect: "none" }}
+            ref={galleryRef}
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            style={{ position: "relative", userSelect: "none" }}
         >
         {(imagesInFolder.length===0)?
             // When there is NO images
@@ -202,6 +238,33 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             }}
             />
         )}
+
+        {/* Center overlay when dragging */}
+        {isFilesDragging && dragOverFiles.length > 0 && (
+            <div className="drag-overlay">
+            <h3>Uploading {dragOverFiles.length} files</h3>
+            {/* <ul>
+                {dragOverFiles.slice(0, 5).map((file, idx) => (
+                    file ? (
+                        <li key={idx}>{file.name} ({Math.round(file.size / 1024)} KB)</li>
+                    ) : null
+                ))}
+                {dragOverFiles.length > 5 && <li>+ {dragOverFiles.length - 5} more…</li>}
+            </ul> */}
+            </div>
+        )}
+
+        {/* Cursor-following badge */}
+        {isFilesDragging && dragOverFiles.length > 0 && (
+            <div
+            className="drag-cursor-badge"
+            style={{ top: cursorPos.y + 10, left: cursorPos.x + 10 }}
+            >
+            <FontAwesomeIcon icon={faImage} size="2x" />
+            <span className="file-count">{dragOverFiles.length}</span>
+            </div>
+        )}
         </div>
+
     )
 }
