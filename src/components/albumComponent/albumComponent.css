@@ -182,3 +182,14 @@
 .folder-option-menu-ul > li > p {
   margin: 0;
 }
+
+.album-divider-container {
+  cursor: col-resize;
+  padding-inline: 0.5rem;
+}
+
+.album-divider {
+  width: 1px;
+  background: #ccc;
+  height: 100%;
+}

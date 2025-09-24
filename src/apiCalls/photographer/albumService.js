@@ -3,7 +3,41 @@ import album_thumbnail_2 from '../../assets/dummy/album_thumbnail_2.jpg';
 import album_thumbnail_3 from '../../assets/dummy/album_thumbnail_3.jpg';
 import album_thumbnail_4 from '../../assets/dummy/album_thumbnail_4.jpeg';
 
+// Dummy
 import chart_img from '../../assets/dummy/chart.png'
+
+import img01 from '../../assets/dummy/album/environment/IMG0001.jpg'
+import img02 from '../../assets/dummy/album/environment/IMG0002.jpg'
+import img03 from '../../assets/dummy/album/environment/IMG0003.jpeg'
+import img04 from '../../assets/dummy/album/environment/IMG0004.jpg'
+import img05 from '../../assets/dummy/album/environment/IMG0005.jpg'
+import img06 from '../../assets/dummy/album/environment/IMG0006.jpg'
+
+import img07 from '../../assets/dummy/album/group/IMG0007.jpeg'
+import img08 from '../../assets/dummy/album/group/IMG0008.jpeg'
+import img09 from '../../assets/dummy/album/group/IMG0009.jpeg'
+import img10 from '../../assets/dummy/album/group/IMG0010.jpeg'
+import img11 from '../../assets/dummy/album/group/IMG0011.jpeg'
+import img12 from '../../assets/dummy/album/group/IMG0012.jpeg'
+import img13 from '../../assets/dummy/album/group/IMG0013.jpeg'
+import img14 from '../../assets/dummy/album/group/IMG0014.jpeg'
+
+import img15 from '../../assets/dummy/album/portrait/IMG0015.jpeg'
+import img16 from '../../assets/dummy/album/portrait/IMG0016.jpeg'
+import img17 from '../../assets/dummy/album/portrait/IMG0017.jpeg'
+import img18 from '../../assets/dummy/album/portrait/IMG0018.jpeg'
+import img19 from '../../assets/dummy/album/portrait/IMG0019.jpeg'
+
+import img20 from '../../assets/dummy/album/ceremony/welcome/IMG0020.jpeg'
+import img21 from '../../assets/dummy/album/ceremony/welcome/IMG0021.jpeg'
+import img22 from '../../assets/dummy/album/ceremony/welcome/IMG0022.jpeg'
+import img23 from '../../assets/dummy/album/ceremony/welcome/IMG0023.jpg'
+
+import img24 from '../../assets/dummy/album/ceremony/vow/IMG0024.jpeg'
+import img25 from '../../assets/dummy/album/ceremony/vow/IMG0025.jpeg'
+import img26 from '../../assets/dummy/album/ceremony/vow/IMG0026.jpeg'
+import img27 from '../../assets/dummy/album/ceremony/vow/IMG0027.jpg'
+import img28 from '../../assets/dummy/album/ceremony/vow/IMG0028.jpeg'
 
 export const getMetadataByStudioID = (studioID) => {
     const dummy = [
@@ -74,4 +108,99 @@ export const getAllAlbumsByStudioID = (studioID) => {
         },
     ]
     return dummy
+}
+
+export const getFolderStructureByAlbumID = (albumID) => {
+    const dummy_folder_structure = [
+    {
+        "id": 1,
+        "name": "Environment",
+        "type": "folder",
+        "parent_id": null,
+        "album_id": 101,
+        "created_at": "2023-01-01"
+    },
+    {
+        "id": 2,
+        "name": "Group Photos",
+        "type": "folder",
+        "parent_id": null,
+        "album_id": 101,
+        "created_at": "2023-01-02"
+    },
+    {
+        "id": 3,
+        "name": "Portrait",
+        "type": "folder",
+        "parent_id": null,
+        "album_id": 101,
+        "created_at": "2023-01-02"
+    },
+    {
+        "id": 4,
+        "name": "Ceremony Photos",
+        "type": "folder",
+        "parent_id": null,
+        "album_id": 101,
+        "created_at": "2023-01-03"
+    },
+    {
+        "id": 5,
+        "name": "Vows",
+        "type": "folder",
+        "parent_id": 4,
+        "album_id": 101,
+        "created_at": "2023-01-04"
+    },
+    {
+        "id": 6,
+        "name": "Welcome",
+        "type": "folder",
+        "parent_id": 4,
+        "album_id": 101,
+        "created_at": "2023-01-04"
+    },
+    {
+        "id": 7,
+        "name": "Readings",
+        "type": "folder",
+        "parent_id": 4,
+        "album_id": 101,
+        "created_at": "2023-01-04"
+    },
+    {
+        "id": 8,
+        "name": "Testing",
+        "type": "folder",
+        "parent_id": 7,
+        "album_id": 101,
+        "created_at": "2023-01-04"
+    },
+    {
+        "id": 9,
+        "name": "Trial",
+        "type": "folder",
+        "parent_id": 4,
+        "album_id": 101,
+        "created_at": "2023-01-04"
+    }
+    ]
+
+    if (['1234', '2345', '3456', '4567'].includes(albumID)) {
+        return dummy_folder_structure
+    } else {
+        return []
+    }
+}
+
+export const getAllImagesByFolderID = (folderID) => {
+    const dummy_images_by_folderID = {
+        1: [img01,img02,img03,img04,img05,img06],
+        2: [img07,img08,img09,img10,img11,img12,img13,img14],
+        3: [img15,img16,img17,img18,img19],
+        5: [img24,img25,img26,img27,img28],
+        6: [img20,img21,img22,img23]
+    }
+    const images = dummy_images_by_folderID[folderID]
+    return images
 }

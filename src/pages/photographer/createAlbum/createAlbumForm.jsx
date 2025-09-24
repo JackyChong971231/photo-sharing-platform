@@ -203,8 +203,9 @@ export const CreateAlbumForm = () => {
             <div className='px-5 position-relative d-flex justify-content-between'>
                 <span></span>
                 <div className='d-flex gap-4'>
-                    <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'>Save</button>
-                    <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Cancel</button>
+                    <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
+                    onClick={() => {alert('Add album metadata to database.')}}>Save</button>
+                    <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Clear</button>
                 </div>
             </div>
         </div>
