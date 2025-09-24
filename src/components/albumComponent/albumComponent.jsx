@@ -9,7 +9,7 @@ import './albumComponent.css'
 
 import { Sidebar } from './sidebar';
 import { GalleryToolbar } from './galleryToolbar';
-import { Gallery } from './Gallery';
+import { Gallery } from './gallery';
 
 export const AlbumComponent = ({albumId}) => {
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
