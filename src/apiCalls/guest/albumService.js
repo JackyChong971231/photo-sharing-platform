@@ -1,4 +1,4 @@
-import img09 from '../../assets/dummy/album/portrait/IMG0016.jpeg'
+import img09 from '../../assets/dummy/album/portrait/IMG0019.jpeg'
 
 export const customGetAlbumInfo = (albumId) => {
     const dummy = {
