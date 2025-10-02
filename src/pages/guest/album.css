@@ -5,12 +5,13 @@
     top: 0;
     z-index: 1000;
     background-color: white;
+    border-bottom: 1px solid var(--text-color);
 }
 
 .customer-album-img {
     position: relative;
     width: 100%;
-    height: 25rem;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -26,4 +27,33 @@
     /* font-weight: 500; */
     color: var(--text-color);
     margin: 0;
+}
+
+.cover-photo-wrapper {
+    position: relative;
+    visibility: visible;
+    height: 50%;
+    transition: 0.2s;
+}
+
+.cover-photo-wrapper--collapsed {
+    visibility: hidden;
+    height: 0px;
+}
+
+.cover-photo-wrapper--show {
+    visibility: visible;
+    height: 50%;
+}
+
+.cover-photo-text-wrapper {
+    position: absolute;
+    transform: translate(0%, -50%);
+    top: 50%;
+    left: 10%;
+}
+
+.cover-photo-text-wrapper > p:first-child {
+    font-weight: 600;
+    font-size: 2rem;
 }
