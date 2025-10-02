@@ -1,4 +1,5 @@
 .album-component-outer-container {
+  position: relative;
   display: flex;
   height: 100%;
 }
@@ -94,6 +95,8 @@
     overflow-y: auto; /* scroll if too tall */
     overflow-x: hidden;
     padding-top: 1rem;
+    position: sticky;
+    top: 0;
 }
 
 .gallery-container {
