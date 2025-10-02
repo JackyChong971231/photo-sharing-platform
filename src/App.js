@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import { SharedProvider, useSharedContext } from './SharedContext';
 
-import { AlbumClient } from './pages/albumClient.jsx';
+import { AlbumClient } from './pages/guest/album.jsx';
 import { AuthRoutes } from './routes/authRoutes.jsx';
 import { PhotographerRoutes } from './routes/photographerRoutes.jsx';
 import { CustomerRoutes } from './routes/customerRoutes.jsx';
