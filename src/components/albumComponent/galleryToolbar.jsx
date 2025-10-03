@@ -9,7 +9,21 @@ import { useSharedContext } from '../../SharedContext';
 import './albumComponent.css'
 import useRouteParams from '../../hooks/useRouteParams';
 
+const FilterByFaceComponent = () => {
+    return (
+        <div className='p-3'>
+            <p>asdfsadfasdfsdf</p>
+        </div>
+    )
+}
+
 export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) => {
+    const [isShowFaceFilterComponent, setIsShowFaceFilterComponent] = useState(false)
+
+    useEffect(() => {
+
+    },[])
+
     return (
         <div>
             <div className='px-3 py-3 d-flex justify-content-between position-sticky top-0'>
@@ -26,12 +40,17 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) 
                         />
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>
                     </div>
-                    <div className='d-flex align-items-center gap-2' style={{cursor: 'pointer'}}>
-                        <FontAwesomeIcon icon={faClipboardUser} style={{fontSize: '1.3rem'}}/>
-                        <p className='m-0'>Filter by face</p>
-                        {/* <div className='filter-by-face-container'>
-                            <p>adsfsadfsdf</p>
-                        </div> */}
+                    <div>
+                        <div className='d-flex align-items-center gap-2' style={{cursor: 'pointer'}}
+                        onClick={()=>{setIsShowFaceFilterComponent(prevState => !prevState)}}>
+                            <FontAwesomeIcon icon={faClipboardUser} style={{fontSize: '1.3rem'}}/>
+                            <p className='m-0'>Filter by face</p>
+                        </div>
+                        {isShowFaceFilterComponent?
+                            <div className='filter-by-face-container'>
+                                <FilterByFaceComponent />
+                            </div>
+                        : null}
                     </div>
                 </div>
                 <div className='d-flex align-items-center gap-3' style={{minHeight: '1.5rem'}}>

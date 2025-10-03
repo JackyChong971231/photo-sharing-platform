@@ -7,12 +7,9 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import { SharedProvider, useSharedContext } from './SharedContext';
 
-import { AlbumClient } from './pages/guest/album.jsx';
 import { AuthRoutes } from './routes/authRoutes.jsx';
 import { PhotographerRoutes } from './routes/photographerRoutes.jsx';
 import { CustomerRoutes } from './routes/customerRoutes.jsx';
-import useRouteParams from './hooks/useRouteParams.js';
-import useQueryParams from './hooks/useQueryParams.js';
 
 function AppRoutes() {
   const { user } = useSharedContext();

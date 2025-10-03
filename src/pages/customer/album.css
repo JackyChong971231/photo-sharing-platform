@@ -5,7 +5,7 @@
     top: 0;
     z-index: 1000;
     background-color: white;
-    border-bottom: 1px solid var(--text-color);
+    border-bottom: 1px solid gray;
 }
 
 .customer-album-img {
@@ -31,18 +31,16 @@
 
 .cover-photo-wrapper {
     position: relative;
-    visibility: visible;
     height: 50%;
     transition: 0.2s;
+    
 }
 
 .cover-photo-wrapper--collapsed {
-    visibility: hidden;
-    height: 0px;
+    height: 10rem;
 }
 
 .cover-photo-wrapper--show {
-    visibility: visible;
     height: 50%;
 }
 
@@ -51,6 +49,11 @@
     transform: translate(0%, -50%);
     top: 50%;
     left: 10%;
+}
+
+.cover-photo-text-wrapper > p {
+    color: white;
+    text-shadow: 1px 1px 10px rgb(92, 92, 92);
 }
 
 .cover-photo-text-wrapper > p:first-child {
