@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons"
+import { faFolder, faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import { faCamera } from "@fortawesome/free-regular-svg-icons"
 import { useSharedContext } from '../../SharedContext';
 
@@ -52,7 +52,7 @@ const FolderTree = ({ tree, setCurrentFolderID, currentFolderID, layer, currebtF
                 else {setCurrentFolderID(node.children[0].id)}
               }}>
                 <span className="folder-icon" role="img" aria-label="folder">
-                  📁
+                  <FontAwesomeIcon icon={faFolder} />
                 </span>
                 <span>{node.name}</span>
               </div>
@@ -105,7 +105,7 @@ export const Sidebar = ({albumId, currentFolderID, setCurrentFolderID}) => {
     },[])
 
     return (
-        <div>
+        <div style={{height: '100%', overflowY: 'auto', overflowX: 'hidden'}}>
             <FolderTree 
                 tree={folderTree} 
                 setCurrentFolderID={setCurrentFolderID} 

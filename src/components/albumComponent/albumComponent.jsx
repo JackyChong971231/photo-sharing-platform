@@ -55,23 +55,34 @@ export const AlbumComponent = ({albumId}) => {
 
     return (
         <div className='album-component-outer-container' ref={outerRef}>
-          <div className="file-structure-container"
-            style={{
-              width: sidebarWidth + "px",
-              minWidth: sidebarWidth + "px",
-              maxWidth: sidebarWidth + "px",
-            }}
+          <div className='d-flex flex-column h-100'
           >
-            <Sidebar albumId={albumId} currentFolderID={currentFolderID} setCurrentFolderID={setCurrentFolderID} />
-          </div>
+            <div style={{borderBottom: '1px solid #ccc'}}>
+              <GalleryToolbar imgMaxHeight={imgMaxHeight} setImgMaxHeight={setImgMaxHeight} selectedImages={selectedImages} />
+            </div>
 
-          {/* -------------- Divider -------------- */}
-          <div className="album-divider-container" onMouseDown={handleMouseDown}><div className="album-divider"/></div>
+            <div className='flex-grow-1 d-flex'
+             style={{overflowY: 'hidden'}}>
+              <div className="file-structure-container"
+                style={{
+                  width: sidebarWidth + "px",
+                  minWidth: sidebarWidth + "px",
+                  maxWidth: sidebarWidth + "px",
+                }}
+              >
+                <Sidebar albumId={albumId} currentFolderID={currentFolderID} setCurrentFolderID={setCurrentFolderID} />
+              </div>
 
-          {/* -------------- Gallery related -------------- */}
-          <div className='d-flex flex-column flex-grow-1'>
-            <GalleryToolbar imgMaxHeight={imgMaxHeight} setImgMaxHeight={setImgMaxHeight} selectedImages={selectedImages} />
-            <Gallery currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
+              {/* -------------- Divider -------------- */}
+              <div className="album-divider-container" onMouseDown={handleMouseDown}><div className="album-divider"/></div>
+
+              {/* -------------- Gallery related -------------- */}
+              <div className='py-2'
+              style={{minHeight: '100%', maxHeight: '100%'}}>
+                <Gallery currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
+              </div>
+            </div>
+
           </div>
         </div>
         
