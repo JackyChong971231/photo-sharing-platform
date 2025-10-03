@@ -57,7 +57,7 @@ export const AlbumComponent = ({albumId}) => {
         <div className='album-component-outer-container' ref={outerRef}>
           <div className='d-flex flex-column h-100'
           >
-            <div style={{borderBottom: '1px solid #ccc'}}>
+            <div style={{borderBottom: '1px solid #ccc', zIndex: '100'}}>
               <GalleryToolbar imgMaxHeight={imgMaxHeight} setImgMaxHeight={setImgMaxHeight} selectedImages={selectedImages} />
             </div>
 

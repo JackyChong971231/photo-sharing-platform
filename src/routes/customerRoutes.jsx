@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPhone, faEnvelope, faLock, faShieldHalved, faEarthAmericas, faCircleQuestion, faCircleInfo, faChevronRight } from "@fortawesome/free-solid-svg-icons"
 import { useSharedContext } from '../SharedContext';
-import { Album } from '../pages/guest/album';
+import { Album } from '../pages/customer/album';
 import useRouteParams from '../hooks/useRouteParams';
 
 

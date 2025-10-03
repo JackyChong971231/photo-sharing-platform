@@ -6,7 +6,7 @@ import { useSharedContext } from '../../SharedContext';
 import useRouteParams from '../../hooks/useRouteParams';
 
 import { AlbumComponent } from '../../components/albumComponent/albumComponent';
-import { customGetAlbumInfo } from '../../apiCalls/guest/albumService';
+import { customGetAlbumInfo } from '../../apiCalls/customer/albumService';
 
 import './album.css'
 
