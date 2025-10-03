@@ -16,20 +16,15 @@ import useQueryParams from './hooks/useQueryParams.js';
 
 function AppRoutes() {
   const { user } = useSharedContext();
-  const queryParams = useQueryParams();
+  const location = useLocation();
 
-  // Check for 'role' parameter in the URL
-  const roleFromURL = queryParams.get('role'); // e.g., 'customer'
-  if  (roleFromURL === 'customer') {
-    return <CustomerRoutes />
+  const isRoot = location.pathname === "/";
+
+  // Handle root path separately
+  if (isRoot) {
+    return user.isAuthenticated ? <PhotographerRoutes /> : <AuthRoutes />;
   }
 
-  if (!user.isAuthenticated) {
-    // Render auth-related routes if the user is not logged in
-    return <AuthRoutes />;
-  }
-
-  // Render role-specific routes
   return user.role === "photographper" ? <PhotographerRoutes /> : <CustomerRoutes />;
 }
 
