@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis } from "@fortawesome/free-solid-svg-icons"
+import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis, faExpand } from "@fortawesome/free-solid-svg-icons"
 import { faCamera } from "@fortawesome/free-regular-svg-icons"
 import { useSharedContext } from '../../SharedContext';
 
@@ -20,6 +20,7 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
     const imgRefs = useRef([]);
     const clickThreshold = 5;
     const [imagesInFolder, setImagesInFolder] = useState([]);
+    const [optionMenuIndex, setOptionMenuIndex] = useState(null);
 
     const dragCounter = useRef(0);
     const [dragOverFiles, setDragOverFiles] = useState([]);
@@ -173,8 +174,13 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         setIsDragging(false);
     }
 
+    const showImageOptionMenu = (e, image_idx) => {
+        console.log(image_idx)
+        setOptionMenuIndex(image_idx)
+    }
+
     return (
-        <div className='gallery-container px-3'
+        <div className='gallery-container p-3'
             ref={galleryRef}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
@@ -199,15 +205,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             // When there is images
             (imagesInFolder.map((imgSrc, i) => (
             <div
+                className={'image-container '}
                 key={imgSrc}
                 ref={imgRefs.current[i]}
-                style={{
-                display: "inline-block",
-                padding: selectedImages.includes(i) ? "2px" : "0", // white space
-                border: selectedImages.includes(i) ? "3px solid #007bff" : "none",
-                boxSizing: "border-box",
-                margin: selectedImages.includes(i) ? "0px" : "5px" // optional: gap between images
-                }}
             >
                 <img
                 src={imgSrc}
@@ -218,6 +218,20 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
                     display: "block"
                 }}
                 />
+                <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
+                <div className='position-absolute top-0 end-0 text-white m-2'>
+                    <button className='image-options-btn'
+                    onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
+                    {optionMenuIndex===i? 
+                    <div className='image-option-menu'>
+                        <p>Request retouch</p>
+                    </div>:null}
+                </div>
+                <div className='position-absolute bottom-0 end-0 text-white m-2'>
+                    <button className='image-expand-btn'>
+                        <FontAwesomeIcon icon={faExpand}/>
+                    </button>
+                </div>
             </div>
             )))
         }
