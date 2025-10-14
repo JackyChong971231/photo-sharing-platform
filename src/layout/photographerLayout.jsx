@@ -13,8 +13,7 @@ const PhotographerLayout = ({ children }) => {
   const handleMouseMove = (e) => {
     if (!isResizing.current) return;
     const newWidth = e.clientX;
-    console.log(newWidth)
-    if (newWidth > 150 && newWidth < 500) {
+    if (newWidth > 230 && newWidth < 500) {
       setSidebarWidth(newWidth);
     }
   };

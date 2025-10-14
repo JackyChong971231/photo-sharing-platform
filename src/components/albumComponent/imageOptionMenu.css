@@ -1,0 +1,16 @@
+.image-option-menu-inner-container {
+    width: 10rem;
+}
+
+.image-option-menu-inner-container > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.2rem;
+    border-radius: 0.4rem;
+}
+
+.image-option-menu-inner-container > div:hover {
+    background-color: rgb(234, 234, 234);
+}
