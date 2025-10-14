@@ -256,7 +256,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
                 key={imgSrc}
                 ref={imgRefs.current[i]}
                 onMouseEnter={() => {
-                    if (selectedImages.length < 2) {
+                    if (selectedImages.length < 2 || 
+                        (selectedImages.length > 1 && !selectedImages.includes(i))
+                    ) {
                         setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
                     }
                 }}
