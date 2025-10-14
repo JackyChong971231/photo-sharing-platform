@@ -10,23 +10,42 @@ import './albumComponent.css'
 import './gallery.css'
 import useRouteParams from '../../hooks/useRouteParams';
 import { getAllImagesByFolderID } from '../../apiCalls/photographer/albumService';
+import { ImageOptionMenu } from './imageOptionMenu';
 
 export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelectedImages}) => {
+    const [imagesInFolder, setImagesInFolder] = useState([]);
     
+    // For image selection
     const galleryRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [dragCurrent, setDragCurrent] = useState({ x: 0, y: 0 });
     const imgRefs = useRef([]);
     const clickThreshold = 5;
-    const [imagesInFolder, setImagesInFolder] = useState([]);
+
+    // For image hovering effect
+    const [hoveredIndex, setHoveredIndex] = useState([]);
+
+    // For option menu
     const [optionMenuIndex, setOptionMenuIndex] = useState(null);
 
+    // For dragging files
     const dragCounter = useRef(0);
     const [dragOverFiles, setDragOverFiles] = useState([]);
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isFilesDragging, setIsFilesDragging] = useState(false);
 
+    // Close option menu if another image is clicked
+    useEffect(() => {
+        if (!selectedImages.includes(optionMenuIndex)) {
+            setOptionMenuIndex(null);   // Close option menu if another image is clicked or no image is selected
+        }
+        if (selectedImages.length > 1 || selectedImages.length === 0) {
+            setHoveredIndex([]) // If more than one image is selected, NO hover effect
+        }
+    },[selectedImages])
+
+    // For downloading images from this folder
     useEffect(() => {
         if (currentFolderID) {
             setSelectedImages([])
@@ -43,6 +62,7 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         }
     }, [currentFolderID])
 
+    // For images dragging in effect
     const handleDragEnter = (e) => {
         e.preventDefault();
         dragCounter.current += 1;
@@ -54,6 +74,7 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         setIsFilesDragging(true);
     };
 
+    // For images dragging out effect
     const handleDragLeave = (e) => {
         e.preventDefault();
         dragCounter.current -= 1;
@@ -63,11 +84,14 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         }
     };
 
+    // For images dragging around effect
     const handleDragOver = (e) => {
         e.preventDefault();
         setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
+
+    // For images dropped logic
     const handleDrop = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -132,11 +156,16 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             ) ? i : null;
         })
         .filter(i => i !== null);
-
+        
         setSelectedImages(selected);
+        if (selectedImages.length===1) {
+            setHoveredIndex(selected)   // set the image to hovered if there is only one image is selected DURING selection stage
+        }
     }
 
     const handleMouseUp = (e) => {
+        e.preventDefault()
+        e.stopPropagation();
         const rect = galleryRef.current.getBoundingClientRect();
         const scrollTop = galleryRef.current.scrollTop;
         const scrollLeft = galleryRef.current.scrollLeft;
@@ -166,6 +195,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
 
         if (clickedImage !== -1) {
             setSelectedImages([clickedImage]);
+            if ([clickedImage].length === 1) {
+                setHoveredIndex([clickedImage]) // set the image to hovered if there is only one image is selected AFTER selection stage
+            }
         } else {
             setSelectedImages([]);
         }
@@ -175,9 +207,24 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
     }
 
     const showImageOptionMenu = (e, image_idx) => {
-        console.log(image_idx)
-        setOptionMenuIndex(image_idx)
-    }
+        e.stopPropagation(); // prevent triggering gallery mouse events
+        const prevOptionMenuIndex = optionMenuIndex
+        setOptionMenuIndex(prev_image_idx => prev_image_idx===image_idx?null:image_idx);
+        setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex.filter(index => index !== prevOptionMenuIndex), image_idx]); // keep hover active while menu is open
+    };
+
+    // remove all hover or option menu effect if clicked outside
+    const handleClickOutside = (e) => {
+        if (!galleryRef.current.contains(e.target)) {
+            setOptionMenuIndex(null);
+            setHoveredIndex([]);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <div className='gallery-container p-3'
@@ -205,29 +252,48 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             // When there is images
             (imagesInFolder.map((imgSrc, i) => (
             <div
-                className={'image-container '}
+                className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
                 key={imgSrc}
                 ref={imgRefs.current[i]}
+                onMouseEnter={() => {
+                    if (selectedImages.length < 2) {
+                        setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
+                    }
+                }}
+                onMouseLeave={() => {
+                    // only clear hover if option menu is not open for this image
+                    if (optionMenuIndex !== i) {
+                        setHoveredIndex(prevHoveredIndex => 
+                            prevHoveredIndex.filter(index => index !== i)
+                        );
+                    }
+                }}
             >
                 <img
-                src={imgSrc}
-                style={{
-                    height: imgMaxHeight + "px",
-                    maxWidth: imgMaxHeight * 2 + "px",
-                    objectFit: "cover",
-                    display: "block"
-                }}
+                    src={imgSrc}
+                    style={{
+                        height: imgMaxHeight + "px",
+                        maxWidth: imgMaxHeight * 2 + "px",
+                        objectFit: "cover",
+                        display: "block"
+                    }}
                 />
                 <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
-                <div className='position-absolute top-0 end-0 text-white m-2'>
+                <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
+                <div className='position-absolute top-0 end-0 text-white m-2'
+                    style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                >
                     <button className='image-options-btn'
+                    onMouseDownCapture={(e) => {e.stopPropagation()}}
                     onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
                     {optionMenuIndex===i? 
-                    <div className='image-option-menu'>
-                        <p>Request retouch</p>
+                    <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}>
+                        <ImageOptionMenu />
                     </div>:null}
                 </div>
-                <div className='position-absolute bottom-0 end-0 text-white m-2'>
+                <div className='position-absolute bottom-0 end-0 text-white m-2'
+                    style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                >
                     <button className='image-expand-btn'>
                         <FontAwesomeIcon icon={faExpand}/>
                     </button>
@@ -235,7 +301,6 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             </div>
             )))
         }
-        
 
         {isDragging && (
             <div
