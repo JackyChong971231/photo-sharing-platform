@@ -28,6 +28,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
 
     // For option menu
     const [optionMenuIndex, setOptionMenuIndex] = useState(null);
+    const [optionMenuAnchor, setOptionMenuAnchor] = useState('translate(0%, 0%)');
+    const [optionMenuTop, setOptionMenuTop] = useState('0px');
+    const optionMenuWidth = '10rem';
 
     // For dragging files
     const dragCounter = useRef(0);
@@ -207,10 +210,24 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
     }
 
     const showImageOptionMenu = (e, image_idx) => {
+        // determine anchor
+        let translateX = '0%'
+        let translateY = '0%'
+        let top = '1.5rem'
+        if (e.clientX/window.innerWidth > 0.8) {
+            translateX = '-100%';
+        }
+        if (e.clientY/window.innerHeight > 0.7) {
+            translateY = '-100%';
+            top = '-1.5rem'
+        }
+        setOptionMenuTop(top)
+        setOptionMenuAnchor(`translate(${translateX}, ${translateY}`)
+
         e.stopPropagation(); // prevent triggering gallery mouse events
         const prevOptionMenuIndex = optionMenuIndex
         setOptionMenuIndex(prev_image_idx => prev_image_idx===image_idx?null:image_idx);
-        setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex.filter(index => index !== prevOptionMenuIndex), image_idx]); // keep hover active while menu is open
+        // setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex.filter(index => index !== prevOptionMenuIndex), image_idx]); // keep hover active while menu is open
     };
 
     // remove all hover or option menu effect if clicked outside
@@ -241,12 +258,12 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         {(imagesInFolder.length===0)?
             // When there is NO images
             <div className='empty-folder-container'>
-            <div className='no-photos-yet-container'>
-                <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
-                <h3>No photos yet</h3>
-                <p>Create the first folder or drag or drop photos to get started</p>
-                <button>+ Create Your First Folder</button>
-            </div>
+                <div className='no-photos-yet-container'>
+                    <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
+                    <h3>No photos yet</h3>
+                    <p>Create the first folder or drag or drop photos to get started</p>
+                    <button>+ Create Your First Folder</button>
+                </div>
             </div>
         :
             // When there is images
@@ -289,8 +306,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
                     onMouseDownCapture={(e) => {e.stopPropagation()}}
                     onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
                     {optionMenuIndex===i? 
-                    <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}>
-                        <ImageOptionMenu />
+                    <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
+                    style={{transform: optionMenuAnchor, top: optionMenuTop}}>
+                        <ImageOptionMenu optionMenuWidth={optionMenuWidth} />
                     </div>:null}
                 </div>
                 <div className='position-absolute bottom-0 end-0 text-white m-2'

@@ -55,7 +55,7 @@ export const AlbumComponent = ({albumId}) => {
 
     return (
         <div className='album-component-outer-container' ref={outerRef}>
-          <div className='d-flex flex-column h-100'
+          <div className='d-flex flex-column h-100 w-100'
           >
             <div style={{borderBottom: '1px solid #ccc', zIndex: '100'}}>
               <GalleryToolbar imgMaxHeight={imgMaxHeight} setImgMaxHeight={setImgMaxHeight} selectedImages={selectedImages} />
@@ -77,8 +77,8 @@ export const AlbumComponent = ({albumId}) => {
               <div className="album-divider-container" onMouseDown={handleMouseDown}><div className="album-divider"/></div>
 
               {/* -------------- Gallery related -------------- */}
-              <div className='py-2'
-              style={{minHeight: '100%', maxHeight: '100%'}}>
+              <div className='py-2 flex-grow-1'
+                style={{minHeight: '100%', maxHeight: '100%'}}>
                 <Gallery currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
               </div>
             </div>

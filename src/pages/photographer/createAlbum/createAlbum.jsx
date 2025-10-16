@@ -35,8 +35,8 @@ export const CreateAlbum = () => {
                 >
                 <FontAwesomeIcon icon={formHeightRatio < 0.5 ? faArrowDown : faArrowUp} />
                 </div>
-                <div className='w-100 d-flex flex-column overflow-hidden'
-                style={{ flexBasis: (1 - formHeightRatio) * 100 + "%", transition: '0.3s' }}
+                <div className='d-flex flex-column overflow-hidden'
+                style={{ flexBasis: (1 - formHeightRatio) * 100 + "%", transition: '0.3s', width: '100%' }}
                 >
                     <AlbumComponent albumId={null}/>
                 </div>
