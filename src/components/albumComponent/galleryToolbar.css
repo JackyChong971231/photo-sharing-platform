@@ -1,0 +1,59 @@
+.filter-by-face-container {
+    width: 32rem;
+    border-radius: 1rem;
+}
+
+.filter-by-face-img-border {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 0.5rem);
+  height: calc(100% + 0.5rem);
+  top: 50%;
+  left: 50%;
+  border: 3px solid #007bff;
+  border-radius: 0.7rem;
+}
+
+.filter-by-face-img {
+    width: 5rem;
+    height: 6.5rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.filter-by-face-tag {
+    display: flex;
+    gap: 0.5rem;
+    background-color: rgb(219, 219, 219);
+    padding-left: 0.3rem;
+    padding-right: 0.5rem;
+    padding-block: 0.2rem;
+    border-radius: 1rem;
+}
+
+.filter-by-face-clear-btn {
+    display: flex;
+    background-color: transparent;
+    align-items: center;
+    gap: 0rem;
+    border: none;
+    color: var(--text-color);
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.filter-by-face-clear-btn > p {
+    max-width: 0;
+    visibility: hidden;
+}
+
+.filter-by-face-clear-btn:hover {
+    background-color: rgb(188, 188, 188);
+    border-radius: 1rem;
+    gap: 0.3rem;
+}
+
+.filter-by-face-clear-btn:hover > p {
+    max-width: none;
+    visibility: visible;
+}

@@ -56,7 +56,7 @@ const FolderTree = ({ tree, setCurrentFolderID, currentFolderID, layer, currebtF
                 </span>
                 <span>{node.name}</span>
               </div>
-              <div className='relative' 
+              <div className='positive-absolute end-0' 
                 onMouseEnter={() => {setCurrebtFolderIDOptionsClicked(node.id)}} 
                 onMouseLeave={() => {setCurrebtFolderIDOptionsClicked(null)}}
               >
