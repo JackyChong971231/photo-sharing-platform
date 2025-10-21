@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
+import { hashPassword } from './utils/common';
 
 const SharedContext = createContext();
 
@@ -12,34 +13,42 @@ export const SharedProvider = ({ children }) => {
   });
 
   const login = async (credentials) => {
-    // 1. Call your backend login API
-    // const response = await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(credentials),
-    // });
+    try {
+      const email = credentials.email
+      const password_hash = await hashPassword(credentials.password)
 
-    // if (!response.ok) {
-    //   throw new Error("Invalid login");
-    // }
-    
+      const response = await fetch("http://127.0.0.1:8000/core/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password_hash: password_hash,
+        }),
+      });
 
-    // const { token } = await response.json();
-    const dummy_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIzNDcsIm5hbWUiOiJUb20gSG9sbGFuZCIsInJvbGUiOiJwaG90b2dyYXBocGVyIiwiZXhwIjo0MTAyNDQ0ODAwfQ.dummy-signature";
+      const response_body = await response.json();
 
-    // 2. Save token
-    localStorage.setItem("token", dummy_token);
+      if (response.ok) {
+        console.log("Logged in user:", response_body.email);
+        localStorage.setItem("token", response_body.token);
 
-    // 3. Decode token to get user info
-    const decoded = jwtDecode(dummy_token);
-    console.log(decoded)
+        const decoded_jwt = jwtDecode(response_body.token);
 
-    setUser({
-      isAuthenticated: true,
-      role: decoded.role,
-      id: decoded.sub, // typical JWT user id claim
-      name: decoded.name,
-    });
+        setUser({
+          isAuthenticated: true,
+          role: decoded_jwt.role,
+          id: decoded_jwt.id, // typical JWT user id claim
+          name: decoded_jwt.first_name+decoded_jwt.last_name,
+          email: decoded_jwt.email,
+        });
+      } else {
+        console.log("Login failed")
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   const logout = () => {

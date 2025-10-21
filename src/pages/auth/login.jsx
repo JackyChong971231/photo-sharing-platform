@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSharedContext } from '../../SharedContext';
+import './login.css'; // import the stylesheet
 
 export const Login = () => {
   const { login } = useSharedContext();
@@ -14,15 +15,16 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(credentials); // Calls dummy login in context
-    navigate('/'); // Redirect to main app after login
+    await login(credentials);
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
-      <form onSubmit={handleSubmit} style={{ width: '300px', padding: '2rem', border: '1px solid #ccc', borderRadius: '0.5rem' }}>
-        <h2 style={{ textAlign: 'center' }}>Login</h2>
-        <div style={{ marginBottom: '1rem' }}>
+    <div className="login-container">
+      <form className="login-card" onSubmit={handleSubmit}>
+        <h2 className="login-title">Welcome Back</h2>
+        <p className="login-subtitle">Sign in to continue</p>
+
+        <div className="input-group">
           <label>Email</label>
           <input
             type="email"
@@ -30,10 +32,10 @@ export const Login = () => {
             value={credentials.email}
             onChange={handleChange}
             required
-            style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+
+        <div className="input-group">
           <label>Password</label>
           <input
             type="password"
@@ -41,12 +43,14 @@ export const Login = () => {
             value={credentials.password}
             onChange={handleChange}
             required
-            style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}
           />
         </div>
-        <button type="submit" style={{ width: '100%', padding: '0.5rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '0.25rem' }}>
-          Login
-        </button>
+
+        <button type="submit" className="login-button">Login</button>
+
+        <p className="login-footer">
+          Don’t have an account? <a href="/register">Sign up</a>
+        </p>
       </form>
     </div>
   );

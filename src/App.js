@@ -22,7 +22,7 @@ function AppRoutes() {
     return user.isAuthenticated ? <PhotographerRoutes /> : <AuthRoutes />;
   }
 
-  return user.role === "photographper" ? <PhotographerRoutes /> : <CustomerRoutes />;
+  return (user.role === "photographer" || user.role === "studio_owner") ? <PhotographerRoutes /> : <CustomerRoutes />;
 }
 
 function App() {
