@@ -10,9 +10,16 @@ import { MyProfile } from './myProfile';
 import { Security } from './security';
 
 
-
 export const Settings = () => {
     const [currentPage, setCurrentPage] = useState(<MyProfile />)
+    const { logout } = useSharedContext();
+    const navigate = useNavigate();
+
+    const logoutHandler = () => {
+        logout();
+        navigate('/')
+        console.log('asdsdfasdf')
+    }
 
     return (
         <div className='p-4 h-100 d-flex flex-column'>
@@ -26,6 +33,7 @@ export const Settings = () => {
                             <p>Notifications</p>
                             <p>Billing</p>
                             <p>Data Export</p>
+                            <button onClick={logoutHandler}>Sign Out</button>
                         </div>
                         {/* Divider */}
                         <div

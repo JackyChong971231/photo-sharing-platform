@@ -182,17 +182,6 @@ export const CreateAlbumForm = () => {
                             />
                             <label className='form-label ms-2'><small>Album Creation Date</small></label>
                         </div>
-                        <div className='form-input-group'>
-                            <input
-                                type="text"
-                                name="client_phone"
-                                value={formData.client_phone}
-                                onChange={handleInputChange}
-                                placeholder=" "
-                                className='form-input ps-3'
-                            />
-                            <label className='form-label ms-2'><small>Phone Number</small></label>
-                        </div>
                     </div>
                     <div className='ms-3 mt-3'>
                         <p>Photographers:</p>
@@ -204,7 +193,7 @@ export const CreateAlbumForm = () => {
                 <span></span>
                 <div className='d-flex gap-4'>
                     <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
-                    onClick={() => {alert('Add album metadata to database.')}}>Save</button>
+                    onClick={() => {console.log(formData)}}>Create</button>
                     <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Clear</button>
                 </div>
             </div>

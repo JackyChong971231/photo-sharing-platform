@@ -19,6 +19,13 @@ const studio_profile = {
 const login_user = 'Jacky Chong'
 
 const PhotographerNavbar = () => {
+  
+  const testConnectionHandler = async () => {
+    const response = await fetch("http://127.0.0.1:8000/core/test/");
+    const body = await response.json()
+    console.log(body);
+  }
+
   return (
     <nav className="photographer-navbar">
       <div className="photographer-navbar-studio">
@@ -58,6 +65,7 @@ const PhotographerNavbar = () => {
               <FontAwesomeIcon icon={faGear} />
               <p>Settings</p>
             </NavLink>
+            <button onClick={() => {testConnectionHandler()}}>Test backend connection</button>
           </div>
       </div>
       <div className="photographer-navbar-account">
