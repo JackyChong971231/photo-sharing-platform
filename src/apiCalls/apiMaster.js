@@ -1,10 +1,7 @@
 export const POST      = 'POST';
 export const GET       = "GET";
 
-// const serverUrl = process.env.REACT_APP_SERVER_IP || 'http://137.184.166.60:8080';
-// const serverUrl = process.env.REACT_APP_SERVER_IP || 'http://localhost:8080';
-// const serverUrl = 'http://localhost:8080';
-const serverUrl = 'https://89tdcn1l68.execute-api.us-east-2.amazonaws.com';
+const serverUrl = 'http://127.0.0.1:8000';
 
 export const apiGateway = async (method, endPoint, requestBody) => {
     const response = await fetch(serverUrl + endPoint, {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { hashPassword } from './utils/common';
+import { apiGateway, POST } from './apiCalls/apiMaster';
 
 const SharedContext = createContext();
 
@@ -17,30 +18,35 @@ export const SharedProvider = ({ children }) => {
       const email = credentials.email
       const password_hash = await hashPassword(credentials.password)
 
-      const response = await fetch("http://127.0.0.1:8000/core/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password_hash: password_hash,
-        }),
-      });
+      // const response = await fetch("http://127.0.0.1:8000/core/login/", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     email,
+      //     password_hash: password_hash,
+      //   }),
+      // });
+      const request_body = {
+        email,
+        password_hash: password_hash,
+      }
+      const {statusCode, body} = await apiGateway(POST, '/core/login/', request_body)
 
-      const response_body = await response.json();
+      console.log(statusCode, body)
 
-      if (response.ok) {
-        console.log("Logged in user:", response_body.email);
-        localStorage.setItem("token", response_body.token);
+      if (statusCode === 200) {
+        console.log("Logged in user:", body.email);
+        localStorage.setItem("token", body.token);
 
-        const decoded_jwt = jwtDecode(response_body.token);
+        const decoded_jwt = jwtDecode(body.token);
+        console.log(decoded_jwt)
 
         setUser({
           isAuthenticated: true,
           role: decoded_jwt.role,
-          id: decoded_jwt.id, // typical JWT user id claim
-          name: decoded_jwt.first_name+decoded_jwt.last_name,
+          id: decoded_jwt.user_id, // typical JWT user id claim
           email: decoded_jwt.email,
         });
       } else {

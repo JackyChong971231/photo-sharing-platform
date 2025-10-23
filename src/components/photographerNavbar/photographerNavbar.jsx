@@ -46,7 +46,7 @@ const PhotographerNavbar = () => {
               <FontAwesomeIcon icon={faMessage} />
               <p>Messages</p>
             </NavLink>
-            <NavLink className='navLink-container-button' to="/" activeClassName="active-link">
+            <NavLink className='navLink-container-button' to="/calendar" activeClassName="active-link">
               <FontAwesomeIcon icon={faCalendar} />
               <p>Calendar</p>
             </NavLink>

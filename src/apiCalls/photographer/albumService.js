@@ -38,6 +38,9 @@ import img25 from '../../assets/dummy/album/ceremony/vow/IMG0025.jpeg'
 import img26 from '../../assets/dummy/album/ceremony/vow/IMG0026.jpeg'
 import img27 from '../../assets/dummy/album/ceremony/vow/IMG0027.jpg'
 import img28 from '../../assets/dummy/album/ceremony/vow/IMG0028.jpeg'
+import { useSharedContext } from '../../SharedContext';
+import { now } from '../../utils/common';
+import { apiGateway, POST } from '../apiMaster';
 
 export const getMetadataByStudioID = (studioID) => {
     const dummy = [
@@ -203,4 +206,22 @@ export const getAllImagesByFolderID = (folderID) => {
     }
     const images = dummy_images_by_folderID[folderID]
     return images
+}
+
+export const insertAlbum = (form_data, user, studio_id) => {
+    console.log(form_data, user)
+    const request_body = {
+        title: form_data.album_title,
+        description: form_data.album_description,
+        is_public: false,
+        studio_id: studio_id,
+        created_at: now(),
+        updated_at: now(),
+        published_at: null,
+        created_by_id: user.id,
+        event_date: form_data.photo_shoot_date,
+        event_location: form_data.photo_shoot_location,
+        photographers: form_data.photographers
+    }
+    const {statusCode, body} = apiGateway(POST, '/core/create_album/', request_body)
 }
