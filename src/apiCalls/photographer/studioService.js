@@ -1,6 +1,6 @@
-export const getAllPhotographersByStudio = (studioID) => {
-    const photographer_list = [
-        'Select photographer','Elias Thorne','Willow Hayes','Caleb Sterling','Aurora Vance'
-    ]
-    return photographer_list
+import { apiGateway, GET, POST } from "../apiMaster"
+
+export const getAllPhotographersByStudio = async (studioID) => {
+    const {statusCode, body} = await apiGateway(POST, '/core/studio/all_staff/', {studio_id: studioID})
+    return body
 }

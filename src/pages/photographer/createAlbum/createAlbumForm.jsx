@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage } from "@fortawesome/free-solid-svg-icons"
+import { faImage, faXmark } from "@fortawesome/free-solid-svg-icons"
 import { useSharedContext } from '../../../SharedContext';
 
 
@@ -10,8 +10,11 @@ import useRouteParams from '../../../hooks/useRouteParams';
 import { Album } from '../album/album';
 import { AlbumComponent } from '../../../components/albumComponent/albumComponent';
 import { getAllPhotographersByStudio } from '../../../apiCalls/photographer/studioService';
+import { insertAlbum } from '../../../apiCalls/photographer/albumService';
 
 export const CreateAlbumForm = () => {
+    const {user} = useSharedContext();
+    const dummy_studio_id = 1;
     const [formData, setFormData] = useState({
         client_first_name: '',
         client_last_name: '',
@@ -21,7 +24,6 @@ export const CreateAlbumForm = () => {
         photographers: []
     })
     const [photographersByStudio, setPhotographersByStudio] = useState([]);
-    const [photographerComponent, setPhotographerComponent] = useState([]);
 
     const handleInputChange = (e) => {
         setFormData({
@@ -47,53 +49,50 @@ export const CreateAlbumForm = () => {
     };
 
     const handlePhotographerChange = (e, index) => {
-        if (!photographersByStudio.includes(e.target.value)) return;
-
-        const photographer = e.target.value;
+        const photographer_id = e.target.value;
 
         setFormData(prev => {
             const updated = [...prev.photographers]; // copy array
-            updated[index] = photographer;           // update safely
+            updated[index] = photographer_id;           // update safely
             return { ...prev, photographers: updated };
         });
     };
 
-    useEffect(() => {
-        const dummy_studio_id = 123;
-        setPhotographersByStudio(getAllPhotographersByStudio(dummy_studio_id))
-    },[])
+    const handleRemovePhotographer = (index) => {
+    setFormData((prev) => {
+        const newPhotographers = [...prev.photographers]; // copy the array
+        newPhotographers.splice(index, 1); // remove the photographer at that index
+        return {
+        ...prev,
+        photographers: newPhotographers,
+        };
+    });
+    };
 
     useEffect(() => {
-        let photographerComponent_temp = []
-        for (let i=0; i <= formData.photographers.length; i++) {
-            photographerComponent_temp.push(
-                <div className="d-flex align-items-center gap-3 mb-2">
-                    <label>{i+1}.</label>
-                    <select
-                        name="photographer_name"
-                        value={formData.photographers[i]?formData.photographers[i]:''}
-                        onChange={(e) => {handlePhotographerChange(e, i)}}
-                        className="form-select"
-                        style={{width: '15rem'}}
-                    >
-                        {photographersByStudio.map((photographer) => (
-                        <option value={photographer}>
-                            {photographer}
-                        </option>
-                        ))}
-                    </select>
-                </div>
-            )
-        }
-        setPhotographerComponent(photographerComponent_temp)
-    }, [photographersByStudio, formData.photographers])
+        const fetchPhotographers = async () => {
+            const photographers = await getAllPhotographersByStudio(dummy_studio_id);
+            setPhotographersByStudio(photographers);
+        };
+
+        fetchPhotographers(); // call the async function
+    }, []);
 
     return (
         <div className='p-0' style={{overflowY: 'auto'}}>
             <div className='p-4'
                 style={{overflow: 'auto'}}>
                 <div className='mx-4 mt-1'>
-                    <input className='album_title_input px-3 bg-transparent' placeholder='Untitled Album' style={{fontSize: '2.5rem'}}/>
+                    {/* <input className='album_title_input px-3 bg-transparent' placeholder='Untitled Album' style={{fontSize: '2.5rem'}}/> */}
+                    <input
+                        className='album_title_input px-3 bg-transparent'
+                        type="text"
+                        name="album_title"
+                        value={formData.album_title}
+                        onChange={handleInputChange}
+                        placeholder="Untitled Album"
+                        style={{fontSize: '2.5rem'}}
+                    />
                 </div>
                 <div className='mx-4 mt-3'>
                     <p className='custom-bold-text'>Client Information</p>
@@ -151,6 +150,17 @@ export const CreateAlbumForm = () => {
                         <div className='form-input-group'>
                             <input
                                 type="text"
+                                name="album_description"
+                                value={formData.album_description}
+                                onChange={handleInputChange}
+                                placeholder=" "
+                                className='form-input ps-3'
+                            />
+                            <label className='form-label ms-2'><small>Album Description</small></label>
+                        </div>
+                        <div className='form-input-group'>
+                            <input
+                                type="text"
                                 name="photo_shoot_location"
                                 value={formData.photo_shoot_location}
                                 onChange={handleInputChange}
@@ -185,7 +195,41 @@ export const CreateAlbumForm = () => {
                     </div>
                     <div className='ms-3 mt-3'>
                         <p>Photographers:</p>
-                        {photographerComponent}
+                        <div>
+                            {Array.from({ length: formData.photographers.length+1 }).map((_, i) => {
+                                // filter out IDs that are already selected in other rows
+                                const availablePhotographers = photographersByStudio.filter(
+                                    (p) => !formData.photographers.includes(p.id.toString()) || p.id.toString() === formData.photographers[i]
+                                );
+
+                                return (
+                                    <div className="d-flex align-items-center gap-3 mb-2" key={i}>
+                                        <label>{i + 1}.</label>
+                                        <select
+                                            name="photographer_name"
+                                            value={formData.photographers[i] || ''}
+                                            onChange={(e) => handlePhotographerChange(e, i)}
+                                            className="form-select"
+                                            style={{ width: '15rem' }}
+                                        >
+                                            <option value={null}>Select a photographer</option>
+                                            {availablePhotographers.map((photographer) => (
+                                                <option key={photographer.id} value={photographer.id}>
+                                                    {photographer.first_name} {photographer.last_name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <div onClick={() => handleRemovePhotographer(i)}
+                                        role='button'>
+                                            {(formData.photographers.length >= i+1)?
+                                                <FontAwesomeIcon icon={faXmark} />
+                                            :null}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {/* {photographerComponent} */}
                     </div>
                 </div>
             </div>
@@ -193,7 +237,7 @@ export const CreateAlbumForm = () => {
                 <span></span>
                 <div className='d-flex gap-4'>
                     <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
-                    onClick={() => {console.log(formData)}}>Create</button>
+                    onClick={() => {insertAlbum(formData, user, dummy_studio_id)}}>Create</button>
                     <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Clear</button>
                 </div>
             </div>

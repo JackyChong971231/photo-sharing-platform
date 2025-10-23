@@ -18,3 +18,18 @@ export const hashPassword = async (password) => {
     .join("");
   return hashHex;
 }
+
+export const now = () => {
+  const d = new Date();
+  
+  const pad = (n) => n.toString().padStart(2, "0");
+
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1); // Months are 0-based
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  const seconds = pad(d.getSeconds());
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};

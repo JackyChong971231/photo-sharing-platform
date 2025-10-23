@@ -9,6 +9,7 @@ import { Dashboard } from '../pages/photographer/dashboard/dashboard';
 import { Album } from '../pages/photographer/album/album';
 import { CreateAlbum } from '../pages/photographer/createAlbum/createAlbum';
 import { Settings } from '../pages/photographer/settings/settings';
+import { Calendar } from '../pages/photographer/calendar/calendar';
 
 
 export const PhotographerRoutes = () => {
@@ -19,6 +20,7 @@ export const PhotographerRoutes = () => {
                 <Route path='/album/:albumId' element={<Album />} />
                 <Route path='/create-album' element={<CreateAlbum />} />
                 <Route path='/settings' element={<Settings />} />
+                <Route path='/calendar' element={<Calendar />} />
             </Routes>
         </PhotographerLayout>
         
