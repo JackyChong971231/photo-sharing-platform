@@ -73,7 +73,7 @@ export const SharedProvider = ({ children }) => {
           setUser({
             isAuthenticated: true,
             role: decoded.role,
-            id: decoded.sub,
+            id: decoded.user_id,
             name: decoded.name,
           });
         } else {

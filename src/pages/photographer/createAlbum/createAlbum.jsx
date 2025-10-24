@@ -11,32 +11,78 @@ import { Album } from '../album/album';
 import { AlbumComponent } from '../../../components/albumComponent/albumComponent';
 import { getAllPhotographersByStudio } from '../../../apiCalls/photographer/studioService';
 import { CreateAlbumForm } from './createAlbumForm';
+import { insertAlbum } from '../../../apiCalls/photographer/albumService';
+import { CreateAlbumSuccess } from './createAlbumSuccess';
 
 export const CreateAlbum = () => {
-    const [formHeightRatio, setFormHeightRatio] = useState(0.7);
+    const [formHeightRatio, setFormHeightRatio] = useState(1);
+    const {user} = useSharedContext();
+    const [photographersByStudio, setPhotographersByStudio] = useState([]);
+    const [isFormCollapsed, setIsFormCollapsed] = useState(false)
+
+    const [formData, setFormData] = useState({
+        album_title: '',
+        client_first_name: '',
+        client_last_name: '',
+        photo_shoot_location: '',
+        photo_shoot_date: '',
+        album_creation_date: '',
+        photographers: []
+    })
+    const [isAlbumCreated, setIsAlbumCreated] = useState(false)
+
+    const submitCreateAlbum = async () => {
+        console.log(formData, user)
+        const statusCode = await insertAlbum(formData, user, 1)
+        if (statusCode===201) {
+            setIsAlbumCreated(true);
+            setFormHeightRatio(0.3)
+        }
+    }
 
     const handleResize = () => {
-        if (formHeightRatio===0.7) {setFormHeightRatio(0.2)}
-        else if (formHeightRatio===0.2) {setFormHeightRatio(0.7)}
+        setIsFormCollapsed(prevState => !prevState)
     }
+
+    useEffect(() => {
+        const fetchPhotographers = async () => {
+            const photographers = await getAllPhotographersByStudio(1);
+            setPhotographersByStudio(photographers);
+        };
+
+        fetchPhotographers(); // call the async function
+    }, []);
 
     return (
         <div className='p-0'>
             <div className='d-flex flex-column vh-100'>
-                <div className="d-flex flex-column" 
-                    style={{ flexBasis: formHeightRatio * 100 + "%", overflow: "hidden", transition: '0.3s' }}
+                <div className={`transition-all overflow-hidden ${
+                        isFormCollapsed ? 'collapsed-section' : ''
+                    }`}
+                    style={{
+                        flex: isAlbumCreated ? '0 0 auto' : '1 1 auto',
+                        // maxHeight: isAlbumCreated && isFormCollapsed ? '3rem' : 'none',
+                        // minHeight: isAlbumCreated?'none':'100vh',
+                        transition: '0.3s ease',
+                    }}
                 >
-                <CreateAlbumForm studioID={123} />
+                    {isAlbumCreated ? (
+                        <CreateAlbumSuccess isFormCollapsed={isFormCollapsed} formData={formData} photographersByStudio={photographersByStudio}/>
+                    ) : (
+                        <CreateAlbumForm studioID={123}  formData={formData} setFormData={setFormData} submitCreateAlbum={submitCreateAlbum}
+                        photographersByStudio={photographersByStudio} setPhotographersByStudio={setPhotographersByStudio}/>
+                    )}
+
                 </div>
 
-                <div className="resizing-button d-flex justify-content-center w-100 py-2 border-bottom"
+                {isAlbumCreated&&<div className="resizing-button d-flex justify-content-center w-100 py-2 border-bottom"
                     onClick={handleResize}
                     role='button'
                 >
-                <FontAwesomeIcon icon={formHeightRatio < 0.5 ? faArrowDown : faArrowUp} />
-                </div>
-                <div className='d-flex flex-column overflow-hidden'
-                style={{ flexBasis: (1 - formHeightRatio) * 100 + "%", transition: '0.3s', width: '100%' }}
+                    <FontAwesomeIcon icon={isFormCollapsed ? faArrowDown : faArrowUp} />
+                </div>}
+                <div className='flex-grow-1 overflow-hidden'
+                style={{ flex: '1 1 auto', transition: '0.3s', width: '100%' }}
                 >
                     <AlbumComponent albumId={null}/>
                 </div>

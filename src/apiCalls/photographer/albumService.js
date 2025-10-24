@@ -208,20 +208,36 @@ export const getAllImagesByFolderID = (folderID) => {
     return images
 }
 
-export const insertAlbum = (form_data, user, studio_id) => {
-    console.log(form_data, user)
-    const request_body = {
-        title: form_data.album_title,
-        description: form_data.album_description,
-        is_public: false,
-        studio_id: studio_id,
-        created_at: now(),
-        updated_at: now(),
-        published_at: null,
-        created_by_id: user.id,
-        event_date: form_data.photo_shoot_date,
-        event_location: form_data.photo_shoot_location,
-        photographers: form_data.photographers
-    }
-    const {statusCode, body} = apiGateway(POST, '/core/create_album/', request_body)
-}
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+export const insertAlbum = async (form_data, user, studio_id) => {
+  let base64Thumbnail = null;
+  if (form_data.thumbnail) {
+    base64Thumbnail = await fileToBase64(form_data.thumbnail);
+  }
+
+  const request_body = {
+    title: form_data.album_title,
+    description: form_data.album_description,
+    is_public: false,
+    studio_id: studio_id,
+    created_at: now(),
+    updated_at: now(),
+    published_at: null,
+    created_by_id: user.id,
+    event_date: form_data.photo_shoot_date,
+    event_location: form_data.photo_shoot_location,
+    photographers: form_data.photographers,
+    thumbnail: base64Thumbnail
+  };
+
+  const { statusCode, body } = await apiGateway(POST, '/core/create_album/', request_body);
+  return statusCode
+};
