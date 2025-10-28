@@ -239,5 +239,5 @@ export const insertAlbum = async (form_data, user, studio_id) => {
   };
 
   const { statusCode, body } = await apiGateway(POST, '/core/create_album/', request_body);
-  return statusCode
+  return statusCode, body
 };

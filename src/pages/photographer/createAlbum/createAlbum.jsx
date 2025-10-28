@@ -30,11 +30,14 @@ export const CreateAlbum = () => {
         photographers: []
     })
     const [isAlbumCreated, setIsAlbumCreated] = useState(false)
+    const [albumCreatedMetadata, setAlbumCreatedMetadata] = useState(null);
+    const [albumID, setAlbumID] = useState(null)
 
     const submitCreateAlbum = async () => {
         console.log(formData, user)
-        const statusCode = await insertAlbum(formData, user, 1)
+        const {statusCode, body} = await insertAlbum(formData, user, 1)
         if (statusCode===201) {
+            setAlbumCreatedMetadata(body)
             setIsAlbumCreated(true);
             setFormHeightRatio(0.3)
         }
@@ -54,35 +57,39 @@ export const CreateAlbum = () => {
     }, []);
 
     return (
-        <div className='p-0'>
-            <div className='d-flex flex-column vh-100'>
-                <div className={`transition-all overflow-hidden ${
+        <div className='position-relative vh-100 p-0'>
+            <div className='d-flex flex-column'>
+                <div className={`position-relative transition-all overflow-hidden ${
                         isFormCollapsed ? 'collapsed-section' : ''
                     }`}
                     style={{
                         flex: isAlbumCreated ? '0 0 auto' : '1 1 auto',
                         // maxHeight: isAlbumCreated && isFormCollapsed ? '3rem' : 'none',
-                        // minHeight: isAlbumCreated?'none':'100vh',
+                        minHeight: isAlbumCreated?'none':'100vh',
                         transition: '0.3s ease',
                     }}
                 >
-                    {isAlbumCreated ? (
-                        <CreateAlbumSuccess isFormCollapsed={isFormCollapsed} formData={formData} photographersByStudio={photographersByStudio}/>
+                    {isAlbumCreated && albumCreatedMetadata ? (
+                        <CreateAlbumSuccess isFormCollapsed={isFormCollapsed} albumCreatedMetadata={albumCreatedMetadata} formData={formData} photographersByStudio={photographersByStudio}/>
                     ) : (
                         <CreateAlbumForm studioID={123}  formData={formData} setFormData={setFormData} submitCreateAlbum={submitCreateAlbum}
                         photographersByStudio={photographersByStudio} setPhotographersByStudio={setPhotographersByStudio}/>
                     )}
 
+                    {isAlbumCreated&&<div className="resizing-button d-flex justify-content-center w-100 py-2 border-bottom"
+                        onClick={handleResize}
+                        role='button'
+                    >
+                        <FontAwesomeIcon icon={isFormCollapsed ? faArrowDown : faArrowUp} />
+                    </div>}
                 </div>
 
-                {isAlbumCreated&&<div className="resizing-button d-flex justify-content-center w-100 py-2 border-bottom"
-                    onClick={handleResize}
-                    role='button'
-                >
-                    <FontAwesomeIcon icon={isFormCollapsed ? faArrowDown : faArrowUp} />
-                </div>}
-                <div className='flex-grow-1 overflow-hidden'
-                style={{ flex: '1 1 auto', transition: '0.3s', width: '100%' }}
+                <div className='position-relative overflow-hidden'
+                style={{ 
+                    flex: '1 1 auto', 
+                    transition: '0.3s', 
+                    width: '100%'
+                }}
                 >
                     <AlbumComponent albumId={null}/>
                 </div>
