@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import "./createAlbumSuccess.css";
 
-export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photographers }) => {
+export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, albumCreatedMetadata, formData, photographers }) => {
     useEffect(() => {
 
     })
@@ -15,14 +15,14 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photogr
                 <div>
                     <img
                         className="create-album-success-thumbnail"
-                        src={formData.thumbnail ? URL.createObjectURL(formData.thumbnail) : null}
+                        src={albumCreatedMetadata.thumbnail}
                         alt="Album Thumbnail"
                         style={{ borderRadius: '0.8rem', width: '5rem', height: '5rem', objectFit: 'cover' }}
                         />
                 </div>
                 <div>
                     <h2>{formData.album_title}</h2>
-                    <div className="success-header mb-2">
+                    <div className="album_create_flag mb-2">
                         <FontAwesomeIcon icon={faCircleCheck} className="success-icon" />
                         <span className="success-text">Album Created Successfully</span>
                     </div>
@@ -33,8 +33,11 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photogr
             <div className="d-flex gap-5">
                 <div>
                     <div className="success-header mb-2">
-                        <FontAwesomeIcon icon={faCircleCheck} className="success-icon" />
-                        <span className="success-text">Album Created Successfully</span>
+                        <h2>{albumCreatedMetadata.title}</h2>
+                        <div className="album_create_flag">
+                            <FontAwesomeIcon icon={faCircleCheck} className="success-icon" />
+                            <span className="success-text">Album Created Successfully</span>
+                        </div>
                     </div>
                     <div className="py-2">
                         <p className='mb-1' style={{fontSize: '1.1rem', fontWeight: '600', textDecoration: 'underline'}}>Client Information:</p>
@@ -45,9 +48,9 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photogr
                                 <p>Client Phone:</p>
                             </div>
                             <div className="client-info-text-container">
-                                <p>{formData.client_first_name} {formData.client_last_name}</p>
-                                <p>{formData.client_email}</p>
-                                <p>{formData.client_phone}</p>
+                                <p>{albumCreatedMetadata.client_first_name} {albumCreatedMetadata.client_last_name}</p>
+                                <p>{albumCreatedMetadata.client_email}</p>
+                                <p>{albumCreatedMetadata.client_phone}</p>
                             </div>
                         </div>
                         <p></p>
@@ -57,7 +60,7 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photogr
                     <div>
                         <img
                         className="create-album-success-thumbnail"
-                        src={formData.thumbnail ? URL.createObjectURL(formData.thumbnail) : null}
+                        src={albumCreatedMetadata.thumbnail}
                         alt="Album Thumbnail"
                         style={{ borderRadius: '0.8rem', width: '10rem', height: '10rem', objectFit: 'cover' }}
                         />
@@ -73,10 +76,10 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photogr
                                 <p>Created on: </p>
                             </div>
                             <div className="me-2 client-info-text-container">
-                                <p>{formData.album_description}</p>
-                                <p>{formData.photo_shoot_location}</p>
-                                <p>{formData.photo_shoot_date}</p>
-                                <p>{formData.album_creation_date}</p>
+                                <p>{albumCreatedMetadata.description}</p>
+                                <p>{albumCreatedMetadata.event_location}</p>
+                                <p>{albumCreatedMetadata.event_date}</p>
+                                <p>{albumCreatedMetadata.created_at}</p>
                             </div>
                         </div>
                     </div>

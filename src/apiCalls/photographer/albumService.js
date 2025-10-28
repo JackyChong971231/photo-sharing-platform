@@ -235,9 +235,20 @@ export const insertAlbum = async (form_data, user, studio_id) => {
     event_date: form_data.photo_shoot_date,
     event_location: form_data.photo_shoot_location,
     photographers: form_data.photographers,
-    thumbnail: base64Thumbnail
+    thumbnail: base64Thumbnail,
+    client_first_name: form_data.client_first_name,
+    client_last_name: form_data.client_last_name,
+    client_email: form_data.client_email,
+    client_phone: form_data.client_phone,
   };
 
   const { statusCode, body } = await apiGateway(POST, '/core/create_album/', request_body);
-  return statusCode, body
+//   console.log(body)
+  return {statusCode, body}
 };
+
+export const getAlbumMetadataByAlbumID = async (album_id) => {
+    const request_body = {album_id: album_id}
+    const { statusCode, body } = await apiGateway(POST, '/core/get_album_metadata/', request_body);
+    return {statusCode, body}
+}

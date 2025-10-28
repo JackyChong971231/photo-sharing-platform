@@ -11,10 +11,12 @@ import { Album } from '../album/album';
 import { AlbumComponent } from '../../../components/albumComponent/albumComponent';
 import { getAllPhotographersByStudio } from '../../../apiCalls/photographer/studioService';
 import { CreateAlbumForm } from './createAlbumForm';
-import { insertAlbum } from '../../../apiCalls/photographer/albumService';
+import { getAlbumMetadataByAlbumID, insertAlbum } from '../../../apiCalls/photographer/albumService';
 import { CreateAlbumSuccess } from './createAlbumSuccess';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const CreateAlbum = () => {
+    const navigate = useNavigate();
     const [formHeightRatio, setFormHeightRatio] = useState(1);
     const {user} = useSharedContext();
     const [photographersByStudio, setPhotographersByStudio] = useState([]);
@@ -32,14 +34,18 @@ export const CreateAlbum = () => {
     const [isAlbumCreated, setIsAlbumCreated] = useState(false)
     const [albumCreatedMetadata, setAlbumCreatedMetadata] = useState(null);
     const [albumID, setAlbumID] = useState(null)
+    const location = useLocation();
 
     const submitCreateAlbum = async () => {
-        console.log(formData, user)
         const {statusCode, body} = await insertAlbum(formData, user, 1)
         if (statusCode===201) {
             setAlbumCreatedMetadata(body)
             setIsAlbumCreated(true);
-            setFormHeightRatio(0.3)
+            setFormHeightRatio(0.3);
+            
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('album_id', body.album.id); // or body.id depending on your API
+            navigate(`${window.location.pathname}?${searchParams.toString()}`, { replace: true });
         }
     }
 
@@ -56,6 +62,27 @@ export const CreateAlbum = () => {
         fetchPhotographers(); // call the async function
     }, []);
 
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const albumIdFromUrl = searchParams.get('album_id');
+
+        if (albumIdFromUrl && albumCreatedMetadata===null) {
+            // Call your API to fetch album metadata
+            const fetchAlbum = async () => {
+                try {
+                    const {statusCode, body} = await getAlbumMetadataByAlbumID(albumIdFromUrl); // implement this API call
+                    console.log(body)
+                    setAlbumCreatedMetadata(body);
+                    setIsAlbumCreated(true);
+                } catch (err) {
+                    console.error('Failed to fetch album:', err);
+                }
+            };
+
+            fetchAlbum();
+        }
+    }, [location.search]);
+
     return (
         <div className='position-relative vh-100 p-0'>
             <div className='d-flex flex-column'>
@@ -65,7 +92,7 @@ export const CreateAlbum = () => {
                     style={{
                         flex: isAlbumCreated ? '0 0 auto' : '1 1 auto',
                         // maxHeight: isAlbumCreated && isFormCollapsed ? '3rem' : 'none',
-                        minHeight: isAlbumCreated?'none':'100vh',
+                        minHeight: isAlbumCreated?'auto':'100vh',
                         transition: '0.3s ease',
                     }}
                 >
