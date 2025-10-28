@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import "./createAlbumSuccess.css";
 
-export const CreateAlbumSuccess = ({ isFormCollapsed, formData, photographers }) => {
+export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, formData, photographers }) => {
+    useEffect(() => {
+
+    })
+
   return (
     <div className="create-album-success p-4">
         {isFormCollapsed ? (

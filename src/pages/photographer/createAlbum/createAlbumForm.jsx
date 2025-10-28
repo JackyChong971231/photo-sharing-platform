@@ -75,9 +75,14 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
     }, []);
 
     return (
-        <div className='p-0' style={{overflowY: 'auto', height: '100vh'}}>
+        <div className='pb-4' style={{
+            overflowY: 'auto', 
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
             <div className='p-4'
-                style={{overflow: 'auto'}}>
+                style={{overflow: 'auto', flex: '1 1 auto'}}>
                 <div className='mx-4 mt-1'>
                     <input
                     className='album_title_input px-3 bg-transparent'
@@ -146,7 +151,7 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                     </div>
                 </div>
 
-                <div className='d-flex gap-5 mx-4 my-5'>
+                <div className='d-flex gap-5 mx-4 mt-5'>
                     <div>
                         <ImageUploadContainer size='15rem' onThumbnailChange={onThumbnailChange}/>
                     </div>
@@ -240,7 +245,8 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                     </div>
                 </div>
             </div>
-            <div className='px-5 position-relative d-flex justify-content-between'>
+            <div className='px-5 position-relative d-flex justify-content-between'
+            style={{flex: '0 0 auto'}}>
                 <span></span>
                 <div className='d-flex gap-4'>
                     <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
