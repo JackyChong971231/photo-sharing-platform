@@ -245,7 +245,7 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                     </div>
                 </div>
             </div>
-            <div className='px-5 position-relative d-flex justify-content-between'
+            <div className='px-5 pt-3 position-relative d-flex justify-content-between'
             style={{flex: '0 0 auto'}}>
                 <span></span>
                 <div className='d-flex gap-4'>

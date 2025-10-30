@@ -40,7 +40,7 @@ import img27 from '../../assets/dummy/album/ceremony/vow/IMG0027.jpg'
 import img28 from '../../assets/dummy/album/ceremony/vow/IMG0028.jpeg'
 import { useSharedContext } from '../../SharedContext';
 import { now } from '../../utils/common';
-import { apiGateway, POST } from '../apiMaster';
+import { apiGateway, GET, POST } from '../apiMaster';
 
 export const getMetadataByStudioID = (studioID) => {
     const dummy = [
@@ -113,88 +113,29 @@ export const getAllAlbumsByStudioID = (studioID) => {
     return dummy
 }
 
-export const getFolderStructureByAlbumID = (albumID) => {
-    const dummy_folder_structure = [
-    {
-        "id": 1,
-        "name": "Environment",
-        "type": "folder",
-        "parent_id": null,
-        "album_id": 101,
-        "created_at": "2023-01-01"
-    },
-    {
-        "id": 2,
-        "name": "Group Photos",
-        "type": "folder",
-        "parent_id": null,
-        "album_id": 101,
-        "created_at": "2023-01-02"
-    },
-    {
-        "id": 3,
-        "name": "Portrait",
-        "type": "folder",
-        "parent_id": null,
-        "album_id": 101,
-        "created_at": "2023-01-02"
-    },
-    {
-        "id": 4,
-        "name": "Ceremony Photos",
-        "type": "folder",
-        "parent_id": null,
-        "album_id": 101,
-        "created_at": "2023-01-03"
-    },
-    {
-        "id": 5,
-        "name": "Vows",
-        "type": "folder",
-        "parent_id": 4,
-        "album_id": 101,
-        "created_at": "2023-01-04"
-    },
-    {
-        "id": 6,
-        "name": "Welcome",
-        "type": "folder",
-        "parent_id": 4,
-        "album_id": 101,
-        "created_at": "2023-01-04"
-    },
-    {
-        "id": 7,
-        "name": "Readings",
-        "type": "folder",
-        "parent_id": 4,
-        "album_id": 101,
-        "created_at": "2023-01-04"
-    },
-    {
-        "id": 8,
-        "name": "Testing",
-        "type": "folder",
-        "parent_id": 7,
-        "album_id": 101,
-        "created_at": "2023-01-04"
-    },
-    {
-        "id": 9,
-        "name": "Trial",
-        "type": "folder",
-        "parent_id": 4,
-        "album_id": 101,
-        "created_at": "2023-01-04"
-    }
-    ]
+export const getFolderStructureByAlbumID = async (album_id) => {
+  try {
+    const { statusCode, body } = await apiGateway(
+      GET,
+      `/core/folders/${album_id}/` // Django endpoint you defined
+    );
 
-    if (['1234', '2345', '3456', '4567'].includes(albumID)) {
-        return dummy_folder_structure
+    if (statusCode === 200 && Array.isArray(body)) {
+      // Example expected structure:
+      // [
+      //   { id: 1, album_id: 3, parent_id: null, name: 'Main', created_at: ... },
+      //   { id: 2, album_id: 3, parent_id: 1, name: 'Child', created_at: ... }
+      // ]
+      return body;
     } else {
-        return []
+      console.error('Unexpected folder structure response:', body);
+      return [];
     }
-}
+  } catch (error) {
+    console.error('Error fetching folder structure:', error);
+    return [];
+  }
+};
 
 export const getAllImagesByFolderID = (folderID) => {
     const dummy_images_by_folderID = {
@@ -251,4 +192,18 @@ export const getAlbumMetadataByAlbumID = async (album_id) => {
     const request_body = {album_id: album_id}
     const { statusCode, body } = await apiGateway(POST, '/core/get_album_metadata/', request_body);
     return {statusCode, body}
+}
+
+export const createFolderAPI = async (album_id, name, parent_id) => {
+    const request_body = {
+        album_id: album_id,
+        parent_id: parent_id || null,
+        name: name,
+        created_at: now(),
+    };
+    console.log(request_body)
+
+    const { statusCode, body } = await apiGateway(POST, "/core/create_folder/", request_body);
+    console.log(body)
+    return { statusCode, body };
 }
