@@ -79,7 +79,7 @@ export const AlbumComponent = ({albumId}) => {
               {/* -------------- Gallery related -------------- */}
               <div className='py-2 flex-grow-1'
                 style={{minHeight: '100%', maxHeight: '100%'}}>
-                <Gallery currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
+                <Gallery albumId={albumId} currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
               </div>
             </div>
 

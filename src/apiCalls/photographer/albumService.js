@@ -40,7 +40,7 @@ import img27 from '../../assets/dummy/album/ceremony/vow/IMG0027.jpg'
 import img28 from '../../assets/dummy/album/ceremony/vow/IMG0028.jpeg'
 import { useSharedContext } from '../../SharedContext';
 import { now } from '../../utils/common';
-import { apiGateway, GET, POST } from '../apiMaster';
+import { apiGateway, apiGatewayFile, GET, POST } from '../apiMaster';
 
 export const getMetadataByStudioID = (studioID) => {
     const dummy = [
@@ -137,17 +137,17 @@ export const getFolderStructureByAlbumID = async (album_id) => {
   }
 };
 
-export const getAllImagesByFolderID = (folderID) => {
-    const dummy_images_by_folderID = {
-        1: [img01,img02,img03,img04,img05,img06],
-        2: [img07,img08,img09,img10,img11,img12,img13,img14],
-        3: [img15,img16,img17,img18,img19],
-        5: [img24,img25,img26,img27,img28],
-        6: [img20,img21,img22,img23]
-    }
-    const images = dummy_images_by_folderID[folderID]
-    return images
-}
+// export const getAllImagesByFolderID = async (folderID) => {
+//     const dummy_images_by_folderID = {
+//         1: [img01,img02,img03,img04,img05,img06],
+//         2: [img07,img08,img09,img10,img11,img12,img13,img14],
+//         3: [img15,img16,img17,img18,img19],
+//         5: [img24,img25,img26,img27,img28],
+//         6: [img20,img21,img22,img23]
+//     }
+//     const images = dummy_images_by_folderID[1]
+//     return images
+// }
 
 const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
@@ -207,3 +207,41 @@ export const createFolderAPI = async (album_id, name, parent_id) => {
     console.log(body)
     return { statusCode, body };
 }
+
+export const insertPhotos = async (albumId, folderId, uploadedBy, files) => {
+  if (!albumId || !uploadedBy || !files || files.length === 0) {
+    throw new Error("albumId, uploadedBy, and files are required");
+  }
+
+  const formData = new FormData();
+  formData.append("album_id", albumId);
+  if (folderId) formData.append("folder_id", folderId);
+  formData.append("uploaded_by", uploadedBy);
+
+  files.forEach((file) => {
+    formData.append("photos", file); // can append multiple files under same key
+  });
+
+  const { statusCode, body } = await apiGatewayFile(
+    "POST",
+    "/core/upload_photos_local/",
+    formData
+  );
+
+  return { statusCode, body };
+};
+
+export const getAllImagesByFolderID = async (folderId) => {
+  if (!folderId) return [];
+
+  const { statusCode, body } = await apiGateway(
+    GET,
+    `/core/photos/folder/${folderId}`
+  );
+
+  if (statusCode !== 200 || !body.photos) return [];
+
+  // Return array of photo URLs
+  console.log(body)
+  return body.photos.map(photo => photo.source);
+};

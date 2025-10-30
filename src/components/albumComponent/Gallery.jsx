@@ -9,10 +9,10 @@ import { useSharedContext } from '../../SharedContext';
 import './albumComponent.css'
 import './gallery.css'
 import useRouteParams from '../../hooks/useRouteParams';
-import { getAllImagesByFolderID } from '../../apiCalls/photographer/albumService';
+import { getAllImagesByFolderID, insertPhotos } from '../../apiCalls/photographer/albumService';
 import { ImageOptionMenu } from './imageOptionMenu';
 
-export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelectedImages}) => {
+export const Gallery = ({albumId, currentFolderID, imgMaxHeight, selectedImages, setSelectedImages}) => {
     const [imagesInFolder, setImagesInFolder] = useState([]);
     
     // For image selection
@@ -38,6 +38,9 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isFilesDragging, setIsFilesDragging] = useState(false);
 
+    // For photo upload
+    const {user} = useSharedContext();
+
     // Close option menu if another image is clicked
     useEffect(() => {
         if (!selectedImages.includes(optionMenuIndex)) {
@@ -50,20 +53,22 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
 
     // For downloading images from this folder
     useEffect(() => {
-        if (currentFolderID) {
-            setSelectedImages([])
-            const images_downloaded = getAllImagesByFolderID(currentFolderID)
-            if (images_downloaded) {
-            imgRefs.current = images_downloaded.map(
-                (_, i) => imgRefs.current[i] ?? React.createRef()
-            );
-            setImagesInFolder(images_downloaded)
-            } else {
-            imgRefs.current = []
-            setImagesInFolder([])
+        console.log(imagesInFolder.length)
+        if (!currentFolderID) return;
+
+        const fetchImages = async () => {
+            await setSelectedImages([]);
+            const images = await getAllImagesByFolderID(currentFolderID);
+            if (images) {
+                imgRefs.current = images.map(
+                    (_, i) => imgRefs.current[i] ?? React.createRef()
+                );
             }
-        }
-    }, [currentFolderID])
+            setImagesInFolder(images);
+        };
+        
+        fetchImages();
+    }, [currentFolderID]);
 
     // For images dragging in effect
     const handleDragEnter = (e) => {
@@ -93,23 +98,34 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
         setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
+    const handleUpload = async (files) => {
+    if (!files || !files.length) return;
+
+    try {
+        const { statusCode, body } = await insertPhotos(albumId, currentFolderID, user.id, files);
+        if (statusCode === 201) {
+        console.log("Photos uploaded successfully:", body);
+        } else {
+        console.error("Failed to upload photos:", body);
+        }
+    } catch (err) {
+        console.error("Upload error:", err);
+    }
+    };
 
     // For images dropped logic
-    const handleDrop = (e) => {
+    const handleDrop = async (e) => {
         e.preventDefault();
         e.stopPropagation();
         setIsFilesDragging(false);
 
         const files = Array.from(e.dataTransfer.files);
-        if (files.length > 0) {
-        const fileNames = files.map(f => f.name);
-        alert("Dropped images:\n" + fileNames.join("\n"));
+        if (files.length === 0) return;
 
-        // optional: show preview
-        const newImageURLs = files.map(f => URL.createObjectURL(f));
-        setImagesInFolder(prev => [...prev, ...newImageURLs]);
-        }
-        setDragOverFiles([]);
+        console.log("Dropped images:", files.map(f => f.name));
+
+        // Call upload directly
+        await handleUpload(files);
     };
 
     const handleMouseDown = (e) => {
@@ -270,7 +286,7 @@ export const Gallery = ({currentFolderID, imgMaxHeight, selectedImages, setSelec
             (imagesInFolder.map((imgSrc, i) => (
             <div
                 className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
-                key={imgSrc}
+                key={i}
                 ref={imgRefs.current[i]}
                 onMouseEnter={() => {
                     if (selectedImages.length < 2 || 

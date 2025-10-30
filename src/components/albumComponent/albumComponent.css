@@ -60,7 +60,7 @@
 .folder-label {
   display: flex;
   align-items: center;
-  overflow: hidden; /* Prevent text from overflowing */
+  /* overflow: hidden;  */
   text-overflow: ellipsis; /* Add "..." for truncated text */
   white-space: nowrap; /* Prevent text wrapping */
 }

@@ -90,10 +90,11 @@ const FolderTree = ({
                 <FontAwesomeIcon
                   role="button"
                   icon={faEllipsis}
-                  onClick={() =>
+                  onClick={() =>{
+                    console.log(node.id)
                     setCurrentFolderIDOptionsClicked((prevFolderID) =>
                       prevFolderID === node.id ? null : node.id
-                    )
+                    )}
                   }
                 />
 
