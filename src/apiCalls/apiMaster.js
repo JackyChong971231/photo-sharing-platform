@@ -16,3 +16,17 @@ export const apiGateway = async (method, endPoint, requestBody) => {
     const apiResult = {statusCode, body}
     return apiResult;
 }
+
+export const apiGatewayFile = async (method, endPoint, formData) => {
+  // method should usually be POST for file uploads
+  const response = await fetch(serverUrl + endPoint, {
+    method: method,
+    mode: 'cors',
+    body: formData // DO NOT JSON.stringify
+    // fetch automatically sets the correct multipart/form-data headers
+  });
+
+  const statusCode = response.status;
+  const body = await response.json();
+  return { statusCode, body };
+};

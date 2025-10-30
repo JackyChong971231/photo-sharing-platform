@@ -5,7 +5,7 @@ import "./createAlbumSuccess.css";
 
 export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, albumCreatedMetadata, formData, photographers }) => {
     useEffect(() => {
-
+        console.log(albumCreatedMetadata)
     })
 
   return (
