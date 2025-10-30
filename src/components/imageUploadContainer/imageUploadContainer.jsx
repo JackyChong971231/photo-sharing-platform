@@ -201,6 +201,21 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
     return () => window.removeEventListener('mouseup', handleMouseUp);
   });
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheelEvent = (e) => handleWheel(e);
+
+    // Add wheel listener with passive: false so preventDefault works
+    container.addEventListener('wheel', handleWheelEvent, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheelEvent);
+    };
+  }, [handleWheel]);
+
+
   return (
     <div className="d-flex justify-content-center align-items-center">
       <div
@@ -212,7 +227,6 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
         onClick={!preview ? onClickUpload : undefined}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onWheel={handleWheel}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClickUpload(); }}

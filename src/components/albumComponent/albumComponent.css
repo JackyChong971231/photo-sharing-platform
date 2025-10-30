@@ -23,6 +23,17 @@
   background-color: #ccc; /* Light gray line */
 }
 
+/* For + New Folder temporary folder in root level */
+.folder-tree-no-vertical-line::before {
+  content: "";
+  position: absolute;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: 0 !important;
+  background-color: transparent !important; /* Light gray line */
+}
+
 /* Style individual folder items */
 .folder-item {
   position: relative;
@@ -146,13 +157,14 @@
 .folder-option-menu {
   position: absolute;
   right: 0rem;
-  top: 0rem;
-  padding-top: 2rem;
+  top: 2rem;
   z-index: 10000;
 }
 
 .folder-option-menu--show {
   visibility: visible;
+  height: auto;
+  width: auto;
 }
 
 .folder-option-menu--hide {

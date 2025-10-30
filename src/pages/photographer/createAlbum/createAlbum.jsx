@@ -39,12 +39,13 @@ export const CreateAlbum = () => {
     const submitCreateAlbum = async () => {
         const {statusCode, body} = await insertAlbum(formData, user, 1)
         if (statusCode===201) {
+            
             setAlbumCreatedMetadata(body)
             setIsAlbumCreated(true);
             setFormHeightRatio(0.3);
             
             const searchParams = new URLSearchParams(window.location.search);
-            searchParams.set('album_id', body.album.id); // or body.id depending on your API
+            searchParams.set('album_id', body.id); // or body.id depending on your API
             navigate(`${window.location.pathname}?${searchParams.toString()}`, { replace: true });
         }
     }
@@ -118,7 +119,7 @@ export const CreateAlbum = () => {
                     width: '100%'
                 }}
                 >
-                    <AlbumComponent albumId={null}/>
+                    <AlbumComponent albumId={albumCreatedMetadata?albumCreatedMetadata.id:null}/>
                 </div>
             </div>
         </div>
