@@ -15,17 +15,22 @@ import chart_img from '../../../assets/dummy/chart.png'
 
 import './dashboard.css'
 import { getAllAlbumsByStudioID, getMetadataByStudioID } from '../../../apiCalls/photographer/albumService';
+import { postgresql_datetime_to_date } from '../../../utils/common';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
     const [allAlbums, setAllAlbums] = useState([]);
     const [metadata, setMetadata] = useState([]);
+    const imgWidth = '13rem';
 
     useEffect(() => {
-        const dummy_studio_id = 123;
+        const fetch_all_albums = async (studio_id) => {
+            const { statusCode, body } = await getAllAlbumsByStudioID(dummy_studio_id);
+            setAllAlbums(body.albums)
+        }
+        const dummy_studio_id = 1;
         setMetadata(getMetadataByStudioID(dummy_studio_id));
-        const albums = getAllAlbumsByStudioID(dummy_studio_id);
-        setAllAlbums(albums)
+        fetch_all_albums(dummy_studio_id)
     }, [])
 
     const handleClick = (albumId) => {
@@ -56,17 +61,37 @@ export const Dashboard = () => {
                     {
                         allAlbums.map(album_info => (
                             <div className='dashboard-gallery'
-                            onClick={() => {handleClick(album_info.albumId)}}>
-                                <img src={album_info.thumbnail}></img>
-                                <div className='dashboard-gallery-description'>
-                                    <p className='m-0'>{album_info.name}</p>
-                                    <div className='d-flex justify-content-between'>
-                                        <p className='m-0'>{album_info.date}</p>
-                                        <div className='d-flex align-items-center gap-1'>
-                                            <FontAwesomeIcon icon={faImage} />
-                                            <p className='m-0'>{album_info.photo_count}</p>
+                            onClick={() => {handleClick(album_info.id)}}>
+                                <img style={{width: imgWidth}} src={album_info.thumbnail}></img>
+                                <div className='dashboard-gallery-description'
+                                style={{width: imgWidth, paddingInline: '0.2rem'}}>
+                                    <p className='m-0'>{album_info.title}</p>
+
+                                    <div>
+                                        <div style={{
+                                            fontSize: '0.8rem', 
+                                            paddingBlock: '0.3rem',
+                                            textWrap: 'nowrap',
+                                            color: 'gray'
+                                        }}>
+                                            <p className='m-0 text-decoration-underline fw-bold'>Client Info</p>
+                                            <div style={{width: '100%'}}>
+                                                <p className='m-0'>Client name: {album_info.client_name}</p>
+                                                <p className='m-0 text-truncate'>Client email: {album_info.client_email}</p>
+                                            </div>
+                                        </div>
+                                        <div className='d-flex align-items-end justify-content-between'>
+                                            <div className='text-secondary' style={{fontSize: '0.7rem'}}>
+                                                <p className='m-0'>Event date: {album_info.event_date}</p>
+                                                <p className='m-0'>Created on: {postgresql_datetime_to_date(album_info.created_at)}</p>
+                                            </div>
+                                            <div className='d-flex align-items-center gap-1'>
+                                                <FontAwesomeIcon icon={faImage} />
+                                                <p className='m-0'>{album_info.photos_count}</p>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         ))

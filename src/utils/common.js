@@ -33,3 +33,8 @@ export const now = () => {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
+
+export const postgresql_datetime_to_date = (date_time_str) => {
+  const dateOnly = new Date(date_time_str).toISOString().split('T')[0];
+  return dateOnly
+}
