@@ -78,7 +78,7 @@ export const getMetadataByStudioID = (studioID) => {
     return dummy
 }
 
-export const getAllAlbumsByStudioID = (studioID) => {
+export const getAllAlbumsByStudioID = async (studioID) => {
 
     const dummy = [
         {
@@ -110,7 +110,19 @@ export const getAllAlbumsByStudioID = (studioID) => {
             albumId: 4567
         },
     ]
-    return dummy
+
+    if (!studioID) return [];
+
+    const { statusCode, body } = await apiGateway(
+      GET,
+      `/core/albums/studio/${studioID}`
+    );
+
+    if (statusCode !== 200 || !body.albums) return [];
+
+    console.log(body);
+
+    return { statusCode, body }
 }
 
 export const getFolderStructureByAlbumID = async (album_id) => {

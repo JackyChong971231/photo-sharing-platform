@@ -18,18 +18,22 @@
     position: relative;
     /* width: 8rem; */
     cursor: pointer;
+    padding: 0.5rem;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    text-overflow: ellipsis;
 }
 
 .galleries-container {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.8rem;
     flex-wrap: wrap;
 }
 
 .dashboard-gallery > img {
     object-fit: cover; /* maintain aspect ratio */
-    width: 10rem;   /* fixed width */
-    height: 10rem;  /* fixed height */
+    width: 13rem;   /* fixed width */
+    height: 13rem;  /* fixed height */
 }
 
 .dashboard-gallery-description > p{
