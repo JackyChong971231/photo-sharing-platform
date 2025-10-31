@@ -26,10 +26,24 @@ export const Dashboard = () => {
     useEffect(() => {
         const fetch_all_albums = async (studio_id) => {
             const { statusCode, body } = await getAllAlbumsByStudioID(dummy_studio_id);
+            console.log(body)
             setAllAlbums(body.albums)
+            const response2 = await getMetadataByStudioID(dummy_studio_id)
+            let metadataForm = {
+                'num_albums': {title: 'Total Albums', subtitle: 'Client albums', value: ''},
+                'num_private_albums': {title: 'Private Albums', subtitle: 'Albums', value: ''},
+                'num_public_albums': {title: 'Public Albums', subtitle: 'Albums shared with clients', value: ''},
+                'num_photographers': {title: 'Total Photographers', subtitle: 'Active photographers', value: ''},
+                'num_photos': {title: 'Total Photos', subtitle: 'Photos shared with clients', value: ''},
+            }
+            await Object.keys(metadataForm).forEach(key => {
+                metadataForm[key].value = response2.body[key]
+            })
+            // console.log(metadataForm)
+            setMetadata(metadataForm);
         }
         const dummy_studio_id = 1;
-        setMetadata(getMetadataByStudioID(dummy_studio_id));
+        
         fetch_all_albums(dummy_studio_id)
     }, [])
 
@@ -45,24 +59,31 @@ export const Dashboard = () => {
             </div>
             <div className='dashboard-content p-2 d-flex'>
                 {
-                    metadata.map(eachMetadata => (
-                        <MetadataCard 
-                            title={eachMetadata.title} 
-                            value={eachMetadata.value} 
-                            description={eachMetadata.subtitle}
-                            graph={eachMetadata.graph}
+                    Object.keys(metadata).map(key => (
+                        <MetadataCard
+                            title={metadata[key].title} 
+                            value={metadata[key].value} 
+                            description={metadata[key].subtitle}
+                            graph={metadata[key].graph}
                         />
                     ))
                 }
             </div>
-            <div className='all-galleries mt-4'>
+            <div className='all-galleries mt-4 p-3'>
                 <h2>Recent Galleries</h2>
                 <div className='galleries-container'>
                     {
                         allAlbums.map(album_info => (
                             <div className='dashboard-gallery'
                             onClick={() => {handleClick(album_info.id)}}>
-                                <img style={{width: imgWidth}} src={album_info.thumbnail}></img>
+                                <div>
+                                    <div className='position-relative' style={{width: imgWidth, height: imgWidth}}>
+                                        <div className='position-absolute p-2 d-flex gap-2'>
+                                            <p className={'dashboard-album-tag '+(album_info.is_public?'dashboard-album-tag--public':'dashboard-album-tag--private')}>{album_info.is_public?'Public':'Private'}</p>
+                                        </div>
+                                        <img style={{width: '100%'}} src={album_info.thumbnail}></img>
+                                    </div>
+                                </div>
                                 <div className='dashboard-gallery-description'
                                 style={{width: imgWidth, paddingInline: '0.2rem'}}>
                                     <p className='m-0'>{album_info.title}</p>
@@ -91,7 +112,6 @@ export const Dashboard = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         ))

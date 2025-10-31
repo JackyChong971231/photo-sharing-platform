@@ -42,7 +42,7 @@ import { useSharedContext } from '../../SharedContext';
 import { now } from '../../utils/common';
 import { apiGateway, apiGatewayFile, GET, POST } from '../apiMaster';
 
-export const getMetadataByStudioID = (studioID) => {
+export const getMetadataByStudioID = async (studioID) => {
     const dummy = [
         {
             title: 'Total Albums',
@@ -75,6 +75,15 @@ export const getMetadataByStudioID = (studioID) => {
             graph: chart_img
         },
     ]
+    const { statusCode, body } = await apiGateway(
+      GET,
+      `/core/studio/${studioID}/dashboard`
+    );
+
+    if (statusCode !== 200 || !body) return [];
+
+
+    return { statusCode, body }
     return dummy
 }
 
