@@ -1,6 +1,6 @@
 .dashboard-content {
     border: 1px solid black;
-    overflow-x: scroll;
+    overflow-x: auto;
     outline: none;
     border: none;
 }
@@ -26,8 +26,9 @@
 
 .galleries-container {
     display: flex;
-    gap: 1.8rem;
+    gap: 2.5rem;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .dashboard-gallery > img {
@@ -43,4 +44,20 @@
 
 .dashboard-gallery-description > div {
     font-size: small;
+}
+
+.dashboard-album-tag {
+    padding-inline: 0.8rem;
+    padding-block: 0.2rem;
+    border-radius: 1rem;
+}
+
+.dashboard-album-tag--private {
+    background-color: rgb(145, 145, 145);
+    color: white;
+}
+
+.dashboard-album-tag--public {
+    background-color: rgb(30, 177, 28);
+    color: white;
 }
