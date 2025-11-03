@@ -147,3 +147,33 @@
   left: 50%;
   border: 3px solid #007bff;
 }
+
+.gallery-folder-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.gallery-folder {
+  background-color: rgb(216, 216, 216);
+  border-radius: 0.5rem;
+  padding-block: 0.5rem;
+  padding-inline: 0.6rem;
+  width: 12rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.gallery-folder > p {
+  overflow: hidden;       /* Needed for ellipsis to work */
+  white-space: nowrap;    /* Prevent text wrapping */
+  text-overflow: ellipsis;
+  flex: 1;                /* Take remaining space in flex container */
+  margin: 0;              /* Remove default margin */
+}

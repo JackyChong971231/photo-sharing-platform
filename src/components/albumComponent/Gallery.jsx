@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis, faExpand } from "@fortawesome/free-solid-svg-icons"
+import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis, faExpand, faFolder } from "@fortawesome/free-solid-svg-icons"
 import { faCamera } from "@fortawesome/free-regular-svg-icons"
 import { useSharedContext } from '../../SharedContext';
 
@@ -12,8 +12,9 @@ import useRouteParams from '../../hooks/useRouteParams';
 import { getAllImagesByFolderID, insertPhotos } from '../../apiCalls/photographer/albumService';
 import { ImageOptionMenu } from './imageOptionMenu';
 
-export const Gallery = ({albumId, currentFolderID, imgMaxHeight, selectedImages, setSelectedImages}) => {
+export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
     const [imagesInFolder, setImagesInFolder] = useState([]);
+    const [folderChildren, setFolderChildren] = useState([])
     
     // For image selection
     const galleryRef = useRef(null);
@@ -53,7 +54,6 @@ export const Gallery = ({albumId, currentFolderID, imgMaxHeight, selectedImages,
 
     // For downloading images from this folder
     useEffect(() => {
-        console.log(imagesInFolder.length)
         if (!currentFolderID) return;
 
         const fetchImages = async () => {
@@ -259,6 +259,14 @@ export const Gallery = ({albumId, currentFolderID, imgMaxHeight, selectedImages,
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        setFolderChildren(
+            folderStructureArray.filter(folder => 
+                folder.parent_id === currentFolderID
+            )
+        )
+    }, [folderStructureArray, currentFolderID])
+
     return (
         <div className='gallery-container p-3'
             ref={galleryRef}
@@ -271,6 +279,17 @@ export const Gallery = ({albumId, currentFolderID, imgMaxHeight, selectedImages,
             onMouseUp={handleMouseUp}
             style={{ position: "relative", userSelect: "none" }}
         >
+            <div className='gallery-folder-container'>
+                {
+                    folderChildren.map(folder => (
+                        <div className='gallery-folder' 
+                        onClick={()=>{setCurrentFolderID(folder.id)}}>
+                            <FontAwesomeIcon icon={faFolder} />
+                            <p className='m-0'>{folder.name}</p>
+                        </div>
+                    ))
+                }
+            </div>
         {(imagesInFolder.length===0)?
             // When there is NO images
             <div className='empty-folder-container'>
