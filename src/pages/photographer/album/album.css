@@ -5,7 +5,8 @@
 }
 
 .photographer-album-detail {
-    margin-right: 4rem;
+    /* margin-right: 4rem; */
+    text-wrap: nowrap;
 }
 
 .photographer-album-detail > p {

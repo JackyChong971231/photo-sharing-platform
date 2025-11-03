@@ -263,6 +263,5 @@ export const getAllImagesByFolderID = async (folderId) => {
   if (statusCode !== 200 || !body.photos) return [];
 
   // Return array of photo URLs
-  console.log(body)
   return body.photos.map(photo => photo.source);
 };

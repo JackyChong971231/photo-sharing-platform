@@ -7,9 +7,10 @@ import { useSharedContext } from '../../SharedContext';
 
 import './albumComponent.css'
 
-import { Sidebar } from './sidebar';
+import { buildTree, Sidebar } from './sidebar';
 import { GalleryToolbar } from './galleryToolbar';
 import { Gallery } from './gallery';
+import { getFolderStructureByAlbumID } from '../../apiCalls/photographer/albumService';
 
 export const AlbumComponent = ({albumId}) => {
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
@@ -21,6 +22,7 @@ export const AlbumComponent = ({albumId}) => {
     const outerRef = useRef(null);
 
     const [selectedImages, setSelectedImages] = useState([]);
+    const [folderStructureArray, setFolderStructureArray] = useState([])
 
     // For Divider Resizing
     const handleMouseDown = () => {
@@ -42,6 +44,14 @@ export const AlbumComponent = ({albumId}) => {
         isResizing.current = false;
         document.body.style.cursor = "default";
     };
+
+    useEffect(() => {
+      const fetch_folders = async (albumId) => {
+        const folder_structure_downloaded = await getFolderStructureByAlbumID(albumId);
+        setFolderStructureArray(folder_structure_downloaded);
+      }
+      fetch_folders(albumId)
+    },[])
 
     useEffect(() => {
         window.addEventListener("mousemove", handleMouseMove);
@@ -70,7 +80,11 @@ export const AlbumComponent = ({albumId}) => {
                   maxWidth: sidebarWidth + "px",
                 }}
               >
-                <Sidebar albumId={albumId} currentFolderID={currentFolderID} setCurrentFolderID={setCurrentFolderID} />
+                <Sidebar 
+                  albumId={albumId} 
+                  currentFolderID={currentFolderID} 
+                  setCurrentFolderID={setCurrentFolderID} 
+                  setFolderStructureArray={setFolderStructureArray}/>
               </div>
 
               {/* -------------- Divider -------------- */}
@@ -79,7 +93,14 @@ export const AlbumComponent = ({albumId}) => {
               {/* -------------- Gallery related -------------- */}
               <div className='py-2 flex-grow-1'
                 style={{minHeight: '100%', maxHeight: '100%'}}>
-                <Gallery albumId={albumId} currentFolderID={currentFolderID} imgMaxHeight={imgMaxHeight} selectedImages={selectedImages} setSelectedImages={setSelectedImages}/>
+                <Gallery 
+                  albumId={albumId} 
+                  currentFolderID={currentFolderID} 
+                  setCurrentFolderID={setCurrentFolderID} 
+                  imgMaxHeight={imgMaxHeight} 
+                  selectedImages={selectedImages} 
+                  setSelectedImages={setSelectedImages} 
+                  folderStructureArray={folderStructureArray}/>
               </div>
             </div>
 

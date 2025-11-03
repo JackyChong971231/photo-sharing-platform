@@ -6,7 +6,7 @@ import { getFolderStructureByAlbumID, createFolderAPI } from '../../apiCalls/pho
 import './albumComponent.css';
 import './sidebar.css';
 
-const buildTree = (data) => {
+export const buildTree = (data) => {
   const map = {};
   const tree = [];
 
@@ -91,7 +91,6 @@ const FolderTree = ({
                   role="button"
                   icon={faEllipsis}
                   onClick={() =>{
-                    console.log(node.id)
                     setCurrentFolderIDOptionsClicked((prevFolderID) =>
                       prevFolderID === node.id ? null : node.id
                     )}
@@ -188,7 +187,7 @@ const FolderTree = ({
   );
 };
 
-export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID }) => {
+export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolderStructureArray }) => {
   const [currentFolderIDOptionsClicked, setCurrentFolderIDOptionsClicked] = useState(null);
   const [folderTree, setFolderTree] = useState([]);
   const [tempFolder, setTempFolder] = useState(null);
@@ -199,7 +198,6 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID }) => {
     const fetchFolders = async () => {
       if (albumId) {
         const folder_structure_downloaded = await getFolderStructureByAlbumID(albumId);
-        console.log(folder_structure_downloaded)
         setFolderTree(buildTree(folder_structure_downloaded));
         setCurrentFolderID(folder_structure_downloaded.length > 0 ? folder_structure_downloaded[0].id : null);
       }
@@ -228,6 +226,7 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID }) => {
     const {statusCode, body} = await createFolderAPI(albumId, folder_name, parent_folder_id);
     const folders = body.folders
     setFolderTree(buildTree(folders));
+    setFolderStructureArray(folders)
     setCurrentFolderID(folders.length > 0 ? folders[0].id : null);
     setTempFolder(null);
   }
