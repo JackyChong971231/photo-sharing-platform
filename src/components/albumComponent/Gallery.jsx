@@ -262,7 +262,9 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             onMouseUp={handleMouseUp}
             style={{ position: "relative", userSelect: "none" }}
         >
-            <div className='gallery-folder-container'>
+            <div className='gallery-folder-container'
+            style={{paddingBottom: (folderChildren.length>0?'2rem':'0rem')}}
+            >
                 {
                     folderChildren.map(folder => (
                         <div className='gallery-folder' 
