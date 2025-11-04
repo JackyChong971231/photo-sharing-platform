@@ -1,5 +1,6 @@
 export const POST      = 'POST';
 export const GET       = "GET";
+export const DELETE    = "DELETE"
 
 const serverUrl = 'http://127.0.0.1:8000';
 

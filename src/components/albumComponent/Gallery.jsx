@@ -12,8 +12,7 @@ import useRouteParams from '../../hooks/useRouteParams';
 import { getAllImagesByFolderID, insertPhotos } from '../../apiCalls/photographer/albumService';
 import { ImageOptionMenu } from './imageOptionMenu';
 
-export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
-    const [imagesInFolder, setImagesInFolder] = useState([]);
+export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, currentFolderID, setCurrentFolderID, imagesInFolder, setImagesInFolder, imgRefs, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
     const [folderChildren, setFolderChildren] = useState([])
     
     // For image selection
@@ -21,7 +20,6 @@ export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHei
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [dragCurrent, setDragCurrent] = useState({ x: 0, y: 0 });
-    const imgRefs = useRef([]);
     const clickThreshold = 5;
 
     // For image hovering effect
@@ -98,21 +96,6 @@ export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHei
         setCursorPos({ x: e.clientX, y: e.clientY });
     };
 
-    const handleUpload = async (files) => {
-    if (!files || !files.length) return;
-
-    try {
-        const { statusCode, body } = await insertPhotos(albumId, currentFolderID, user.id, files);
-        if (statusCode === 201) {
-        console.log("Photos uploaded successfully:", body);
-        } else {
-        console.error("Failed to upload photos:", body);
-        }
-    } catch (err) {
-        console.error("Upload error:", err);
-    }
-    };
-
     // For images dropped logic
     const handleDrop = async (e) => {
         e.preventDefault();
@@ -122,10 +105,10 @@ export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHei
         const files = Array.from(e.dataTransfer.files);
         if (files.length === 0) return;
 
-        console.log("Dropped images:", files.map(f => f.name));
+        const images_to_be_uploaded = files.length;
 
         // Call upload directly
-        await handleUpload(files);
+        await handlePhotosUpload(files);
     };
 
     const handleMouseDown = (e) => {
@@ -290,114 +273,114 @@ export const Gallery = ({albumId, currentFolderID, setCurrentFolderID, imgMaxHei
                     ))
                 }
             </div>
-        {(imagesInFolder.length===0)?
-            // When there is NO images
-            <div className='empty-folder-container'>
-                <div className='no-photos-yet-container'>
-                    <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
-                    <h3>No photos yet</h3>
-                    <p>Create the first folder or drag or drop photos to get started</p>
-                    <button>+ Create Your First Folder</button>
+            {(imagesInFolder.length===0 && folderChildren.length===0)?
+                // When there is NO images
+                <div className='empty-folder-container'>
+                    <div className='no-photos-yet-container'>
+                        <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
+                        <h3>No photos yet</h3>
+                        <p>Create the first folder or drag or drop photos to get started</p>
+                        <button>+ Create Your First Folder</button>
+                    </div>
                 </div>
-            </div>
-        :
-            // When there is images
-            (imagesInFolder.map((imgSrc, i) => (
-            <div
-                className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
-                key={i}
-                ref={imgRefs.current[i]}
-                onMouseEnter={() => {
-                    if (selectedImages.length < 2 || 
-                        (selectedImages.length > 1 && !selectedImages.includes(i))
-                    ) {
-                        setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
-                    }
-                }}
-                onMouseLeave={() => {
-                    // only clear hover if option menu is not open for this image
-                    if (optionMenuIndex !== i) {
-                        setHoveredIndex(prevHoveredIndex => 
-                            prevHoveredIndex.filter(index => index !== i)
-                        );
-                    }
-                }}
-            >
-                <img
-                    src={imgSrc}
-                    style={{
-                        height: imgMaxHeight + "px",
-                        maxWidth: imgMaxHeight * 2 + "px",
-                        objectFit: "cover",
-                        display: "block"
+            :
+                // When there is images
+                (imagesInFolder.map((img, i) => (
+                <div
+                    className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
+                    key={i}
+                    ref={imgRefs.current[i]}
+                    onMouseEnter={() => {
+                        if (selectedImages.length < 2 || 
+                            (selectedImages.length > 1 && !selectedImages.includes(i))
+                        ) {
+                            setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
+                        }
                     }}
+                    onMouseLeave={() => {
+                        // only clear hover if option menu is not open for this image
+                        if (optionMenuIndex !== i) {
+                            setHoveredIndex(prevHoveredIndex => 
+                                prevHoveredIndex.filter(index => index !== i)
+                            );
+                        }
+                    }}
+                >
+                    <img
+                        src={img.source}
+                        style={{
+                            height: imgMaxHeight + "px",
+                            maxWidth: imgMaxHeight * 2 + "px",
+                            objectFit: "cover",
+                            display: "block"
+                        }}
+                    />
+                    <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
+                    <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
+                    <div className='position-absolute top-0 end-0 text-white m-2'
+                        style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                    >
+                        <button className='image-options-btn'
+                        onMouseDownCapture={(e) => {e.stopPropagation()}}
+                        onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
+                        {optionMenuIndex===i? 
+                        <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
+                        style={{transform: optionMenuAnchor, top: optionMenuTop}}>
+                            <ImageOptionMenu optionMenuWidth={optionMenuWidth} handlePhotosDownload={handlePhotosDownload} />
+                        </div>:null}
+                    </div>
+                    <div className='position-absolute bottom-0 end-0 text-white m-2'
+                        style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                    >
+                        <button className='image-expand-btn'>
+                            <FontAwesomeIcon icon={faExpand}/>
+                        </button>
+                    </div>
+                </div>
+                )))
+            }
+
+            {isDragging && (
+                <div
+                style={{
+                    position: "absolute",
+                    left: Math.min(dragStart.x, dragCurrent.x),
+                    top: Math.min(dragStart.y, dragCurrent.y),
+                    width: Math.abs(dragCurrent.x - dragStart.x),
+                    height: Math.abs(dragCurrent.y - dragStart.y),
+                    backgroundColor: "rgba(0, 123, 255, 0.2)",
+                    border: "1px solid #007bff",
+                    pointerEvents: "none", // so it doesn’t block mouse events
+                    zIndex: 1000
+                }}
                 />
-                <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
-                <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
-                <div className='position-absolute top-0 end-0 text-white m-2'
-                    style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
-                >
-                    <button className='image-options-btn'
-                    onMouseDownCapture={(e) => {e.stopPropagation()}}
-                    onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
-                    {optionMenuIndex===i? 
-                    <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
-                    style={{transform: optionMenuAnchor, top: optionMenuTop}}>
-                        <ImageOptionMenu optionMenuWidth={optionMenuWidth} />
-                    </div>:null}
+            )}
+
+            {/* Center overlay when dragging */}
+            {isFilesDragging && dragOverFiles.length > 0 && (
+                <div className="drag-overlay">
+                <h3>Uploading {dragOverFiles.length} files</h3>
+                {/* <ul>
+                    {dragOverFiles.slice(0, 5).map((file, idx) => (
+                        file ? (
+                            <li key={idx}>{file.name} ({Math.round(file.size / 1024)} KB)</li>
+                        ) : null
+                    ))}
+                    {dragOverFiles.length > 5 && <li>+ {dragOverFiles.length - 5} more…</li>}
+                </ul> */}
                 </div>
-                <div className='position-absolute bottom-0 end-0 text-white m-2'
-                    style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+            )}
+
+            {/* Cursor-following badge */}
+            {isFilesDragging && dragOverFiles.length > 0 && (
+                <div
+                className="drag-cursor-badge"
+                style={{ top: cursorPos.y + 10, left: cursorPos.x + 10 }}
                 >
-                    <button className='image-expand-btn'>
-                        <FontAwesomeIcon icon={faExpand}/>
-                    </button>
+                <FontAwesomeIcon icon={faImage} size="2x" />
+                <span className="file-count">{dragOverFiles.length}</span>
                 </div>
-            </div>
-            )))
-        }
-
-        {isDragging && (
-            <div
-            style={{
-                position: "absolute",
-                left: Math.min(dragStart.x, dragCurrent.x),
-                top: Math.min(dragStart.y, dragCurrent.y),
-                width: Math.abs(dragCurrent.x - dragStart.x),
-                height: Math.abs(dragCurrent.y - dragStart.y),
-                backgroundColor: "rgba(0, 123, 255, 0.2)",
-                border: "1px solid #007bff",
-                pointerEvents: "none", // so it doesn’t block mouse events
-                zIndex: 1000
-            }}
-            />
-        )}
-
-        {/* Center overlay when dragging */}
-        {isFilesDragging && dragOverFiles.length > 0 && (
-            <div className="drag-overlay">
-            <h3>Uploading {dragOverFiles.length} files</h3>
-            {/* <ul>
-                {dragOverFiles.slice(0, 5).map((file, idx) => (
-                    file ? (
-                        <li key={idx}>{file.name} ({Math.round(file.size / 1024)} KB)</li>
-                    ) : null
-                ))}
-                {dragOverFiles.length > 5 && <li>+ {dragOverFiles.length - 5} more…</li>}
-            </ul> */}
-            </div>
-        )}
-
-        {/* Cursor-following badge */}
-        {isFilesDragging && dragOverFiles.length > 0 && (
-            <div
-            className="drag-cursor-badge"
-            style={{ top: cursorPos.y + 10, left: cursorPos.x + 10 }}
-            >
-            <FontAwesomeIcon icon={faImage} size="2x" />
-            <span className="file-count">{dragOverFiles.length}</span>
-            </div>
-        )}
+            )}
         </div>
 
     )

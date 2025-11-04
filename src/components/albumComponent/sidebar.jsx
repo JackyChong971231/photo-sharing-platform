@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { getFolderStructureByAlbumID, createFolderAPI } from '../../apiCalls/photographer/albumService';
+import { getFolderStructureByAlbumID, createFolderAPI, deleteFolderByID } from '../../apiCalls/photographer/albumService';
 
 import './albumComponent.css';
 import './sidebar.css';
@@ -29,6 +29,7 @@ export const buildTree = (data) => {
 
 const FolderTree = ({
   createFolderHandler,
+  deleteFolderHandler,
   tree,
   setCurrentFolderID,
   currentFolderID,
@@ -120,7 +121,10 @@ const FolderTree = ({
                       </p>
                     </li>
                     <li>
-                      <p>Delete</p>
+                      <p role='button'
+                      onClick={() => {
+                        deleteFolderHandler(node.id);
+                      }}>Delete</p>
                     </li>
                   </ul>
                 </div>
@@ -157,8 +161,8 @@ const FolderTree = ({
                         style={{minWidth: '0rem', maxWidth: '30rem', width: '100%'}}
                       />
                       <div className='new-folder-confirmation-button-container'>
-                        <button>Save</button>
-                        <button>Cancel</button>
+                        <button onClick={() => {createFolderHandler(tempFolder.name, tempFolder.parent_id);}}>Save</button>
+                        <button onClick={() => {setTempFolder(null);}}>Cancel</button>
                       </div>
                     </div>
                   </div>
@@ -171,6 +175,7 @@ const FolderTree = ({
           {node.children.length > 0 && (
             <FolderTree
               createFolderHandler={createFolderHandler}
+              deleteFolderHandler={deleteFolderHandler}
               tree={node.children}
               setCurrentFolderID={setCurrentFolderID}
               currentFolderID={currentFolderID}
@@ -227,8 +232,15 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
     const folders = body.folders
     setFolderTree(buildTree(folders));
     setFolderStructureArray(folders)
-    setCurrentFolderID(folders.length > 0 ? folders[0].id : null);
+    setCurrentFolderID(body.folder.id);
     setTempFolder(null);
+  }
+
+  const deleteFolderHandler = async (folder_id) => {
+    const {statusCode, body} = await deleteFolderByID(folder_id);
+    setFolderTree(buildTree(body.folders));
+    if (body.folder===currentFolderID) {setCurrentFolderID(body.folders[0].id)}
+    setCurrentFolderIDOptionsClicked(false);
   }
 
   return (
@@ -236,6 +248,7 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
       <div ref={sidebarRef}>
         <FolderTree
           createFolderHandler={createFolderHandler}
+          deleteFolderHandler={deleteFolderHandler}
           tree={folderTree}
           setCurrentFolderID={setCurrentFolderID}
           currentFolderID={currentFolderID}
@@ -271,8 +284,8 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
                   style={{'minWidth': '0rem', 'maxWidth': '30rem', width: '100%'}}
                 />
                 <div className='new-folder-confirmation-button-container'>
-                  <button>Save</button>
-                  <button>Cancel</button>
+                  <button onClick={() => {createFolderHandler(tempFolder.name, null);}}>Save</button>
+                  <button onClick={() => {setTempFolder(null);}}>Cancel</button>
                 </div>
               </div>
             </div>

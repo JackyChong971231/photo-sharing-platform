@@ -57,3 +57,7 @@
     max-width: none;
     visibility: visible;
 }
+
+.image_resize_bar {
+    width: 6rem;
+}
