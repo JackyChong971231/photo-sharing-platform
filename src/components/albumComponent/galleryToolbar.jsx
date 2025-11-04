@@ -73,10 +73,12 @@ const FilterByFaceComponent = ({setIsShowFaceFilterComponent, filterFaces, setFi
     )
 }
 
-export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) => {
+export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload}) => {
     const [isShowFaceFilterComponent, setIsShowFaceFilterComponent] = useState(false)
     const filterByFaceRef = useRef(null)
     const [filterFaces, setFilterFaces] = useState([])
+
+    const fileInputRef = useRef(null); // <-- ref for hidden file input
 
     const handleClickOutside = (e) => {
         if (!filterByFaceRef.current.contains(e.target)) {
@@ -88,6 +90,19 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) 
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const openFileDialog = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // programmatically open file picker
+        }
+    };
+
+    const onFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length > 0) {
+            handlePhotosUpload(files); // pass to parent handler
+        }
+    };
 
     return (
         <div>
@@ -101,7 +116,7 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) 
                         max="400"
                         value={imgMaxHeight}
                         onChange={(e) => setImgMaxHeight(e.target.value)}
-                        className="w-full accent-blue-500"
+                        className="w-full accent-blue-500 image_resize_bar"
                         />
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>
                     </div>
@@ -126,17 +141,31 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages}) 
                     <p className='m-0 p-0'>{selectedImages.length} Selected</p>  
                     :
                     null}
-                    <FontAwesomeIcon icon={faCloudArrowUp} style={{color:'rgba(58, 58, 58, 1)', fontSize: '1.3rem', cursor: 'pointer'}}/>
+
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        multiple
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={onFileChange}
+                    />
+
+                    <div onClick={() => {openFileDialog()}}>
+                        <FontAwesomeIcon icon={faCloudArrowUp} style={{color:'rgba(58, 58, 58, 1)', fontSize: '1.3rem', cursor: 'pointer'}}/>    
+                    </div>
                     <FontAwesomeIcon icon={faTrash} style={{
                     color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
                     cursor: selectedImages.length>0?'pointer':'',
                     fontSize: '1.3rem'
                     }}/>
-                    <FontAwesomeIcon icon={faCloudArrowDown} style={{
-                    color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
-                    cursor: selectedImages.length>0?'pointer':'',
-                    fontSize: '1.3rem'
-                    }}/>
+                    <div onClick={() => {handlePhotosDownload()}}>
+                        <FontAwesomeIcon icon={faCloudArrowDown} style={{
+                        color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
+                        cursor: selectedImages.length>0?'pointer':'',
+                        fontSize: '1.3rem'
+                        }}/>
+                    </div>
                 </div>
             </div>
         </div>

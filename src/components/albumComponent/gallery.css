@@ -154,6 +154,8 @@
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
+  padding-bottom: 2rem;
+  /* border-bottom: 1px solid rgb(187, 187, 187); */
 }
 
 .gallery-folder {

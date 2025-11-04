@@ -10,9 +10,14 @@ import './albumComponent.css'
 import { buildTree, Sidebar } from './sidebar';
 import { GalleryToolbar } from './galleryToolbar';
 import { Gallery } from './gallery';
-import { getFolderStructureByAlbumID } from '../../apiCalls/photographer/albumService';
+import { getFolderStructureByAlbumID, insertPhotos } from '../../apiCalls/photographer/albumService';
+
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export const AlbumComponent = ({albumId}) => {
+    const {user} = useSharedContext();
+
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
   
     // For Folder Structure Panel
@@ -22,6 +27,8 @@ export const AlbumComponent = ({albumId}) => {
     const outerRef = useRef(null);
 
     const [selectedImages, setSelectedImages] = useState([]);
+    const [imagesInFolder, setImagesInFolder] = useState([]);
+    const imgRefs = useRef([]);
     const [folderStructureArray, setFolderStructureArray] = useState([])
 
     // For Divider Resizing
@@ -63,12 +70,88 @@ export const AlbumComponent = ({albumId}) => {
         };
     }, []);
 
+    const handlePhotosDownload = async () => {
+      if (!selectedImages || selectedImages.length === 0) return;
+
+      if (selectedImages.length === 1) {
+        // Download single image directly
+        const img = imagesInFolder[selectedImages[0]];
+        if (!img) return;
+
+        try {
+          const response = await fetch(img.source);
+          const blob = await response.blob();
+          const fileExt = img.source.split('.').pop().split(/\#|\?/)[0];
+          const filename = `${img.name ?? `image_${img.id}`}.${fileExt}`;
+          saveAs(blob, filename);
+        } catch (err) {
+          console.error(`Failed to fetch ${img.source}`, err);
+        }
+
+      } else {
+        // Multiple images → zip them
+        const zip = new JSZip();
+        const folder = zip.folder("photos");
+
+        for (const idx of selectedImages) {
+          const img = imagesInFolder[idx];
+          if (!img) continue;
+
+          try {
+            const response = await fetch(img.source);
+            const blob = await response.blob();
+            const fileExt = img.source.split('.').pop().split(/\#|\?/)[0];
+            const filename = `${img.name ?? `image_${img.id}`}.${fileExt}`;
+            folder.file(filename, blob);
+          } catch (err) {
+            console.error(`Failed to fetch ${img.source}`, err);
+          }
+        }
+
+        const zipped = await zip.generateAsync({ type: "blob" });
+        saveAs(zipped, "selected_photos.zip");
+      }
+    };
+
+    const handlePhotosUpload = async (files) => {
+      if (!files || !files.length) return null;
+      try {
+        const images_to_be_uploaded = files.length;
+        const { statusCode, body } = await insertPhotos(albumId, currentFolderID, user.id, files);
+        const images_uploaded = body.created_photos;
+
+        if (images_to_be_uploaded === images_uploaded.length) {
+            setImagesInFolder(prevImagesInFolder => [...prevImagesInFolder, ...images_uploaded]);
+
+            if (images_uploaded) {
+                imgRefs.current = [...imgRefs.current, ...images_uploaded.map(
+                    (_, i) => imgRefs.current[i] ?? React.createRef()
+                )]
+            }
+        }
+
+        if (statusCode === 201) {
+          return body.created_photos
+        } else {
+          return null;
+        }
+      } catch (err) {
+        return null;
+      }
+    }
+
     return (
         <div className='album-component-outer-container' ref={outerRef}>
           <div className='d-flex flex-column h-100 w-100'
           >
             <div style={{borderBottom: '1px solid #ccc', zIndex: '100'}}>
-              <GalleryToolbar imgMaxHeight={imgMaxHeight} setImgMaxHeight={setImgMaxHeight} selectedImages={selectedImages} />
+              <GalleryToolbar 
+              imgMaxHeight={imgMaxHeight} 
+              setImgMaxHeight={setImgMaxHeight} 
+              selectedImages={selectedImages} 
+              handlePhotosUpload={handlePhotosUpload}
+              handlePhotosDownload={handlePhotosDownload}
+              />
             </div>
 
             <div className='flex-grow-1 d-flex'
@@ -95,8 +178,13 @@ export const AlbumComponent = ({albumId}) => {
                 style={{minHeight: '100%', maxHeight: '100%'}}>
                 <Gallery 
                   albumId={albumId} 
+                  handlePhotosUpload={handlePhotosUpload}
+                  handlePhotosDownload={handlePhotosDownload}
                   currentFolderID={currentFolderID} 
                   setCurrentFolderID={setCurrentFolderID} 
+                  imagesInFolder={imagesInFolder}
+                  setImagesInFolder={setImagesInFolder}
+                  imgRefs={imgRefs}
                   imgMaxHeight={imgMaxHeight} 
                   selectedImages={selectedImages} 
                   setSelectedImages={setSelectedImages} 

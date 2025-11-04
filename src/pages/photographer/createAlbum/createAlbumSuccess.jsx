@@ -21,7 +21,7 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, albumCreatedMetad
                         />
                 </div>
                 <div>
-                    <h2>{formData.album_title}</h2>
+                    <h2>{albumCreatedMetadata.title}</h2>
                     <div className="album_create_flag mb-2">
                         <FontAwesomeIcon icon={faCircleCheck} className="success-icon" />
                         <span className="success-text">Album Created Successfully</span>

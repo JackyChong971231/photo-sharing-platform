@@ -40,7 +40,7 @@ import img27 from '../../assets/dummy/album/ceremony/vow/IMG0027.jpg'
 import img28 from '../../assets/dummy/album/ceremony/vow/IMG0028.jpeg'
 import { useSharedContext } from '../../SharedContext';
 import { now } from '../../utils/common';
-import { apiGateway, apiGatewayFile, GET, POST } from '../apiMaster';
+import { apiGateway, apiGatewayFile, GET, POST, DELETE } from '../apiMaster';
 
 export const getMetadataByStudioID = async (studioID) => {
     const dummy = [
@@ -222,12 +222,28 @@ export const createFolderAPI = async (album_id, name, parent_id) => {
         name: name,
         created_at: now(),
     };
-    console.log(request_body)
-
     const { statusCode, body } = await apiGateway(POST, "/core/create_folder/", request_body);
-    console.log(body)
     return { statusCode, body };
 }
+
+export const deleteFolderByID = async (folder_id) => {
+  try {
+    const { statusCode, body } = await apiGateway(
+      DELETE,
+      `/core/folders/${folder_id}/delete/`
+    );
+
+    return { statusCode, body };
+  } catch (error) {
+    // Inspect error structure
+    console.error("Error deleting folder:", error);
+
+    return {
+      statusCode: error?.statusCode ?? 500,
+      body: error?.body ?? "Unexpected error"
+    };
+  }
+};
 
 export const insertPhotos = async (albumId, folderId, uploadedBy, files) => {
   if (!albumId || !uploadedBy || !files || files.length === 0) {
@@ -263,5 +279,6 @@ export const getAllImagesByFolderID = async (folderId) => {
   if (statusCode !== 200 || !body.photos) return [];
 
   // Return array of photo URLs
-  return body.photos.map(photo => photo.source);
+  // return body.photos.map(photo => photo.source);
+  return body.photos;
 };

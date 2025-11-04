@@ -41,9 +41,15 @@ export const Album = () => {
     return (
         <div className='album-page-container d-flex flex-column vh-100'>
             <div className='photographer-album-title-container px-5 pt-4 sticky-top flex-shrink-0'>
-                <div className='d-flex gap-4'>
-                    <h1>{albumCreatedMetadata.title}</h1>
-                    <button className='border-0 rounded px-4 bg-dark text-white'>Copy shared link</button>
+                <div className='d-flex gap-4 align-items-center'>
+                    <div className='d-flex gap-1'>
+                        <h1 className='text-nowrap'>{albumCreatedMetadata.title}</h1>
+                    </div>
+                    <button className='text-nowrap border-0 rounded px-4 bg-dark text-white py-0'
+                    style={{height: '2rem'}}>Copy shared link</button>
+                </div>
+                <div className='d-flex gap-2'>
+                    <p className={'dashboard-album-tag '+(albumCreatedMetadata.is_public?'dashboard-album-tag--public':'dashboard-album-tag--private')}>{albumCreatedMetadata.is_public?'Public':'Private'}</p>
                 </div>
                 <p>ID: {albumCreatedMetadata.id}</p>
             </div>
