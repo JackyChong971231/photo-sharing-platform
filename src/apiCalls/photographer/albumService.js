@@ -260,9 +260,25 @@ export const insertPhotos = async (albumId, folderId, uploadedBy, files) => {
   });
 
   const { statusCode, body } = await apiGatewayFile(
-    "POST",
+    POST,
     "/core/upload_photos_local/",
     formData
+  );
+
+  return { statusCode, body };
+};
+
+export const deletePhotos = async (photoIds) => {
+  if (!photoIds || photoIds.length === 0) {
+    throw new Error("photoIds array is required");
+  }
+
+  const request_body = { photo_ids: photoIds };
+
+  const { statusCode, body } = await apiGateway(
+    DELETE,
+    "/core/photos/delete/",
+    request_body,
   );
 
   return { statusCode, body };
