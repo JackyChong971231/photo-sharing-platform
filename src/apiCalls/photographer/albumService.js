@@ -298,3 +298,30 @@ export const getAllImagesByFolderID = async (folderId) => {
   // return body.photos.map(photo => photo.source);
   return body.photos;
 };
+
+export const renameFolderAPI = async (folder_id, new_name) => {
+  if (!folder_id || !new_name) {
+    throw new Error("folder_id and new_name are required");
+  }
+
+  try {
+    const request_body = {
+      name: new_name,
+      updated_at: now(),
+    };
+
+    const { statusCode, body } = await apiGateway(
+      POST, // or PATCH if your backend prefers
+      `/core/folders/${folder_id}/rename/`,
+      request_body
+    );
+
+    return { statusCode, body };
+  } catch (error) {
+    console.error("Error renaming folder:", error);
+    return {
+      statusCode: error?.statusCode ?? 500,
+      body: error?.body ?? "Unexpected error"
+    };
+  }
+};

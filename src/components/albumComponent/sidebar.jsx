@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { getFolderStructureByAlbumID, createFolderAPI, deleteFolderByID } from '../../apiCalls/photographer/albumService';
+import { getFolderStructureByAlbumID, createFolderAPI, deleteFolderByID, renameFolderAPI } from '../../apiCalls/photographer/albumService';
 
 import './albumComponent.css';
 import './sidebar.css';
@@ -34,10 +34,15 @@ const FolderTree = ({
   setCurrentFolderID,
   currentFolderID,
   layer,
-  currentFolderIDOptionsClicked,
-  setCurrentFolderIDOptionsClicked,
-  tempFolder,
-  setTempFolder
+  activeOptionsFolderId,
+  setActiveOptionsFolderId,
+  draftNewFolder,
+  setDraftNewFolder,
+  renameFolderHandler,
+  folderBeingRenamed, 
+  setFolderBeingRenamed,
+  draftName,
+  setDraftName
 }) => {
   const tempRef = useRef(null);
 
@@ -46,7 +51,7 @@ const FolderTree = ({
     if (tempRef.current) {
       tempRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [tempFolder]);
+  }, [draftNewFolder]);
 
   if (!tree || tree.length === 0) return null;
 
@@ -71,19 +76,50 @@ const FolderTree = ({
                 }}
                 onClick={() => {
                   setCurrentFolderID(node.id);
-                  setCurrentFolderIDOptionsClicked(null);
+                  setActiveOptionsFolderId(null);
                 }}
               >
                 <FontAwesomeIcon icon={faFolder} className="me-1" />
-                <span
-                  className="text-truncate"
-                  style={{
-                    display: 'inline-block',
-                    maxWidth: '100%',
+                {folderBeingRenamed===node.id ? (
+                <input
+                  style={{ border: '1px solid gray', minWidth: '0rem', outline: 'none' }}
+                  value={draftName}
+                  onChange={(e) => setDraftName(e.target.value)}
+                  autoFocus
+                  onBlur={async () => {
+                    // Only rename if the user actually changed the name
+                    if (draftName && folderBeingRenamed !== null) {
+                      await renameFolderHandler(folderBeingRenamed, draftName);
+                    }
+                    setFolderBeingRenamed(null);
+                    setDraftName('');
                   }}
-                >
-                  {node.name}
-                </span>
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      // Call the renameFolderHandler with the current folder ID and new name
+                      await renameFolderHandler(node.id, draftName);
+                      // Clear the input state after renaming
+                      setFolderBeingRenamed(null);
+                      setDraftName('');
+                    } else if (e.key === 'Escape') {
+                      // Cancel renaming
+                      setFolderBeingRenamed(null);
+                      setDraftName('');
+                    }
+                  }}
+                />
+                ) : (
+                  <span
+                    className="text-truncate"
+                    style={{
+                      display: 'inline-block',
+                      maxWidth: '100%',
+                    }}
+                  >
+                    {node.name}
+                  </span>
+
+                )}
               </div>
 
               {/* Options (faEllipsis) */}
@@ -92,7 +128,7 @@ const FolderTree = ({
                   role="button"
                   icon={faEllipsis}
                   onClick={() =>{
-                    setCurrentFolderIDOptionsClicked((prevFolderID) =>
+                    setActiveOptionsFolderId((prevFolderID) =>
                       prevFolderID === node.id ? null : node.id
                     )}
                   }
@@ -100,21 +136,30 @@ const FolderTree = ({
 
                 <div
                   className={`folder-option-menu ${
-                    currentFolderIDOptionsClicked === node.id
+                    activeOptionsFolderId === node.id
                       ? 'folder-option-menu--show'
                       : 'folder-option-menu--hide'
                   }`}
                 >
                   <ul className="folder-option-menu-ul">
                     <li>
-                      <p>Rename</p>
+                      <p
+                        role="button"
+                        onClick={() => {
+                          setDraftName(node.name)
+                          setFolderBeingRenamed(node.id);
+                          setActiveOptionsFolderId(null);
+                        }}
+                      >
+                        Rename
+                      </p>
                     </li>
                     <li>
                       <p
                         role="button"
                         onClick={() => {
-                          setTempFolder({ parent_id: node.id, name: '', layer: layer + 1 });
-                          setCurrentFolderIDOptionsClicked(null);
+                          setDraftNewFolder({ parent_id: node.id, name: '', layer: layer + 1 });
+                          setActiveOptionsFolderId(null);
                         }}
                       >
                         Create New Folder
@@ -133,7 +178,7 @@ const FolderTree = ({
           </div>
 
           {/* Render temporary folder under this parent if exists */}
-          {tempFolder && tempFolder.parent_id === node.id && (
+          {draftNewFolder && draftNewFolder.parent_id === node.id && (
             <ul className="folder-tree ps-1 pe-1">
               <li ref={tempRef} className={`folder-item folder-item-${layer + 1}`}>
                 <div className="folder-label"
@@ -148,21 +193,21 @@ const FolderTree = ({
                     <div style={{flex: '1 1 auto', width: '100%'}}>
                       <input
                         autoFocus
-                        value={tempFolder.name}
-                        onChange={(e) => setTempFolder({ ...tempFolder, name: e.target.value })}
+                        value={draftNewFolder.name}
+                        onChange={(e) => setDraftNewFolder({ ...draftNewFolder, name: e.target.value })}
                         onKeyDown={async (e) => {
                           if (e.key === 'Enter') {
-                            createFolderHandler(tempFolder.name, tempFolder.parent_id);
+                            createFolderHandler(draftNewFolder.name, draftNewFolder.parent_id);
                           } else if (e.key === 'Escape') {
-                            setTempFolder(node.id);
+                            setDraftNewFolder(node.id);
                           }
                         }}
                         placeholder="New folder"
                         style={{minWidth: '0rem', maxWidth: '30rem', width: '100%'}}
                       />
                       <div className='new-folder-confirmation-button-container'>
-                        <button onClick={() => {createFolderHandler(tempFolder.name, tempFolder.parent_id);}}>Save</button>
-                        <button onClick={() => {setTempFolder(null);}}>Cancel</button>
+                        <button onClick={() => {createFolderHandler(draftNewFolder.name, draftNewFolder.parent_id);}}>Save</button>
+                        <button onClick={() => {setDraftNewFolder(null);}}>Cancel</button>
                       </div>
                     </div>
                   </div>
@@ -180,10 +225,15 @@ const FolderTree = ({
               setCurrentFolderID={setCurrentFolderID}
               currentFolderID={currentFolderID}
               layer={layer + 1}
-              currentFolderIDOptionsClicked={currentFolderIDOptionsClicked}
-              setCurrentFolderIDOptionsClicked={setCurrentFolderIDOptionsClicked}
-              tempFolder={tempFolder}
-              setTempFolder={setTempFolder}
+              activeOptionsFolderId={activeOptionsFolderId}
+              setActiveOptionsFolderId={setActiveOptionsFolderId}
+              draftNewFolder={draftNewFolder}
+              setDraftNewFolder={setDraftNewFolder}
+              renameFolderHandler={renameFolderHandler}
+              folderBeingRenamed={folderBeingRenamed}
+              setFolderBeingRenamed={setFolderBeingRenamed}
+              draftName={draftName}
+              setDraftName={setDraftName}
             />
           )}
         </li>
@@ -193,9 +243,11 @@ const FolderTree = ({
 };
 
 export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolderStructureArray }) => {
-  const [currentFolderIDOptionsClicked, setCurrentFolderIDOptionsClicked] = useState(null);
   const [folderTree, setFolderTree] = useState([]);
-  const [tempFolder, setTempFolder] = useState(null);
+  const [activeOptionsFolderId, setActiveOptionsFolderId] = useState(null);
+  const [draftNewFolder, setDraftNewFolder] = useState(null);
+  const [folderBeingRenamed, setFolderBeingRenamed] = useState(null);
+  const [draftName, setDraftName] = useState(null)
   const rootTempRef = useRef(null); // ✅ define ref once here
   const sidebarRef = useRef(null);
 
@@ -214,12 +266,12 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
     if (rootTempRef.current) {
       rootTempRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [tempFolder]);
+  }, [draftNewFolder]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        setCurrentFolderIDOptionsClicked(null);
+        setActiveOptionsFolderId(null);
       }
     };
 
@@ -233,15 +285,27 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
     setFolderTree(buildTree(folders));
     setFolderStructureArray(folders)
     setCurrentFolderID(body.folder.id);
-    setTempFolder(null);
+    setDraftNewFolder(null);
   }
 
   const deleteFolderHandler = async (folder_id) => {
     const {statusCode, body} = await deleteFolderByID(folder_id);
     setFolderTree(buildTree(body.folders));
     if (body.folder===currentFolderID) {setCurrentFolderID(body.folders[0].id)}
-    setCurrentFolderIDOptionsClicked(false);
+    setActiveOptionsFolderId(false);
   }
+
+  const renameFolderHandler = async (folder_id, new_name) => {
+    const { statusCode, body } = await renameFolderAPI(folder_id, new_name);
+    if (statusCode === 200) {
+      const folders = body.folders;
+      setFolderTree(buildTree(folders));
+      setFolderStructureArray(folders);
+      setCurrentFolderID(folder_id);
+    }
+    setDraftNewFolder(null); // remove any input if active
+    setActiveOptionsFolderId(null);
+  };
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -253,15 +317,20 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
           setCurrentFolderID={setCurrentFolderID}
           currentFolderID={currentFolderID}
           layer={0}
-          currentFolderIDOptionsClicked={currentFolderIDOptionsClicked}
-          setCurrentFolderIDOptionsClicked={setCurrentFolderIDOptionsClicked}
-          tempFolder={tempFolder}
-          setTempFolder={setTempFolder}
+          activeOptionsFolderId={activeOptionsFolderId}
+          setActiveOptionsFolderId={setActiveOptionsFolderId}
+          draftNewFolder={draftNewFolder}
+          setDraftNewFolder={setDraftNewFolder}
+          renameFolderHandler={renameFolderHandler}
+          folderBeingRenamed={folderBeingRenamed}
+          setFolderBeingRenamed={setFolderBeingRenamed}
+          draftName={draftName}
+          setDraftName={setDraftName}
         />
       </div>
 
       {/* ✅ Use ref here safely */}
-      {tempFolder && tempFolder.parent_id === null && (
+      {draftNewFolder && draftNewFolder.parent_id === null && (
         <ul className="folder-tree folder-tree-no-vertical-line ps-1 pe-1">
           <li ref={rootTempRef} className="folder-item folder-item-0 ps-3 pe-1">
             <div className="position-relative folder-label d-flex justify-content-start align-items-start gap-2">
@@ -271,21 +340,21 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
               }}>
                 <input
                   autoFocus
-                  value={tempFolder.name}
-                  onChange={(e) => setTempFolder({ ...tempFolder, name: e.target.value })}
+                  value={draftNewFolder.name}
+                  onChange={(e) => setDraftNewFolder({ ...draftNewFolder, name: e.target.value })}
                   onKeyDown={async (e) => {
                     if (e.key === 'Enter') {
-                      createFolderHandler(tempFolder.name, null);
+                      createFolderHandler(draftNewFolder.name, null);
                     } else if (e.key === 'Escape') {
-                      setTempFolder(null);
+                      setDraftNewFolder(null);
                     }
                   }}
                   placeholder="New folder"
                   style={{'minWidth': '0rem', 'maxWidth': '30rem', width: '100%'}}
                 />
                 <div className='new-folder-confirmation-button-container'>
-                  <button onClick={() => {createFolderHandler(tempFolder.name, null);}}>Save</button>
-                  <button onClick={() => {setTempFolder(null);}}>Cancel</button>
+                  <button onClick={() => {createFolderHandler(draftNewFolder.name, null);}}>Save</button>
+                  <button onClick={() => {setDraftNewFolder(null);}}>Cancel</button>
                 </div>
               </div>
             </div>
@@ -296,7 +365,7 @@ export const Sidebar = ({ albumId, currentFolderID, setCurrentFolderID, setFolde
       <div className='p-2'>
         <button
           className='w-100 text-white bg-dark rounded'
-          onClick={() => setTempFolder({ parent_id: null, name: '', layer: 0 })}
+          onClick={() => setDraftNewFolder({ parent_id: null, name: '', layer: 0 })}
         >
           + New Folder
         </button>
