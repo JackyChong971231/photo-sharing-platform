@@ -73,7 +73,7 @@ const FilterByFaceComponent = ({setIsShowFaceFilterComponent, filterFaces, setFi
     )
 }
 
-export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload}) => {
+export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload, handlePhotosDelete}) => {
     const [isShowFaceFilterComponent, setIsShowFaceFilterComponent] = useState(false)
     const filterByFaceRef = useRef(null)
     const [filterFaces, setFilterFaces] = useState([])
@@ -154,11 +154,13 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, h
                     <div onClick={() => {openFileDialog()}}>
                         <FontAwesomeIcon icon={faCloudArrowUp} style={{color:'rgba(58, 58, 58, 1)', fontSize: '1.3rem', cursor: 'pointer'}}/>    
                     </div>
-                    <FontAwesomeIcon icon={faTrash} style={{
-                    color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
-                    cursor: selectedImages.length>0?'pointer':'',
-                    fontSize: '1.3rem'
-                    }}/>
+                    <div onClick={() => {handlePhotosDelete()}}>
+                        <FontAwesomeIcon icon={faTrash} style={{
+                        color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
+                        cursor: selectedImages.length>0?'pointer':'',
+                        fontSize: '1.3rem'
+                        }}/>
+                    </div>
                     <div onClick={() => {handlePhotosDownload()}}>
                         <FontAwesomeIcon icon={faCloudArrowDown} style={{
                         color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',

@@ -10,7 +10,7 @@ import './albumComponent.css'
 import { buildTree, Sidebar } from './sidebar';
 import { GalleryToolbar } from './galleryToolbar';
 import { Gallery } from './gallery';
-import { getFolderStructureByAlbumID, insertPhotos } from '../../apiCalls/photographer/albumService';
+import { deletePhotos, getFolderStructureByAlbumID, insertPhotos } from '../../apiCalls/photographer/albumService';
 
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -140,6 +140,34 @@ export const AlbumComponent = ({albumId}) => {
       }
     }
 
+    const handlePhotosDelete = async () => {
+      if (!selectedImages || selectedImages.length === 0) return;
+
+      const photoIdsToDelete = selectedImages.map(idx => imagesInFolder[idx].id);
+
+      try {
+        const { statusCode, body } = await deletePhotos(photoIdsToDelete);
+
+        if (statusCode === 200) {
+          // Remove deleted photos from state
+          setImagesInFolder(prev => prev.filter(img => !photoIdsToDelete.includes(img.id)));
+
+          // Remove corresponding refs
+          imgRefs.current = imgRefs.current.filter((_, idx) => !selectedImages.includes(idx));
+
+          // Clear selection
+          setSelectedImages([]);
+
+          console.log("Deleted photos:", body);
+        } else {
+          console.error("Failed to delete photos:", body);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error deleting photos. Please try again.");
+      }
+    };
+
     return (
         <div className='album-component-outer-container' ref={outerRef}>
           <div className='d-flex flex-column h-100 w-100'
@@ -151,6 +179,7 @@ export const AlbumComponent = ({albumId}) => {
               selectedImages={selectedImages} 
               handlePhotosUpload={handlePhotosUpload}
               handlePhotosDownload={handlePhotosDownload}
+              handlePhotosDelete={handlePhotosDelete}
               />
             </div>
 
