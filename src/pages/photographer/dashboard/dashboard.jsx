@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,14 +20,14 @@ import { postgresql_datetime_to_date } from '../../../utils/common';
 export const AlbumOptionMenu = ({album_info, handleAlbumDelete, handleAlbumMakePublicOrPrivate, setOptionMenuAlbumID}) => {
     return (
         <div className='position-absolute p-2 mt-5 mx-2 end-0 bg-light'
-        style={{width: '8rem', borderRadius: '0.7rem'}}>
-            <button className='btn btn-light border-0 rounded px-3 py-1 w-100'
+        style={{width: '10rem', borderRadius: '0.7rem'}}>
+            <button className='btn btn-light text-start border-0 rounded px-3 py-1 w-100'
             style={{borderRadius: '1.4rem'}}
             onClick={() => {
                 handleAlbumDelete(album_info.id);
                 setOptionMenuAlbumID(null);
             }}>Delete</button>
-            <button className='btn btn-light border-0 rounded px-3 py-1 w-100'
+            <button className='btn btn-light text-start border-0 rounded px-3 py-1 w-100'
             style={{borderRadius: '1.4rem'}}
             onClick={() => {
                 handleAlbumMakePublicOrPrivate(album_info.id, album_info.is_public);
@@ -43,6 +43,27 @@ export const Dashboard = () => {
     const [metadata, setMetadata] = useState([]);
     const imgWidth = '13rem';
     const [optionMenuAlbumID, setOptionMenuAlbumID] = useState(null)
+
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // if menu is open and click is outside menu and outside trigger button
+            if (
+                optionMenuAlbumID !== null &&
+                menuRef.current &&
+                !menuRef.current.contains(event.target) &&
+                !event.target.closest('.dashboard-album-option-btn')
+            ) {
+                setOptionMenuAlbumID(null);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [optionMenuAlbumID]);
 
     useEffect(() => {
         const fetch_all_albums = async (studio_id) => {
@@ -146,11 +167,15 @@ export const Dashboard = () => {
                                             </div>
                                         </div>
                                         {optionMenuAlbumID===album_info.id ? (
-                                            <AlbumOptionMenu album_info={album_info} handleAlbumDelete={handleAlbumDelete} handleAlbumMakePublicOrPrivate={handleAlbumMakePublicOrPrivate} setOptionMenuAlbumID={setOptionMenuAlbumID}/>
-                                        ) : (
-                                            null
-                                        )
-                                        }
+                                            <div ref={menuRef}>
+                                                <AlbumOptionMenu 
+                                                    album_info={album_info} 
+                                                    handleAlbumDelete={handleAlbumDelete} 
+                                                    handleAlbumMakePublicOrPrivate={handleAlbumMakePublicOrPrivate} 
+                                                    setOptionMenuAlbumID={setOptionMenuAlbumID}
+                                                />
+                                            </div>
+                                        ) : null}
                                         <img onClick={() => {handleClick(album_info.id)}} style={{width: '100%'}} src={album_info.thumbnail}></img>
                                     </div>
                                 </div>

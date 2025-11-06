@@ -282,7 +282,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                         <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
                         <h3>No photos yet</h3>
                         <p>Create the first folder or drag or drop photos to get started</p>
-                        <button>+ Create Your First Folder</button>
+                        {/* <button>+ Create Your First Folder</button> */}
                     </div>
                 </div>
             :
