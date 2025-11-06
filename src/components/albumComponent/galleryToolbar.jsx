@@ -106,7 +106,8 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, h
 
     return (
         <div>
-            <div className='px-3 py-3 d-flex justify-content-between position-sticky top-0'>
+            <div className='px-3 py-3 d-flex justify-content-between gap-5 position-sticky top-0'
+            style={{overflowX: 'auto'}}>
                 <div className='d-flex gap-5'>
                     <div className='d-flex align-items-center gap-2'>
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '0.7rem'}}/>
@@ -125,7 +126,7 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, h
                         onClick={()=>{if (isShowFaceFilterComponent===false) setIsShowFaceFilterComponent(true)}}
                         >
                             <FontAwesomeIcon icon={faClipboardUser} style={{fontSize: '1.3rem'}}/>
-                            <p className='m-0'>Filter by face</p>
+                            <p className='m-0 text-nowrap'>Filter by face</p>
                         </div>
                         {isShowFaceFilterComponent?
                             <div className='filter-by-face-container'>
@@ -138,7 +139,7 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, h
                 </div>
                 <div className='d-flex align-items-center gap-3' style={{minHeight: '1.5rem'}}>
                     {selectedImages.length > 0?
-                    <p className='m-0 p-0'>{selectedImages.length} Selected</p>  
+                    <p className='m-0 p-0 text-nowrap'>{selectedImages.length} Selected</p>  
                     :
                     null}
 
