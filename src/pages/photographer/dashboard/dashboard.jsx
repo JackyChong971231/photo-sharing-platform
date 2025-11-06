@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage } from "@fortawesome/free-solid-svg-icons"
+import { faEllipsisVertical, faImage } from "@fortawesome/free-solid-svg-icons"
 import { useSharedContext } from '../../../SharedContext';
 import MetadataCard from '../../../components/metadataCard/metadataCard';
 
@@ -14,14 +14,35 @@ import album_thumbnail_4 from '../../../assets/dummy/album_thumbnail_4.jpeg';
 import chart_img from '../../../assets/dummy/chart.png'
 
 import './dashboard.css'
-import { getAllAlbumsByStudioID, getMetadataByStudioID } from '../../../apiCalls/photographer/albumService';
+import { deleteAlbumByID, getAllAlbumsByStudioID, getMetadataByStudioID, setAlbumVisibility } from '../../../apiCalls/photographer/albumService';
 import { postgresql_datetime_to_date } from '../../../utils/common';
+
+export const AlbumOptionMenu = ({album_info, handleAlbumDelete, handleAlbumMakePublicOrPrivate, setOptionMenuAlbumID}) => {
+    return (
+        <div className='position-absolute p-2 mt-5 mx-2 end-0 bg-light'
+        style={{width: '8rem', borderRadius: '0.7rem'}}>
+            <button className='btn btn-light border-0 rounded px-3 py-1 w-100'
+            style={{borderRadius: '1.4rem'}}
+            onClick={() => {
+                handleAlbumDelete(album_info.id);
+                setOptionMenuAlbumID(null);
+            }}>Delete</button>
+            <button className='btn btn-light border-0 rounded px-3 py-1 w-100'
+            style={{borderRadius: '1.4rem'}}
+            onClick={() => {
+                handleAlbumMakePublicOrPrivate(album_info.id, album_info.is_public);
+                setOptionMenuAlbumID(null);
+            }}>Make {album_info.is_public?'private':'public'}</button>
+        </div>
+    )
+}
 
 export const Dashboard = () => {
     const navigate = useNavigate();
     const [allAlbums, setAllAlbums] = useState([]);
     const [metadata, setMetadata] = useState([]);
     const imgWidth = '13rem';
+    const [optionMenuAlbumID, setOptionMenuAlbumID] = useState(null)
 
     useEffect(() => {
         const fetch_all_albums = async (studio_id) => {
@@ -51,6 +72,40 @@ export const Dashboard = () => {
         navigate("/album/"+albumId); // relative to base
     };
 
+    const handleAlbumDelete = async (album_id) => {
+        const confirmed = window.confirm("Are you sure you want to delete this album?");
+        if (!confirmed) return;
+
+        const { statusCode } = await deleteAlbumByID(album_id);
+
+        if (statusCode === 200) {
+            setAllAlbums(prev => prev.filter(a => a.id !== album_id));
+        }
+    }
+
+    const handleAlbumMakePublicOrPrivate = async (album_id, currentVisibility) => {
+        const newVisibility = !currentVisibility;
+
+        const confirmed = window.confirm(
+            newVisibility 
+            ? "This album will become PUBLIC and visible to clients. Continue?" 
+            : "This album will become PRIVATE and hidden from clients. Continue?"
+        );
+
+        if (!confirmed) return;
+
+        const { statusCode } = await setAlbumVisibility(album_id, newVisibility);
+
+        if (statusCode === 200) {
+            // Update UI without refetching
+            setAllAlbums(prev =>
+            prev.map(a =>
+                a.id === album_id ? { ...a, is_public: newVisibility } : a
+            )
+            );
+        }
+    }
+
     return (
         <div className='p-3'>
             <div className='dashboard-header p-2'>
@@ -74,17 +129,33 @@ export const Dashboard = () => {
                 <div className='galleries-container'>
                     {
                         allAlbums.map(album_info => (
-                            <div className='dashboard-gallery'
-                            onClick={() => {handleClick(album_info.id)}}>
+                            <div className='dashboard-gallery'>
                                 <div>
                                     <div className='position-relative' style={{width: imgWidth, height: imgWidth}}>
-                                        <div className='position-absolute p-2 d-flex gap-2'>
-                                            <p className={'dashboard-album-tag '+(album_info.is_public?'dashboard-album-tag--public':'dashboard-album-tag--private')}>{album_info.is_public?'Public':'Private'}</p>
+                                        <div className='position-absolute w-100 p-2 d-flex justify-content-between align-items-center'>
+                                            <div className='d-flex gap-2'>
+                                                <p className={'dashboard-album-tag '+(album_info.is_public?'dashboard-album-tag--public':'dashboard-album-tag--private')}>{album_info.is_public?'Public':'Private'}</p>
+                                            </div>
+                                            <div>
+                                                <div className='dashboard-album-option-btn'
+                                                onClick={() => {
+                                                    setOptionMenuAlbumID(prevOptionMenuAlbumID => prevOptionMenuAlbumID===album_info.id?null:album_info.id)
+                                                }}>
+                                                    <FontAwesomeIcon icon={faEllipsisVertical} />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <img style={{width: '100%'}} src={album_info.thumbnail}></img>
+                                        {optionMenuAlbumID===album_info.id ? (
+                                            <AlbumOptionMenu album_info={album_info} handleAlbumDelete={handleAlbumDelete} handleAlbumMakePublicOrPrivate={handleAlbumMakePublicOrPrivate} setOptionMenuAlbumID={setOptionMenuAlbumID}/>
+                                        ) : (
+                                            null
+                                        )
+                                        }
+                                        <img onClick={() => {handleClick(album_info.id)}} style={{width: '100%'}} src={album_info.thumbnail}></img>
                                     </div>
                                 </div>
                                 <div className='dashboard-gallery-description'
+                                onClick={() => {handleClick(album_info.id)}}
                                 style={{width: imgWidth, paddingInline: '0.2rem'}}>
                                     <p className='m-0'>{album_info.title}</p>
 

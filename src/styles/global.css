@@ -33,7 +33,6 @@ a:hover {
 
 .form-input-group {
   position: relative;
-  margin-inline: 1rem;
   margin-block: 0.5rem;
   /* margin-bottom: 0.8rem; */
   /* border-radius: 0.5rem; */
@@ -46,7 +45,7 @@ a:hover {
   padding: 8px 6px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   outline: none;
   background: none;
 }
