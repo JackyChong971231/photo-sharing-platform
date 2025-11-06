@@ -15,7 +15,6 @@ import ImageUploadContainer from '../../../components/imageUploadContainer/image
 
 export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, photographersByStudio, setPhotographersByStudio }) => {
     const dummy_studio_id = 1;
-    const [isAlbumCreated, setIsAlbumCreated] = useState(false)
 
     const handleInputChange = (e) => {
         setFormData({
@@ -65,6 +64,10 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
         setFormData((prev) => ({ ...prev, thumbnail: blob }));
     };
 
+    const onCoverPhotoChange = (blob) => {
+        setFormData((prev) => ({ ...prev, cover_photo: blob }));
+    };
+
     useEffect(() => {
         const fetchPhotographers = async () => {
             const photographers = await getAllPhotographersByStudio(dummy_studio_id);
@@ -75,101 +78,115 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
     }, []);
 
     return (
-        <div className='pb-4' style={{
+        <div className='position-relative pb-4' style={{
             overflowY: 'auto', 
             height: '100vh',
-            display: 'flex',
-            flexDirection: 'column'
+            width: '100%'
         }}>
-            <div className='p-4'
-                style={{overflow: 'auto', flex: '1 1 auto'}}>
-                <div className='mx-4 mt-1'>
-                    <input
-                    className='album_title_input px-3 bg-transparent'
-                    type="text"
-                    name="album_title"
-                    value={formData.album_title}
-                    onChange={handleInputChange}
-                    placeholder="Untitled Album"
-                    style={{ fontSize: '2.5rem', height: '4rem', marginRight: '1rem' }}
-                    />
-
-                    {isAlbumCreated && (
-                        <div className='d-flex gap-2 align-items-center text-success mt-2'>
-                        <FontAwesomeIcon icon={faCircleCheck} />
-                        <p className='m-0'>Album is created successfully!</p>
-                        </div>
-                    )}
-                </div>
-                <div className='mx-4 my-5'>
-                    <p className='custom-bold-text'>Client Information</p>
-                    <div className='d-flex flex-wrap mb-3'>
-                        <div className='form-input-group'>
-                            <input
-                                type="text"
-                                name="client_first_name"
-                                value={formData.client_first_name}
-                                onChange={handleInputChange}
-                                placeholder=" "
-                                className='form-input ps-3'
-                            />
-                            <label className='custom-input-label form-label ms-2'><small>First name</small></label>
-                        </div>
-                        <div className='form-input-group'>
-                            <input
-                                type="text"
-                                name="client_last_name"
-                                value={formData.client_last_name}
-                                onChange={handleInputChange}
-                                placeholder=" "
-                                className='form-input ps-3'
-                            />
-                            <label className='custom-input-label form-label ms-2'><small>Last name</small></label>
-                        </div>
-                        <div className='form-input-group'>
-                            <input
-                                type="text"
-                                name="client_email"
-                                value={formData.client_email}
-                                onChange={handleInputChange}
-                                placeholder=" "
-                                className='form-input ps-3'
-                            />
-                            <label className='custom-input-label form-label ms-2'><small>Email</small></label>
-                        </div>
-                        <div className='form-input-group'>
-                            <input
-                                type="text"
-                                name="client_phone"
-                                value={formData.client_phone}
-                                onChange={handleInputChange}
-                                placeholder=" "
-                                className='form-input ps-3'
-                            />
-                            <label className='custom-input-label form-label ms-2'><small>Phone Number</small></label>
+            <div>
+                <div className='sticky-header'>
+                    <div className='d-flex flex-wrap gap-3 align-items-center justify-content-between px-3 py-4'>
+                        <h3 className='m-0 text-nowrap' style={{color: 'var(--text-color)', fontSize: '1.7rem'}}>Create New Album</h3>
+                        <div className='position-relative d-flex justify-content-between'
+                        style={{flex: '0 0 auto'}}>
+                            <span></span>
+                            <div className='d-flex gap-4'>
+                                <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
+                                onClick={() => {submitCreateAlbum()}}>Create</button>
+                                <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Clear</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div className='d-flex gap-5 mx-4 mt-5'>
-                    <div>
-                        <ImageUploadContainer size='15rem' onThumbnailChange={onThumbnailChange}/>
-                    </div>
-                    <div className=''>
-                        <p className='custom-bold-text'>Album Information</p>
-                        <div className='d-flex flex-wrap'>
-                            <div className='form-input-group'>
+                <div className='p-4'
+                    style={{overflow: 'auto', flex: '1 1 auto', color: 'var(--text-color)',
+                        borderTop: '1px solid gray'
+                    }}>
+                    <div className='mx-4 mt-1' style={{
+                        minWidth: '40rem', maxWidth: '50rem'
+                    }}>
+                        <div>
+                            <label className='custom-input-label-2'>Album Title *</label>
+                            <input
+                            className='form-input px-3 bg-transparent'
+                            type="text"
+                            name="album_title"
+                            value={formData.album_title}
+                            onChange={handleInputChange}
+                            placeholder="Untitled Album"
+                            style={{ marginRight: '1rem' }}
+                            />
+                        </div>
+                        <div className='w-100 mt-2'>
+                            <label className='custom-input-label-2'>Album Cover Photo *</label>
+                            <ImageUploadContainer textOnContainer={<p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>cover photo</span></p>} height='12rem' width='100%' onImageChange={onCoverPhotoChange}/>
+                        </div>
+                        <div className='d-flex gap-4 my-3'>
+                            <div className='form-input-group flex-grow-1'>
+                                <label className='custom-input-label-2'>Client First Name *</label>
                                 <input
                                     type="text"
-                                    name="album_description"
-                                    value={formData.album_description}
+                                    name="client_first_name"
+                                    value={formData.client_first_name}
                                     onChange={handleInputChange}
                                     placeholder=" "
                                     className='form-input ps-3'
                                 />
-                                <label className='custom-input-label form-label ms-2'><small>Album Description</small></label>
+                                {/* <label className='custom-input-label form-label ms-2'><small>First name</small></label> */}
                             </div>
-                            <div className='form-input-group'>
+                            <div className='form-input-group flex-grow-1'>
+                                <label className='custom-input-label-2'>Client Last Name *</label>
+                                <input
+                                    type="text"
+                                    name="client_last_name"
+                                    value={formData.client_last_name}
+                                    onChange={handleInputChange}
+                                    placeholder=" "
+                                    className='form-input ps-3'
+                                />
+                                {/* <label className='custom-input-label form-label ms-2'><small>Last name</small></label> */}
+                            </div>
+                        </div>
+                        <div className='d-flex flex-column gap-4'>
+                            <div>
+                                <label className='custom-input-label-2'>Client Email *</label>
+                                <input
+                                    type="text"
+                                    name="client_email"
+                                    value={formData.client_email}
+                                    onChange={handleInputChange}
+                                    placeholder=" "
+                                    className='form-input ps-3'
+                                />
+                            </div>
+                            <div>
+                                <label className='custom-input-label-2'>Client Phone Number *</label>
+                                <input
+                                    type="text"
+                                    name="client_phone"
+                                    value={formData.client_phone}
+                                    onChange={handleInputChange}
+                                    placeholder=" "
+                                    className='form-input ps-3'
+                                />
+                            </div>
+                            <div className='d-flex justify-content-between gap-5'>
+                                <div className='flex-grow-0'>
+                                    <ImageUploadContainer textOnContainer={<p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>thumbnail</span></p>} width='13rem' height='13rem' onImageChange={onThumbnailChange}/>
+                                </div>
+                                <div className='flex-grow-1'>
+                                    <label className='custom-input-label-2'>Album Description *</label>
+                                    <textarea 
+                                        style={{width: '100%', minHeight: '5rem'}}
+                                        name="album_description"
+                                        value={formData.album_description}
+                                        onChange={handleInputChange}
+                                        className='p-2'
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className='custom-input-label-2'>Photo Shoot Location *</label>
                                 <input
                                     type="text"
                                     name="photo_shoot_location"
@@ -178,9 +195,9 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                                     placeholder=" "
                                     className='form-input ps-3'
                                 />
-                                <label className='custom-input-label form-label ms-2'><small>Photo Shoot Location</small></label>
                             </div>
-                            <div className='form-input-group'>
+                            <div>
+                                <label className='custom-input-label-2'>Photo Shoot Date *</label>
                                 <input
                                     type="text"
                                     name="photo_shoot_date"
@@ -190,68 +207,46 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                                     maxLength={10}
                                     className='form-input ps-3'
                                 ></input>
-                                <label className='custom-input-label form-label ms-2'><small>Photo Shoot Date</small></label>
                             </div>
-                            <div className='form-input-group'>
-                                <input
-                                    type="text"
-                                    name="album_creation_date"
-                                    value={formData.album_creation_date}
-                                    onChange={handleDateChange}
-                                    placeholder="mm/dd/yyyy"
-                                    className='form-input ps-3'
-                                />
-                                <label className='custom-input-label form-label ms-2'><small>Album Creation Date</small></label>
-                            </div>
-                        </div>
-                        <div className='ms-3 mt-3'>
-                            <p>Photographers:</p>
                             <div>
-                                {Array.from({ length: formData.photographers.length+1 }).map((_, i) => {
-                                    // filter out IDs that are already selected in other rows
-                                    const availablePhotographers = photographersByStudio.filter(
-                                        (p) => !formData.photographers.includes(p.id.toString()) || p.id.toString() === formData.photographers[i]
-                                    );
+                                <label className='custom-input-label-2'>Photographers *</label>
+                                <div>
+                                    {Array.from({ length: formData.photographers.length+1 }).map((_, i) => {
+                                        // filter out IDs that are already selected in other rows
+                                        const availablePhotographers = photographersByStudio.filter(
+                                            (p) => !formData.photographers.includes(p.id.toString()) || p.id.toString() === formData.photographers[i]
+                                        );
 
-                                    return (
-                                        <div className="d-flex align-items-center gap-3 mb-2" key={i}>
-                                            <label>{i + 1}.</label>
-                                            <select
-                                                name="photographer_name"
-                                                value={formData.photographers[i] || ''}
-                                                onChange={(e) => handlePhotographerChange(e, i)}
-                                                className="form-select"
-                                                style={{ width: '15rem' }}
-                                            >
-                                                <option value={null}>Select a photographer</option>
-                                                {availablePhotographers.map((photographer) => (
-                                                    <option key={photographer.id} value={photographer.id}>
-                                                        {photographer.first_name} {photographer.last_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <div onClick={() => handleRemovePhotographer(i)}
-                                            role='button'>
-                                                {(formData.photographers.length >= i+1)?
-                                                    <FontAwesomeIcon icon={faXmark} />
-                                                :null}
+                                        return (
+                                            <div className="d-flex align-items-center gap-3 mb-2" key={i}>
+                                                <label>{i + 1}.</label>
+                                                <select
+                                                    name="photographer_name"
+                                                    value={formData.photographers[i] || ''}
+                                                    onChange={(e) => handlePhotographerChange(e, i)}
+                                                    className="form-select"
+                                                    style={{ width: '15rem' }}
+                                                >
+                                                    <option value={null}>Select a photographer</option>
+                                                    {availablePhotographers.map((photographer) => (
+                                                        <option key={photographer.id} value={photographer.id}>
+                                                            {photographer.first_name} {photographer.last_name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div onClick={() => handleRemovePhotographer(i)}
+                                                role='button'>
+                                                    {(formData.photographers.length >= i+1)?
+                                                        <FontAwesomeIcon icon={faXmark} />
+                                                    :null}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
-                            {/* {photographerComponent} */}
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className='px-5 pt-3 position-relative d-flex justify-content-between'
-            style={{flex: '0 0 auto'}}>
-                <span></span>
-                <div className='d-flex gap-4'>
-                    <button className='px-4 py-1 bg-primary-subtle border border-secondary-subtle rounded'
-                    onClick={() => {submitCreateAlbum()}}>Create</button>
-                    <button className='px-4 py-1 bg-secondary-subtle border border-secondary-subtle rounded'>Clear</button>
                 </div>
             </div>
         </div>

@@ -185,6 +185,11 @@ export const insertAlbum = async (form_data, user, studio_id) => {
     base64Thumbnail = await fileToBase64(form_data.thumbnail);
   }
 
+  let base64CoverPhoto = null;
+  if (form_data.cover_photo) {
+    base64CoverPhoto = await fileToBase64(form_data.cover_photo);
+  }
+
   const request_body = {
     title: form_data.album_title,
     description: form_data.album_description,
@@ -198,6 +203,7 @@ export const insertAlbum = async (form_data, user, studio_id) => {
     event_location: form_data.photo_shoot_location,
     photographers: form_data.photographers,
     thumbnail: base64Thumbnail,
+    cover_photo: base64CoverPhoto,
     client_first_name: form_data.client_first_name,
     client_last_name: form_data.client_last_name,
     client_email: form_data.client_email,
@@ -324,4 +330,39 @@ export const renameFolderAPI = async (folder_id, new_name) => {
       body: error?.body ?? "Unexpected error"
     };
   }
+};
+
+export const deleteAlbumByID = async (album_id) => {
+  if (!album_id) {
+    throw new Error("album_id is required to delete an album");
+  }
+
+  try {
+    const { statusCode, body } = await apiGateway(
+      DELETE,
+      `/core/albums/${album_id}/delete/`
+    );
+
+    return { statusCode, body };
+  } catch (error) {
+    console.error("Error deleting album:", error);
+    return {
+      statusCode: error?.statusCode ?? 500,
+      body: error?.body ?? "Unexpected error"
+    };
+  }
+};
+
+export const setAlbumVisibility = async (album_id, is_public) => {
+  if (!album_id) throw new Error("album_id is required");
+  
+  const request_body = { is_public };
+
+  const { statusCode, body } = await apiGateway(
+    POST,
+    `/core/albums/${album_id}/visibility/`,
+    request_body
+  );
+
+  return { statusCode, body };
 };

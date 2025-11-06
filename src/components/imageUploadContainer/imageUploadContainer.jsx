@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function ImageUploadContainer({ size = '15rem', onThumbnailChange }) {
+export default function ImageUploadContainer({ textOnContainer = <p className="fw-semibold m-0">Click or drag to upload image</p>, width = '15rem', height = '15rem', onImageChange }) {
   const [preview, setPreview] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
@@ -39,7 +39,7 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
     setPreview(null);
     setPosition({ x: 0, y: 0 });
     if (inputRef.current) inputRef.current.value = null;
-    onThumbnailChange?.(null);
+    onImageChange?.(null);
   }
 
   function handleMouseDown(e) {
@@ -145,7 +145,7 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
     ctx.drawImage(img, drawX, drawY, scaledWidth, scaledHeight);
 
     canvas.toBlob((blob) => {
-      if (blob) onThumbnailChange?.(blob);
+      if (blob) onImageChange?.(blob);
     }, 'image/jpeg', 0.9);
   }
 
@@ -221,7 +221,7 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
       <div
         ref={containerRef}
         className="position-relative border border-secondary border-1 border-dashed rounded-4 overflow-hidden bg-light d-flex justify-content-center align-items-center text-secondary"
-        style={{ width: size, height: size, cursor: preview ? 'grab' : 'pointer' }}
+        style={{ width: width, height: height, cursor: preview ? 'grab' : 'pointer' }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
         onClick={!preview ? onClickUpload : undefined}
@@ -268,7 +268,7 @@ export default function ImageUploadContainer({ size = '15rem', onThumbnailChange
         ) : (
           <div className="text-center">
             <FontAwesomeIcon icon={faCloudArrowUp} size="2x" className="mb-2" />
-            <div className="fw-semibold">Click or drag to upload thumbnail</div>
+            {textOnContainer}
           </div>
         )}
 

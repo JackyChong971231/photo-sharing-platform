@@ -251,7 +251,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     }, [folderStructureArray, currentFolderID])
 
     return (
-        <div className='gallery-container p-3'
+        <div className='gallery-container flex-grow-1 p-3'
             ref={galleryRef}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}

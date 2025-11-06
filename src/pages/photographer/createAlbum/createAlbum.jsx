@@ -29,7 +29,9 @@ export const CreateAlbum = () => {
         photo_shoot_location: '',
         photo_shoot_date: '',
         album_creation_date: '',
-        photographers: []
+        photographers: [],
+        cover_photo: null,
+        thumbnail: null
     })
     const [isAlbumCreated, setIsAlbumCreated] = useState(false)
     const [albumCreatedMetadata, setAlbumCreatedMetadata] = useState(null);
@@ -37,6 +39,7 @@ export const CreateAlbum = () => {
     const location = useLocation();
 
     const submitCreateAlbum = async () => {
+        console.log(formData)
         const {statusCode, body} = await insertAlbum(formData, user, 1)
         if (statusCode===201) {
             
