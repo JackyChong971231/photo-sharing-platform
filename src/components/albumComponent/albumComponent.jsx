@@ -21,7 +21,6 @@ export const AlbumComponent = ({albumId}) => {
 
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
     const [imagesPerRow, setImagesPerRow] = useState(4); // default 4 per row
-    const imageSize = `calc((100% - ${(imagesPerRow - 1) * 1}rem) / ${imagesPerRow})`;
   
     // For Folder Structure Panel
     const [currentFolderID, setCurrentFolderID] = useState(null);

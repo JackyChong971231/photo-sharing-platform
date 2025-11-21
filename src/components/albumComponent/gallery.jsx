@@ -14,20 +14,7 @@ import { ImageOptionMenu } from './imageOptionMenu';
 
 export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, currentFolderID, setCurrentFolderID, imagesInFolder, setImagesInFolder, imgRefs, imagesPerRow, setImagesPerRow, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
     const [folderChildren, setFolderChildren] = useState([])
-    
-    const gridStyle = useMemo(() => ({
-        display: 'grid',
-        gridTemplateColumns: `repeat(${imagesPerRow}, 1fr)`,
-        gap: '2rem',
-        position: 'relative',
-        userSelect: 'none',
-        width: '100%',
-        maxWidth: '100%',
-        minWidth: 0,        // ← very important
-        paddingRight: '0.7rem',
-        // border: '2px solid blue',
 
-    }), [imagesPerRow]);
 
     // For image selection
     const galleryRef = useRef(null);
@@ -265,7 +252,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     }, [folderStructureArray, currentFolderID])
 
     return (
-        <div className='gallery-container flex-grow-1 p-3'
+        <div className='gallery-container flex-grow-1'
             ref={galleryRef}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
@@ -300,12 +287,28 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                     </div>
                 </div>
             :
-                <div className='flex-grow-1' style={gridStyle}>
+                <div className='flex-grow-1' 
+                // style={gridStyle}
+                style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '1rem',          
+                    width: '100%',
+                    maxWidth: '100%',
+                    minWidth: 0,
+                    position: 'relative',
+                    userSelect: 'none',
+                    border: '2px solid blue',
+                    overflowY: 'scroll',
+                    padding: '1rem'
+                }}
+                >
                     {imagesInFolder.map((img, i) => (
                         <div
                             className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
                             key={i}
                             ref={imgRefs.current[i]}
+                            // style={{ flex: `0 0 ${imageWidth}` }}
                             onMouseEnter={() => {
                                 if (selectedImages.length < 2 || 
                                     (selectedImages.length > 1 && !selectedImages.includes(i))
