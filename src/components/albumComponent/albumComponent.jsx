@@ -208,7 +208,7 @@ export const AlbumComponent = ({albumId}) => {
               <div className="album-divider-container" onMouseDown={handleMouseDown}><div className="album-divider"/></div>
 
               {/* -------------- Gallery related -------------- */}
-              <div className='flex-grow-1' style={{minHeight:'0', maxHeight:'100%', overflow: 'hidden'}}>
+              <div className='flex-grow-1' style={{minHeight:'0', maxHeight:'100%', height:'100%', overflow: 'hidden'}}>
                 <Gallery 
                   albumId={albumId} 
                   handlePhotosUpload={handlePhotosUpload}

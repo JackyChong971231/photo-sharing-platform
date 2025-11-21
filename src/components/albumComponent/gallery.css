@@ -154,7 +154,7 @@
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
-  /* border-bottom: 1px solid rgb(187, 187, 187); */
+  flex-grow: 0;
 }
 
 .gallery-folder {
@@ -169,6 +169,7 @@
   align-items: center;
   text-overflow: ellipsis;
   white-space: nowrap; /* Prevent text wrapping */
+  height: 2rem;
 }
 
 .gallery-folder > p {
