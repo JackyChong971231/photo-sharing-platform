@@ -35,12 +35,6 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     const [dragCurrent, setDragCurrent] = useState({ x: 0, y: 0 });
     const clickThreshold = 5;
 
-    const selectionBoxRef = useRef(null);
-    const dragStartRef = useRef({ x: 0, y: 0 });
-    const dragCurrentRef = useRef({ x: 0, y: 0 });
-    const isDraggingRef = useRef(false);
-    const rafIdRef = useRef(null);
-
     // For image hovering effect
     const [hoveredIndex, setHoveredIndex] = useState([]);
 
