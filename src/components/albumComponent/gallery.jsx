@@ -26,6 +26,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
         minWidth: 0,        // ← very important
         paddingRight: '0.7rem',
         // border: '2px solid blue',
+
     }), [imagesPerRow]);
 
     // For image selection
@@ -299,7 +300,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                     </div>
                 </div>
             :
-                <div style={gridStyle}>
+                <div className='flex-grow-1' style={gridStyle}>
                     {imagesInFolder.map((img, i) => (
                         <div
                             className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
