@@ -1,0 +1,33 @@
+.metacard-outer-container {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.metacard-title {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.metacard-value {
+    color: black;
+    font-size: 1.8rem;
+    font-weight: 350;
+}
+
+.metacard-description {
+    color: rgb(122, 122, 122);
+    font-size: 0.8rem;
+}
+
+.metacard-outer-container > div {
+    width: 10rem;
+}
+
+.metacard-outer-container > img {
+    width: 10rem;
+    object-fit: cover; /* maintain aspect ratio */
+    border: none;
+    outline: none;
+}

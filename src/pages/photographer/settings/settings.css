@@ -1,0 +1,59 @@
+/* .photographer-setting-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: row;   
+    height: 100%;          
+    flex: 1;
+} */
+
+/* Make outer wrapper a column flex container */
+.d-flex.flex-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;  /* full height of parent (h-100 on top-level div) */
+}
+
+/* Outer container takes remaining space under h2 */
+.photographer-setting-container-outer {
+    flex-grow: 1;    /* expands to fill remaining vertical space */
+    margin-inline: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+/* Inner container takes full height of outer */
+.photographer-setting-container {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: row;
+    height: 100%;    /* fill outer container */
+    width: 100%;
+}
+
+.photographer-settings-bar {
+    min-width: 10rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.photographer-settings-bar > p {
+    margin-block: 0.75rem;
+    padding-block: 0.5rem;
+    padding-inline: 0.75rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+}
+
+.photographer-settings-bar > p:hover {
+    background: lightgray;
+
+}
+
+.photographer-settings-content {
+    flex: 1;
+    overflow-y: auto;
+}
