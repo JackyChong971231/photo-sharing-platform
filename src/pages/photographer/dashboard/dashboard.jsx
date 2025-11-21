@@ -11,10 +11,9 @@ import album_thumbnail_2 from '../../../assets/dummy/album_thumbnail_2.jpg';
 import album_thumbnail_3 from '../../../assets/dummy/album_thumbnail_3.jpg';
 import album_thumbnail_4 from '../../../assets/dummy/album_thumbnail_4.jpeg';
 
-import chart_img from '../../../assets/dummy/chart.png'
-
 import './dashboard.css'
-import { deleteAlbumByID, getAllAlbumsByStudioID, getMetadataByStudioID, setAlbumVisibility } from '../../../apiCalls/photographer/albumService';
+import { deleteAlbumByID, getAllAlbumsByStudioID, setAlbumVisibility } from '../../../apiCalls/photographer/albumService';
+import { getMetadataByStudioID } from '../../../apiCalls/photographer/studioService';
 import { postgresql_datetime_to_date } from '../../../utils/common';
 
 export const AlbumOptionMenu = ({album_info, handleAlbumDelete, handleAlbumMakePublicOrPrivate, setOptionMenuAlbumID}) => {

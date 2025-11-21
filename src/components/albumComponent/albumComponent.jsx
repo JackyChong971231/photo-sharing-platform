@@ -10,7 +10,8 @@ import './albumComponent.css'
 import { buildTree, Sidebar } from './sidebar';
 import { GalleryToolbar } from './galleryToolbar';
 import { Gallery } from './gallery';
-import { deletePhotos, getFolderStructureByAlbumID, insertPhotos } from '../../apiCalls/photographer/albumService';
+import { deletePhotos, insertPhotos } from '../../apiCalls/photographer/photoService';
+import { getFolderStructureByAlbumID } from '../../apiCalls/photographer/folderService';
 
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -19,6 +20,8 @@ export const AlbumComponent = ({albumId}) => {
     const {user} = useSharedContext();
 
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
+    const [imagesPerRow, setImagesPerRow] = useState(4); // default 4 per row
+    const imageSize = `calc((100% - ${(imagesPerRow - 1) * 1}rem) / ${imagesPerRow})`;
   
     // For Folder Structure Panel
     const [currentFolderID, setCurrentFolderID] = useState(null);
@@ -174,6 +177,8 @@ export const AlbumComponent = ({albumId}) => {
           >
             <div style={{borderBottom: '1px solid #ccc', zIndex: '100'}}>
               <GalleryToolbar 
+              imagesPerRow = {imagesPerRow}
+              setImagesPerRow = {setImagesPerRow}
               imgMaxHeight={imgMaxHeight} 
               setImgMaxHeight={setImgMaxHeight} 
               selectedImages={selectedImages} 
@@ -184,7 +189,7 @@ export const AlbumComponent = ({albumId}) => {
             </div>
 
             <div className='flex-grow-1 d-flex'
-             style={{overflowY: 'hidden'}}>
+             style={{overflow: 'hidden'}}>
               <div className="file-structure-container"
                 style={{
                   width: sidebarWidth + "px",
@@ -203,8 +208,7 @@ export const AlbumComponent = ({albumId}) => {
               <div className="album-divider-container" onMouseDown={handleMouseDown}><div className="album-divider"/></div>
 
               {/* -------------- Gallery related -------------- */}
-              <div className='py-2 flex-grow-1'
-                style={{minHeight: '100%', maxHeight: '100%'}}>
+              <div className='flex-grow-1' style={{minHeight:'0', maxHeight:'100%', overflow: 'hidden'}}>
                 <Gallery 
                   albumId={albumId} 
                   handlePhotosUpload={handlePhotosUpload}
@@ -214,6 +218,8 @@ export const AlbumComponent = ({albumId}) => {
                   imagesInFolder={imagesInFolder}
                   setImagesInFolder={setImagesInFolder}
                   imgRefs={imgRefs}
+                  imagesPerRow = {imagesPerRow}
+                  setImagesPerRow = {setImagesPerRow}
                   imgMaxHeight={imgMaxHeight} 
                   selectedImages={selectedImages} 
                   setSelectedImages={setSelectedImages} 

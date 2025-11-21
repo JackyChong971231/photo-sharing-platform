@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { getFolderStructureByAlbumID, createFolderAPI, deleteFolderByID, renameFolderAPI } from '../../apiCalls/photographer/albumService';
+import { getFolderStructureByAlbumID, createFolderAPI, deleteFolderByID, renameFolderAPI } from '../../apiCalls/photographer/folderService';
 
 import './albumComponent.css';
 import './sidebar.css';

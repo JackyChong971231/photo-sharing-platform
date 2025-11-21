@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { hashPassword } from './utils/common';
 import { apiGateway, POST } from './apiCalls/apiMaster';
+import { userLogin } from './apiCalls/photographer/authService';
 
 const SharedContext = createContext();
 
@@ -15,26 +16,7 @@ export const SharedProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const email = credentials.email
-      const password_hash = await hashPassword(credentials.password)
-
-      // const response = await fetch("http://127.0.0.1:8000/core/login/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     email,
-      //     password_hash: password_hash,
-      //   }),
-      // });
-      const request_body = {
-        email,
-        password_hash: password_hash,
-      }
-      const {statusCode, body} = await apiGateway(POST, '/core/login/', request_body)
-
-      console.log(statusCode, body)
+      const {statusCode, body} = await userLogin(credentials)
 
       if (statusCode === 200) {
         console.log("Logged in user:", body.email);
