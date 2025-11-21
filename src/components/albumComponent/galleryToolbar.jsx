@@ -73,7 +73,7 @@ const FilterByFaceComponent = ({setIsShowFaceFilterComponent, filterFaces, setFi
     )
 }
 
-export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload, handlePhotosDelete}) => {
+export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload, handlePhotosDelete}) => {
     const [isShowFaceFilterComponent, setIsShowFaceFilterComponent] = useState(false)
     const filterByFaceRef = useRef(null)
     const [filterFaces, setFilterFaces] = useState([])
@@ -111,13 +111,12 @@ export const GalleryToolbar = ({imgMaxHeight, setImgMaxHeight, selectedImages, h
                 <div className='d-flex gap-5'>
                     <div className='d-flex align-items-center gap-2'>
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '0.7rem'}}/>
-                        <input
-                        type="range"
-                        min="100"
-                        max="400"
-                        value={imgMaxHeight}
-                        onChange={(e) => setImgMaxHeight(e.target.value)}
-                        className="w-full accent-blue-500 image_resize_bar"
+                        <input 
+                            type="range" 
+                            min="2" 
+                            max="8" 
+                            value={imagesPerRow} 
+                            onChange={(e) => setImagesPerRow(Number(e.target.value))} 
                         />
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>
                     </div>

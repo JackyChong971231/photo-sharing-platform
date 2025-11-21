@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo  } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis, faExpand, faFolder } from "@fortawesome/free-solid-svg-icons"
@@ -9,12 +9,25 @@ import { useSharedContext } from '../../SharedContext';
 import './albumComponent.css'
 import './gallery.css'
 import useRouteParams from '../../hooks/useRouteParams';
-import { getAllImagesByFolderID, insertPhotos } from '../../apiCalls/photographer/albumService';
+import { getAllImagesByFolderID, insertPhotos } from '../../apiCalls/photographer/photoService';
 import { ImageOptionMenu } from './imageOptionMenu';
 
-export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, currentFolderID, setCurrentFolderID, imagesInFolder, setImagesInFolder, imgRefs, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
+export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, currentFolderID, setCurrentFolderID, imagesInFolder, setImagesInFolder, imgRefs, imagesPerRow, setImagesPerRow, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
     const [folderChildren, setFolderChildren] = useState([])
     
+    const gridStyle = useMemo(() => ({
+        display: 'grid',
+        gridTemplateColumns: `repeat(${imagesPerRow}, 1fr)`,
+        gap: '2rem',
+        position: 'relative',
+        userSelect: 'none',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,        // ← very important
+        paddingRight: '0.7rem',
+        // border: '2px solid blue',
+    }), [imagesPerRow]);
+
     // For image selection
     const galleryRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -277,7 +290,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             </div>
             {(imagesInFolder.length===0 && folderChildren.length===0)?
                 // When there is NO images
-                <div className='empty-folder-container'>
+                <div className='empty-folder-container border'>
                     <div className='no-photos-yet-container'>
                         <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
                         <h3>No photos yet</h3>
@@ -286,60 +299,56 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                     </div>
                 </div>
             :
-                // When there is images
-                (imagesInFolder.map((img, i) => (
-                <div
-                    className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
-                    key={i}
-                    ref={imgRefs.current[i]}
-                    onMouseEnter={() => {
-                        if (selectedImages.length < 2 || 
-                            (selectedImages.length > 1 && !selectedImages.includes(i))
-                        ) {
-                            setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
-                        }
-                    }}
-                    onMouseLeave={() => {
-                        // only clear hover if option menu is not open for this image
-                        if (optionMenuIndex !== i) {
-                            setHoveredIndex(prevHoveredIndex => 
-                                prevHoveredIndex.filter(index => index !== i)
-                            );
-                        }
-                    }}
-                >
-                    <img
-                        src={img.source}
-                        style={{
-                            height: imgMaxHeight + "px",
-                            maxWidth: imgMaxHeight * 2 + "px",
-                            objectFit: "cover",
-                            display: "block"
-                        }}
-                    />
-                    <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
-                    <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
-                    <div className='position-absolute top-0 end-0 text-white m-2'
-                        style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
-                    >
-                        <button className='image-options-btn'
-                        onMouseDownCapture={(e) => {e.stopPropagation()}}
-                        onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
-                        {optionMenuIndex===i? 
-                        <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
-                        style={{transform: optionMenuAnchor, top: optionMenuTop}}>
-                            <ImageOptionMenu optionMenuWidth={optionMenuWidth} handlePhotosDownload={handlePhotosDownload} />
-                        </div>:null}
-                    </div>
-                    <div className='position-absolute bottom-0 end-0 text-white m-2'
-                        style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
-                    >
-                        <button className='image-expand-btn'>
-                            <FontAwesomeIcon icon={faExpand}/>
-                        </button>
-                    </div>
+                <div style={gridStyle}>
+                    {imagesInFolder.map((img, i) => (
+                        <div
+                            className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
+                            key={i}
+                            ref={imgRefs.current[i]}
+                            onMouseEnter={() => {
+                                if (selectedImages.length < 2 || 
+                                    (selectedImages.length > 1 && !selectedImages.includes(i))
+                                ) {
+                                    setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i]) // set image to hover
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                // only clear hover if option menu is not open for this image
+                                if (optionMenuIndex !== i) {
+                                    setHoveredIndex(prevHoveredIndex => 
+                                        prevHoveredIndex.filter(index => index !== i)
+                                    );
+                                }
+                            }}
+                        >
+                            <img
+                                src={img.source}
+                            />
+                            <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
+                            <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
+                            <div className='position-absolute top-0 end-0 text-white m-2'
+                                style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                            >
+                                <button className='image-options-btn'
+                                onMouseDownCapture={(e) => {e.stopPropagation()}}
+                                onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
+                                {optionMenuIndex===i? 
+                                <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
+                                style={{transform: optionMenuAnchor, top: optionMenuTop}}>
+                                    <ImageOptionMenu optionMenuWidth={optionMenuWidth} handlePhotosDownload={handlePhotosDownload} />
+                                </div>:null}
+                            </div>
+                            <div className='position-absolute bottom-0 end-0 text-white m-2'
+                                style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                            >
+                                <button className='image-expand-btn'>
+                                    <FontAwesomeIcon icon={faExpand}/>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                )))
+                // When there is images
             }
 
             {isDragging && (
