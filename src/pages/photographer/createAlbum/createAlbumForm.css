@@ -1,0 +1,24 @@
+.album_title_input {
+    border-radius: 0.4rem;
+    border: 1px solid rgb(186, 186, 186);
+    outline: none;
+}
+
+.custom-input-label {
+    background-color: #f8f8f8ff !important;
+}
+
+.custom-input-label-2 {
+    padding-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    margin-inline: 1.5rem;
+    /* border-bottom: 1px solid rgb(188, 188, 188); */
+    flex-grow: 1;
+    z-index: 10; /* make sure it's on top */
+    backdrop-filter: blur(10px); /* apply blur */
+}
