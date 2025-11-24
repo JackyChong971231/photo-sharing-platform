@@ -40,14 +40,51 @@
   z-index: 3000000;
 }
 
-.image-container {
+.gallery-container {
   position: relative;
-  display: "inline-block";
-  box-sizing: "border-box";
-  padding: 0px;
-  border: none;
-  margin: 5px;
+  display: flex;
+  flex-direction: column;  /* stack children vertically */
+  flex-grow: 1;            /* take remaining space of parent */
+  min-height: 0;           /* allow scrolling in flex */
+  overflow-y: auto;        /* scroll vertically if content exceeds */
+  overflow-x: hidden;      /* prevent horizontal scroll */
+  gap: 1rem;               /* optional spacing */
+  position: relative;
+  max-height: 100%;
+  user-select: none;
+  height: 100%;
+  padding-right: 0.5rem;
 }
+
+.image-container {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    padding: 0.3rem;
+    /* overflow: hidden;  */
+    display: block;    /* no flex */
+  }
+  
+  .image-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* clip the image only */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 2px solid red; */
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* .image-container img {
+  height: 100%;
+  width: auto;             
+  object-fit: cover;
+}  */
 
 .image-container--hovered {
   box-shadow: 2px 2px 10px 4px rgba(0, 0, 0, 0.3);
@@ -60,10 +97,10 @@
   inset: 0; /* shorthand for top, right, bottom, left = 0 */
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.7) 0%,      /* top dark */
-    transparent 40%,            /* fade out */
-    transparent 60%,            /* middle transparent */
-    rgba(0, 0, 0, 0.7) 100%     /* bottom dark */
+    rgba(0, 0, 0, 0.2) 0%,      /* top dark */
+    rgba(0, 0, 0, 0.2) 40%,            /* fade out */
+    rgba(0, 0, 0, 0.2) 60%,            /* middle transparent */
+    rgba(0, 0, 0, 0.2) 100%     /* bottom dark */
   );
   pointer-events: none;
   transition: opacity 0.3s ease; /* optional smooth fade-in */
@@ -141,8 +178,8 @@
 .image-container-border {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: calc(100% + 1rem);
-  height: calc(100% + 1rem);
+  width: calc(100%);
+  height: calc(100%);
   top: 50%;
   left: 50%;
   border: 3px solid #007bff;

@@ -110,7 +110,7 @@ export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, set
             style={{overflowX: 'auto'}}>
                 <div className='d-flex gap-5'>
                     <div className='d-flex align-items-center gap-2'>
-                        <FontAwesomeIcon icon={faImage} style={{fontSize: '0.7rem'}}/>
+                        <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>
                         <input 
                             type="range" 
                             min="2" 
@@ -118,7 +118,7 @@ export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, set
                             value={imagesPerRow} 
                             onChange={(e) => setImagesPerRow(Number(e.target.value))} 
                         />
-                        <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>
+                        <FontAwesomeIcon icon={faImage} style={{fontSize: '0.7rem'}}/>
                     </div>
                     <div ref={filterByFaceRef} >
                         <div className='d-flex align-items-center gap-2' style={{cursor: 'pointer'}}

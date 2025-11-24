@@ -269,8 +269,8 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     }, [folderStructureArray, currentFolderID])
 
     return (
-        <div className='gallery-container flex-grow-1'
-            // ref={galleryRef}
+        <div className='gallery-container'
+            ref={galleryRef}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -278,7 +278,6 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            style={{ position: "relative", userSelect: "none" }}
         >
             <div className='gallery-folder-container'
             style={{paddingBottom: (folderChildren.length>0?'2rem':'0rem')}}
@@ -293,99 +292,96 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                     ))
                 }
             </div>
-            <div className='flex-grow-1' 
+            <div
             // style={gridStyle}
             style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '1rem',          
+                display: 'grid',
+                gridTemplateColumns: `repeat(${imagesPerRow}, 1fr)`,
+                gap: `${(2/imagesPerRow)+0.03*imagesPerRow}rem`,
                 width: '100%',
-                maxWidth: '100%',
-                minWidth: 0,
-                position: 'relative',
-                userSelect: 'none',
-                // border: '2px solid blue',
-                overflowY: 'scroll',
-                padding: '1rem'
+                boxSizing: 'border-box',
+                gridAutoRows: 'auto',  // rows grow naturally
+                height: 'auto',        // important: let grid content determine height
             }}
-            ref={galleryRef}
+            // ref={galleryRef}
             >
-            {(imagesInFolder.length===0 && folderChildren.length===0)?
-                // When there is NO images
-                <div className='empty-folder-container border'>
-                    <div className='no-photos-yet-container'>
-                        <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
-                        <h3>No photos yet</h3>
-                        <p>Create the first folder or drag or drop photos to get started</p>
-                        {/* <button>+ Create Your First Folder</button> */}
+                {(imagesInFolder.length===0 && folderChildren.length===0)?
+                    // When there is NO images
+                    <div className='empty-folder-container border'>
+                        <div className='no-photos-yet-container'>
+                            <FontAwesomeIcon icon={faCamera} style={{fontSize: '5rem', color: 'lightgray'}}/>
+                            <h3>No photos yet</h3>
+                            <p>Create the first folder or drag or drop photos to get started</p>
+                            {/* <button>+ Create Your First Folder</button> */}
+                        </div>
                     </div>
-                </div>
-            :
-                (imagesInFolder.map((img, i) => (
+                :
+                    (imagesInFolder.map((img, i) => (
+                        <div
+                            className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
+                            key={i}
+                            ref={imgRefs.current[i]}
+                            onMouseEnter={() => {
+                                if (selectedImages.length < 2 || 
+                                    (selectedImages.length > 1 && !selectedImages.includes(i))
+                                ) {
+                                    setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i])
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (optionMenuIndex !== i) {
+                                    setHoveredIndex(prevHoveredIndex => 
+                                        prevHoveredIndex.filter(index => index !== i)
+                                    );
+                                }
+                            }}
+                        >
+                            <div className='image-wrapper'>
+                                <img
+                                    src={img.source}
+                                    loading='lazy'
+                                />
+                            </div>
+                            <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
+                            <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
+                            <div className='position-absolute top-0 end-0 text-white m-2'
+                                style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                            >
+                                <button className='image-options-btn'
+                                onMouseDownCapture={(e) => {e.stopPropagation()}}
+                                onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
+                                {optionMenuIndex===i? 
+                                <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
+                                style={{transform: optionMenuAnchor, top: optionMenuTop}}>
+                                    <ImageOptionMenu optionMenuWidth={optionMenuWidth} handlePhotosDownload={handlePhotosDownload} />
+                                </div>:null}
+                            </div>
+                            <div className='position-absolute bottom-0 end-0 text-white m-2'
+                                style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
+                            >
+                                <button className='image-expand-btn'>
+                                    <FontAwesomeIcon icon={faExpand}/>
+                                </button>
+                            </div>
+                        </div>
+                    )))
+                    // When there is images
+                }
+                {isDragging && (
                     <div
-                        className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
-                        key={i}
-                        ref={imgRefs.current[i]}
-                        style={{ width: `${imageWidth}px`, height: `${imageWidth}px` }}
-                        onMouseEnter={() => {
-                            if (selectedImages.length < 2 || 
-                                (selectedImages.length > 1 && !selectedImages.includes(i))
-                            ) {
-                                setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex, i])
-                            }
-                        }}
-                        onMouseLeave={() => {
-                            if (optionMenuIndex !== i) {
-                                setHoveredIndex(prevHoveredIndex => 
-                                    prevHoveredIndex.filter(index => index !== i)
-                                );
-                            }
-                        }}
-                    >
-                        <img
-                            src={img.source}
-                            loading='lazy'
-                        />
-                        <div className='image-container-border' style={{visibility: (selectedImages.includes(i)?'visible':'hidden')}}/>
-                        <div className={`image-container-hover-overlay ${hoveredIndex.includes(i) ? 'image-container-hover-overlay--hovered' : ''}`}></div>
-                        <div className='position-absolute top-0 end-0 text-white m-2'
-                            style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
-                        >
-                            <button className='image-options-btn'
-                            onMouseDownCapture={(e) => {e.stopPropagation()}}
-                            onClick={(e) => {showImageOptionMenu(e,i)}}><FontAwesomeIcon style={{fontSize: '0.75rem'}} icon={faEllipsis} /></button>
-                            {optionMenuIndex===i? 
-                            <div className={`image-option-menu ${optionMenuIndex===i ? 'image-option-menu--show' : 'image-option-menu--hidden'}`}
-                            style={{transform: optionMenuAnchor, top: optionMenuTop}}>
-                                <ImageOptionMenu optionMenuWidth={optionMenuWidth} handlePhotosDownload={handlePhotosDownload} />
-                            </div>:null}
-                        </div>
-                        <div className='position-absolute bottom-0 end-0 text-white m-2'
-                            style={{visibility: (hoveredIndex.includes(i)?'visible':'hidden')}}
-                        >
-                            <button className='image-expand-btn'>
-                                <FontAwesomeIcon icon={faExpand}/>
-                            </button>
-                        </div>
-                    </div>
-                )))
-                // When there is images
-            }
-            {isDragging && (
-                <div
-                style={{
-                    position: "absolute",
-                    left: Math.min(dragStart.x, dragCurrent.x),
-                    top: Math.min(dragStart.y, dragCurrent.y),
-                    width: Math.abs(dragCurrent.x - dragStart.x),
-                    height: Math.abs(dragCurrent.y - dragStart.y),
-                    backgroundColor: "rgba(0, 123, 255, 0.2)",
-                    border: "1px solid #007bff",
-                    pointerEvents: "none", // so it doesn’t block mouse events
-                    zIndex: 1000
-                }}
-                />
-            )}
+                    style={{
+                        position: "absolute",
+                        left: Math.min(dragStart.x, dragCurrent.x),
+                        top: Math.min(dragStart.y, dragCurrent.y),
+                        width: Math.abs(dragCurrent.x - dragStart.x),
+                        height: Math.abs(dragCurrent.y - dragStart.y),
+                        backgroundColor: "rgba(0, 123, 255, 0.2)",
+                        border: "1px solid #007bff",
+                        pointerEvents: "none", // so it doesn’t block mouse events
+                        zIndex: 1000
+                    }}
+                    />
+                )}
             </div>
 
 
