@@ -16,3 +16,11 @@ export const getMetadataByStudioID = async (studioID) => {
 
     return { statusCode, body }
 }
+
+export const getStudios = async () => {
+  const dummy = [
+    {id: 0, name:'Rosewood Studio'},
+    {id: 1, name:'Happy Studio'},
+  ]
+  return dummy
+}

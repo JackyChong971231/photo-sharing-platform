@@ -36,7 +36,7 @@ const PhotographerNavbar = () => {
         </div>
       </div>
       <div className="photographer-navbar-panel">
-        <section>INTERACTIONS</section>
+        {/* <section>INTERACTIONS</section>
           <div className="navLink-container">
             <NavLink className='navLink-container-button' to="/" activeClassName="active-link">
               <FontAwesomeIcon icon={faBell} />
@@ -50,7 +50,7 @@ const PhotographerNavbar = () => {
               <FontAwesomeIcon icon={faCalendar} />
               <p>Calendar</p>
             </NavLink>
-          </div>
+          </div> */}
         <section>MANAGEMENT</section>
           <div className="navLink-container">
             <NavLink className='navLink-container-button' to="/" activeClassName="active-link">

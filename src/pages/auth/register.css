@@ -1,0 +1,126 @@
+.register-title {
+  margin-bottom: 0.3rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333333;
+}
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #fafafa;
+  font-family: 'Inter', sans-serif;
+}
+
+.register-card {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  width: 500px;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.register-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.2rem;
+  color: #333;
+}
+
+.register-card p {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+/* Profile picture */
+.profile-picture-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.profile-preview {
+  margin-top: 0.5rem;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+/* Multi-column rows */
+.name-row, .contact-row, .password-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.input-group input,
+.input-group select {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #888;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Checkbox */
+.checkbox-group {
+  margin-bottom: 1rem;
+}
+
+/* Button */
+.register-button {
+  width: 100%;
+  padding: 0.7rem;
+  background-color: #333;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.register-button:hover {
+  background-color: #000;
+}
+
+/* Footer */
+.footer-text {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.footer-text a {
+  color: #333;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer-text a:hover {
+  text-decoration: underline;
+}

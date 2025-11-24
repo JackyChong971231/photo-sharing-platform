@@ -13,3 +13,7 @@ export const userLogin = async (credentials) => {
     const {statusCode, body} = await apiGateway(POST, '/core/auth/login/', request_body)
     return {statusCode, body}
 }
+
+export const userRegister = async (formData) => {
+    console.log(formData)
+}

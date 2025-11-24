@@ -18,8 +18,10 @@ function AppRoutes() {
   const isRoot = location.pathname === "/";
 
   // Handle root path separately
-  if (isRoot) {
-    return user.isAuthenticated ? <PhotographerRoutes /> : <AuthRoutes />;
+  if (user.isAuthenticated) {
+    if (isRoot) {return <PhotographerRoutes />} 
+  } else {
+    return <AuthRoutes />
   }
 
   return (user.role === "photographer" || user.role === "studio_owner") ? <PhotographerRoutes /> : <CustomerRoutes />;

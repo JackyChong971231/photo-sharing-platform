@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPhone, faEnvelope, faLock, faShieldHalved, faEarthAmericas, faCircleQuestion, faCircleInfo, faChevronRight } from "@fortawesome/free-solid-svg-icons"
 import { useSharedContext } from '../SharedContext';
 import { Login } from '../pages/auth/login';
-import { Signup } from '../pages/auth/signup';
+import { Register, SignUp } from '../pages/auth/register';
 
 
 export const AuthRoutes = () => {
@@ -14,7 +14,7 @@ export const AuthRoutes = () => {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path='/login' element={<Login />} />
-                <Route path='/signup' element={<Signup />} />
+                <Route path='/register' element={<Register />} />
             </Routes>
         </div>
         
