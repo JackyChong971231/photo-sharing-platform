@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { hashPassword } from './utils/common';
 import { apiGateway, POST } from './apiCalls/apiMaster';
-import { userLogin } from './apiCalls/photographer/authService';
+import { userLogin, userRegister } from './apiCalls/photographer/authService';
 
 const SharedContext = createContext();
 
@@ -13,6 +13,31 @@ export const SharedProvider = ({ children }) => {
     id: null,
     name: null,
   });
+
+  const register = async (formData) => {
+    try {
+      const {statusCode, body} = await userRegister(formData)
+
+      if (statusCode === 201) {
+        console.log("Registered and logged in user:", body.email);
+        localStorage.setItem("token", body.token);
+
+        const decoded_jwt = jwtDecode(body.token);
+        console.log(decoded_jwt)
+
+        setUser({
+          isAuthenticated: true,
+          role: decoded_jwt.role,
+          id: decoded_jwt.user_id, // typical JWT user id claim
+          email: decoded_jwt.email,
+        });
+      } else {
+        console.log("Registered and logged in failed")
+      }
+    } catch (error) {
+      console.error("Error during register:", error);
+    }
+  }
 
   const login = async (credentials) => {
     try {
@@ -71,7 +96,7 @@ export const SharedProvider = ({ children }) => {
 
   return (
     <SharedContext.Provider value={{
-      user, setUser, login, logout
+      user, setUser, register, login, logout
       }}
     >
       {children}

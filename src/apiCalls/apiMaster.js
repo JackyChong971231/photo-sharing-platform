@@ -5,18 +5,28 @@ export const DELETE    = "DELETE"
 const serverUrl = 'http://127.0.0.1:8000';
 
 export const apiGateway = async (method, endPoint, requestBody) => {
-    const response = await fetch(serverUrl + endPoint, {
+    let options = {
         method: method,
         mode: 'cors',
-        headers: { 
-            'Content-Type': 'application/json'},
-        body: (method !== GET)? JSON.stringify(requestBody): null
-    })
-    const statusCode = await response.status
+    };
+
+    // Determine if the body is FormData
+    if (method !== 'GET' && requestBody) {
+        if (requestBody instanceof FormData) {
+            options.body = requestBody;
+            // Do NOT set Content-Type, browser will set it automatically
+        } else {
+            options.headers = { 'Content-Type': 'application/json' };
+            options.body = JSON.stringify(requestBody);
+        }
+    }
+
+    const response = await fetch(serverUrl + endPoint, options);
+    const statusCode = response.status;
     const body = await response.json();
-    const apiResult = {statusCode, body}
-    return apiResult;
-}
+    return { statusCode, body };
+};
+
 
 export const apiGatewayFile = async (method, endPoint, formData) => {
   // method should usually be POST for file uploads

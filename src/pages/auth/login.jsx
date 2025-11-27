@@ -24,7 +24,7 @@ export const Login = () => {
         <h2 className="login-title">Welcome Back</h2>
         <p className="login-subtitle">Sign in to continue</p>
 
-        <div className="input-group">
+        <div className="custom-input-group">
           <label>Email</label>
           <input
             type="email"
@@ -35,7 +35,7 @@ export const Login = () => {
           />
         </div>
 
-        <div className="input-group">
+        <div className="custom-input-group">
           <label>Password</label>
           <input
             type="password"

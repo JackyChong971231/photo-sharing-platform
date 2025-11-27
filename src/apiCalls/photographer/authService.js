@@ -15,5 +15,38 @@ export const userLogin = async (credentials) => {
 }
 
 export const userRegister = async (formData) => {
-    console.log(formData)
-}
+    try {
+        // Create a FormData object to handle file upload
+        const password_hash = await hashPassword(formData.password)
+        const form = new FormData();
+        form.append("first_name", formData.firstName);
+        form.append("last_name", formData.lastName);
+        form.append("email", formData.email);
+        form.append("password_hash", password_hash);
+        form.append("role", formData.isStudioMember ? "photographer" : "customer");
+
+        if (formData.profilePicture)
+            form.append("profile_picture", formData.profilePicture);
+
+        if (formData.studioId)
+            form.append("studio", formData.studioId);
+        
+
+        // Debug
+        console.log("Submitting registration form:", form);
+
+        // Call API
+        const { statusCode, body } = await apiGateway(
+        POST,
+        '/core/auth/register/',
+        form,
+        {} // important for files
+        );
+
+        return { statusCode, body };
+
+    } catch (err) {
+        console.error("Error in userRegister:", err);
+        return { statusCode: 500, body: { error: "Registration failed" } };
+    }
+};
