@@ -53,15 +53,32 @@ const PhotographerNavbar = () => {
           </div> */}
         <section>MANAGEMENT</section>
           <div className="navLink-container">
-            <NavLink className='navLink-container-button' to="/" activeClassName="active-link">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                "navLink-container-button" + (isActive ? " active-link" : "")
+              }
+            >
               <FontAwesomeIcon icon={faImages} />
               <p>Dashboard</p>
             </NavLink>
-            <NavLink className='navLink-container-button' to="/create-album" activeClassName="active-link">
+            <NavLink
+              to="/create-album"
+              className={({ isActive }) =>
+                "navLink-container-button" + (isActive ? " active-link" : "")
+              }
+            >
+            {/* <NavLink className='navLink-container-button' to="/create-album" activeClassName="active-link"> */}
               <FontAwesomeIcon icon={faCamera} />
               <p>Create Gallery</p>
             </NavLink>
-            <NavLink className='navLink-container-button' to="/settings" activeClassName="active-link">
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                "navLink-container-button" + (isActive ? " active-link" : "")
+              }
+            >
+            {/* <NavLink className='navLink-container-button' to="/settings" activeClassName="active-link"> */}
               <FontAwesomeIcon icon={faGear} />
               <p>Settings</p>
             </NavLink>

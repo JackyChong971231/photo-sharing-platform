@@ -136,6 +136,7 @@ export const Dashboard = () => {
                 {
                     Object.keys(metadata).map(key => (
                         <MetadataCard
+                            key={key}
                             title={metadata[key].title} 
                             value={metadata[key].value} 
                             description={metadata[key].subtitle}
@@ -149,7 +150,7 @@ export const Dashboard = () => {
                 <div className='galleries-container'>
                     {
                         allAlbums.map(album_info => (
-                            <div className='dashboard-gallery'>
+                            <div key={album_info.id} className='dashboard-gallery'>
                                 <div>
                                     <div className='position-relative' style={{width: imgWidth, height: imgWidth}}>
                                         <div className='position-absolute w-100 p-2 d-flex justify-content-between align-items-center'>

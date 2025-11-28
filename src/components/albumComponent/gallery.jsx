@@ -284,7 +284,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             >
                 {
                     folderChildren.map(folder => (
-                        <div className='gallery-folder' 
+                        <div key={folder.id} className='gallery-folder' 
                         onClick={()=>{setCurrentFolderID(folder.id)}}>
                             <FontAwesomeIcon icon={faFolder} />
                             <p className='m-0'>{folder.name}</p>

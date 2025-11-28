@@ -70,6 +70,7 @@ export const SharedProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log('testing123')
     const token = localStorage.getItem("token");
     if (token) {
       try {

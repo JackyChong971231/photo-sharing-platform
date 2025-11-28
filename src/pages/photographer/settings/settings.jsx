@@ -30,9 +30,9 @@ export const Settings = () => {
                         <div className='photographer-settings-bar'>
                             <p onClick={() => {setCurrentPage(<MyProfile />)}}>My Profile</p>
                             <p onClick={() => {setCurrentPage(<Security />)}}>Security</p>
-                            <p>Notifications</p>
+                            {/* <p>Notifications</p>
                             <p>Billing</p>
-                            <p>Data Export</p>
+                            <p>Data Export</p> */}
                             <button onClick={logoutHandler}>Sign Out</button>
                         </div>
                         {/* Divider */}

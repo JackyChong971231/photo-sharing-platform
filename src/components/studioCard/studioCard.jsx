@@ -20,7 +20,7 @@ export const StudioCard = ({selectedStudio}) => {
             <p className="fw-bold fs-4">{selectedStudio.name}</p>
             <div className="studio-card-services">
                 {selectedStudio.services.map(service => (
-                    <p>{service}</p>
+                    <p key={service}>{service}</p>
                 ))}
             </div>
         </div>
