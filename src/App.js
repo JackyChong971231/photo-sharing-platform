@@ -12,19 +12,19 @@ import { PhotographerRoutes } from './routes/photographerRoutes.jsx';
 import { CustomerRoutes } from './routes/customerRoutes.jsx';
 
 function AppRoutes() {
-  const { user } = useSharedContext();
+  const { decodedToken } = useSharedContext();
   const location = useLocation();
 
   const isRoot = location.pathname === "/";
 
   // Handle root path separately
-  if (user.isAuthenticated) {
+  if (decodedToken.isAuthenticated) {
     if (isRoot) {return <PhotographerRoutes />} 
   } else {
     return <AuthRoutes />
   }
 
-  return (user.role === "photographer" || user.role === "studio_owner") ? <PhotographerRoutes /> : <CustomerRoutes />;
+  return (decodedToken.role === "photographer" || decodedToken.role === "studio_owner") ? <PhotographerRoutes /> : <CustomerRoutes />;
 }
 
 function App() {

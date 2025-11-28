@@ -39,9 +39,6 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isFilesDragging, setIsFilesDragging] = useState(false);
 
-    // For photo upload
-    const {user} = useSharedContext();
-
     useEffect(() => {
         if (!galleryRef.current || imagesPerRow <= 0) return;
         

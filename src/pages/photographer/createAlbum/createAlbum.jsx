@@ -18,7 +18,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 export const CreateAlbum = () => {
     const navigate = useNavigate();
     const [formHeightRatio, setFormHeightRatio] = useState(1);
-    const {user} = useSharedContext();
+    const {decodedToken} = useSharedContext();
     const [photographersByStudio, setPhotographersByStudio] = useState([]);
     const [isFormCollapsed, setIsFormCollapsed] = useState(false)
 
@@ -40,7 +40,7 @@ export const CreateAlbum = () => {
 
     const submitCreateAlbum = async () => {
         console.log(formData)
-        const {statusCode, body} = await insertAlbum(formData, user, 1)
+        const {statusCode, body} = await insertAlbum(formData, decodedToken, 1)
         if (statusCode===201) {
             
             setAlbumCreatedMetadata(body)

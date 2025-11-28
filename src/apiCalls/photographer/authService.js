@@ -50,3 +50,20 @@ export const userRegister = async (formData) => {
         return { statusCode: 500, body: { error: "Registration failed" } };
     }
 };
+
+export const fetchUserInfoShort = async (userId) => {
+  try {
+    if (!userId) throw new Error("userId is required");
+
+    const { statusCode, body } = await apiGateway(
+      GET,
+      `/core/auth/userInfo/short/${userId}/`,
+      null
+    );
+
+    return { statusCode, body };
+  } catch (error) {
+    console.error("Error in fetchUserInfoShort:", error);
+    return { statusCode: 500, body: { error: "Failed to fetch user info" } };
+  }
+};

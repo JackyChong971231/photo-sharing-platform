@@ -1,18 +1,44 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useReducer } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { hashPassword } from './utils/common';
 import { apiGateway, POST } from './apiCalls/apiMaster';
-import { userLogin, userRegister } from './apiCalls/photographer/authService';
+import { userLogin, userRegister, fetchUserInfoShort } from './apiCalls/photographer/authService';
 
 const SharedContext = createContext();
 
 export const SharedProvider = ({ children }) => {
-  const [user, setUser] = useState({
+  const initialUserInfoShort = {
+    id: null,
+    first_name: null,
+    last_name: null,
+    email: null,
+    profile_picture: null,
+    studios: []
+  }
+
+  const userInfoReducerShort = (state, action) => {
+    switch (action.type) {
+      case "SET_ALL":
+        return { ...state, ...action.payload };
+
+      case "UPDATE_FIELD":
+        return { ...state, [action.field]: action.value };
+
+      case "CLEAR":
+        return initialUserInfoShort;
+
+      default:
+        return state;
+    }
+  }
+
+  const [decodedToken, setDecodedToken] = useState({
     isAuthenticated: false,
     role: null,
     id: null,
-    name: null,
+    email: null,
   });
+  const [userInfoShort, dispatchUserInfoShort] = useReducer(userInfoReducerShort, initialUserInfoShort);
 
   const register = async (formData) => {
     try {
@@ -25,12 +51,13 @@ export const SharedProvider = ({ children }) => {
         const decoded_jwt = jwtDecode(body.token);
         console.log(decoded_jwt)
 
-        setUser({
+        setDecodedToken({
           isAuthenticated: true,
           role: decoded_jwt.role,
           id: decoded_jwt.user_id, // typical JWT user id claim
           email: decoded_jwt.email,
         });
+        getUserInfoShort(decoded_jwt.user_id)
       } else {
         console.log("Registered and logged in failed")
       }
@@ -48,14 +75,14 @@ export const SharedProvider = ({ children }) => {
         localStorage.setItem("token", body.token);
 
         const decoded_jwt = jwtDecode(body.token);
-        console.log(decoded_jwt)
 
-        setUser({
+        setDecodedToken({
           isAuthenticated: true,
           role: decoded_jwt.role,
           id: decoded_jwt.user_id, // typical JWT user id claim
           email: decoded_jwt.email,
         });
+        getUserInfoShort(decoded_jwt.user_id)
       } else {
         console.log("Login failed")
       }
@@ -66,11 +93,35 @@ export const SharedProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    setUser({ isAuthenticated: false, role: null, id: null, name: null });
+    setDecodedToken({ isAuthenticated: false, role: null, id: null, name: null });
+    dispatchUserInfoShort({ type: "CLEAR" });
+
+
+    // dispatchUserInfo({
+    //   type: "UPDATE_FIELD",
+    //   field: "profile_picture",
+    //   value: newFileUrl
+    // });
+  };
+
+  const getUserInfoShort = async (userId = null) => {
+    try {
+      const id = userId || decodedToken.id;
+      if (!id) return;
+
+      const { statusCode, body } = await fetchUserInfoShort(id);
+      if (statusCode === 200) {
+        dispatchUserInfoShort({ type: "SET_ALL", payload: body });
+        console.log("Updated userInfoShort:");
+      } else {
+        console.error("Failed to fetch userInfoShort:");
+      }
+    } catch (error) {
+      console.error("Error in getUserInfoShort:", error);
+    }
   };
 
   useEffect(() => {
-    console.log('testing123')
     const token = localStorage.getItem("token");
     if (token) {
       try {
@@ -78,12 +129,13 @@ export const SharedProvider = ({ children }) => {
 
         // Optionally check expiration
         if (decoded.exp * 1000 > Date.now()) {
-          setUser({
+          setDecodedToken({
             isAuthenticated: true,
             role: decoded.role,
             id: decoded.user_id,
-            name: decoded.name,
+            email: decoded.email,
           });
+          getUserInfoShort(decoded.user_id)
         } else {
           logout(); // token expired
         }
@@ -97,7 +149,9 @@ export const SharedProvider = ({ children }) => {
 
   return (
     <SharedContext.Provider value={{
-      user, setUser, register, login, logout
+      decodedToken, setDecodedToken, 
+      userInfoShort, dispatchUserInfoShort, 
+      register, login, logout
       }}
     >
       {children}

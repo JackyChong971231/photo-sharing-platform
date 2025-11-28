@@ -17,7 +17,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 export const AlbumComponent = ({albumId}) => {
-    const {user} = useSharedContext();
+    const {decodedToken} = useSharedContext();
 
     const [imgMaxHeight, setImgMaxHeight] = useState(250);
     const [imagesPerRow, setImagesPerRow] = useState(4); // default 4 per row
@@ -119,7 +119,7 @@ export const AlbumComponent = ({albumId}) => {
       if (!files || !files.length) return null;
       try {
         const images_to_be_uploaded = files.length;
-        const { statusCode, body } = await insertPhotos(albumId, currentFolderID, user.id, files);
+        const { statusCode, body } = await insertPhotos(albumId, currentFolderID, decodedToken.id, files);
         const images_uploaded = body.created_photos;
 
         if (images_to_be_uploaded === images_uploaded.length) {

@@ -15,8 +15,6 @@ export const getAllAlbumsByStudioID = async (studioID) => {
 
     if (statusCode !== 200 || !body.albums) return [];
 
-    console.log(body);
-
     return { statusCode, body }
 }
 

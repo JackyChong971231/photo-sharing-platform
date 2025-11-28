@@ -67,7 +67,6 @@ export const Dashboard = () => {
     useEffect(() => {
         const fetch_all_albums = async (studio_id) => {
             const { statusCode, body } = await getAllAlbumsByStudioID(dummy_studio_id);
-            console.log(body)
             setAllAlbums(body.albums)
             const response2 = await getMetadataByStudioID(dummy_studio_id)
             let metadataForm = {

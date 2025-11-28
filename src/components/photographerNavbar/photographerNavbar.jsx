@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import './photographerNavbar.css'
 
@@ -8,6 +8,7 @@ import studio_logo_png from '../../assets/dummy/studio_logo.png'
 // icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faMessage, faCalendar, faImages, faCamera, faGear, faCircleUser } from "@fortawesome/free-solid-svg-icons"
+import { useSharedContext } from "../../SharedContext";
 
 
 const studio_profile = {
@@ -19,6 +20,7 @@ const studio_profile = {
 const login_user = 'Jacky Chong'
 
 const PhotographerNavbar = () => {
+  const {userInfoShort} = useSharedContext();
   
   const testConnectionHandler = async () => {
     const response = await fetch("http://127.0.0.1:8000/core/test/");
@@ -29,11 +31,15 @@ const PhotographerNavbar = () => {
   return (
     <nav className="photographer-navbar">
       <div className="photographer-navbar-studio">
-        <img src={studio_profile.image}></img>
-        <div>
-          <p style={{fontSize: '1.2rem', margin: '0', fontWeight: 'bold'}}>{studio_profile.name}</p>
-          <p style={{fontSize: '0.8rem', margin: '0'}}>{studio_profile.bio}</p>
-        </div>
+        {userInfoShort.studio ? (userInfoShort.studio.map(studio => (
+          <div key={studio.id} className="d-flex align-items-center gap-2">
+            <img src={studio.logo}></img>
+            <div>
+              <p style={{fontSize: '1.2rem', margin: '0', fontWeight: 'bold'}}>{studio.name}</p>
+              <p style={{fontSize: '0.8rem', margin: '0'}}>{studio.short_bio}</p>
+            </div>
+          </div>
+        ))) : null}
       </div>
       <div className="photographer-navbar-panel">
         {/* <section>INTERACTIONS</section>
@@ -86,9 +92,13 @@ const PhotographerNavbar = () => {
           </div>
       </div>
       <div className="photographer-navbar-account">
-        <FontAwesomeIcon style={{fontSize: '2rem'}} icon={faCircleUser} />
+        {userInfoShort.profile_picture? (
+          <img src={userInfoShort.profile_picture} />
+        ) : (
+          <FontAwesomeIcon style={{fontSize: '2rem'}} icon={faCircleUser} />
+        )}
         <div>
-          <p style={{fontSize: '1rem', margin: '0', fontWeight: 'bold'}}>{login_user}</p>
+          <p style={{fontSize: '1rem', margin: '0', fontWeight: 'bold'}}>{userInfoShort.first_name} {userInfoShort.last_name}</p>
           <p style={{fontSize: '0.8rem', margin: '0'}}>Manage your account</p>
         </div>
       </div>

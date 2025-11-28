@@ -58,3 +58,10 @@
     gap: 1rem;
     border-top: 1px solid var(--border-color);
 }
+
+.photographer-navbar-account img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
