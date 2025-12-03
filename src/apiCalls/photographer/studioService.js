@@ -18,9 +18,16 @@ export const getMetadataByStudioID = async (studioID) => {
 }
 
 export const getStudios = async () => {
-  const dummy = [
-    {id: 0, name:'Rosewood Studio'},
-    {id: 1, name:'Happy Studio'},
-  ]
-  return dummy
+    try {
+        const { statusCode, body } = await apiGateway(GET, `/core/studios/all/`)
+        if (statusCode === 200 && Array.isArray(body)) {
+            return body
+        } else {
+            console.warn('Failed to fetch studios or empty response')
+            return []
+        }
+    } catch (error) {
+        console.error('Error fetching studios:', error)
+        return []
+    }
 }

@@ -164,10 +164,10 @@
 .studio-details {
   margin-top: 20px;
   padding: 20px;
-  background: #fff; /* white card */
+  /* background: #fff; */
   border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f2f2f7;
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
+  /* border: 1px solid #f2f2f7; */
 }
 
 .studio-details h5 {

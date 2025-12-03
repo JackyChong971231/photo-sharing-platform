@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faMessage, faCalendar, faImages, faCamera, faGear, faCircleUser } from "@fortawesome/free-solid-svg-icons"
 import { useSharedContext } from "../../SharedContext";
 
+import default_studio_logo from '../../assets/dummy/default_studio_logo.png';
+
 
 const studio_profile = {
   image: studio_logo_png,
@@ -32,12 +34,14 @@ const PhotographerNavbar = () => {
     <nav className="photographer-navbar">
       <div className="photographer-navbar-studio">
         {userInfoShort.studio ? (userInfoShort.studio.map(studio => (
-          <div key={studio.id} className="d-flex align-items-center gap-2">
-            <img src={studio.logo}></img>
-            <div>
-              <p style={{fontSize: '1.2rem', margin: '0', fontWeight: 'bold'}}>{studio.name}</p>
-              <p style={{fontSize: '0.8rem', margin: '0'}}>{studio.short_bio}</p>
+          <div>
+            <div key={studio.id} className="d-flex align-items-center gap-2">
+              <img src={studio.logo?studio.logo:default_studio_logo}></img>
+              <div>
+                <p style={{fontSize: '1.2rem', margin: '0', fontWeight: 'bold'}}>{studio.name}</p>
+              </div>
             </div>
+            <p style={{fontSize: '0.8rem', margin: '0'}}>{studio.short_bio}</p>
           </div>
         ))) : null}
       </div>

@@ -5,6 +5,7 @@ import './login.css'; // import the stylesheet
 
 export const Login = () => {
   const { login } = useSharedContext();
+  const [ loginResult, setLoginResult ] = useState(null);
   const navigate = useNavigate();
   
   const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -15,7 +16,8 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(credentials);
+    const result = await login(credentials);
+    setLoginResult(result)
   };
 
   return (
@@ -45,6 +47,15 @@ export const Login = () => {
             required
           />
         </div>
+        {
+          loginResult ? (
+            <div className='text-start text-danger'>
+              <p>{loginResult}</p>
+            </div>
+          ) : (
+            null
+          )
+        }
 
         <button type="submit" className="login-button">Login</button>
 

@@ -83,8 +83,10 @@ export const SharedProvider = ({ children }) => {
           email: decoded_jwt.email,
         });
         getUserInfoShort(decoded_jwt.user_id)
+        return null
       } else {
         console.log("Login failed")
+        return "Wrong email/ password"
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -112,12 +114,14 @@ export const SharedProvider = ({ children }) => {
       const { statusCode, body } = await fetchUserInfoShort(id);
       if (statusCode === 200) {
         dispatchUserInfoShort({ type: "SET_ALL", payload: body });
-        console.log("Updated userInfoShort:");
+        // console.log(body);
       } else {
+        logout()
         console.error("Failed to fetch userInfoShort:");
       }
     } catch (error) {
       console.error("Error in getUserInfoShort:", error);
+      logout()
     }
   };
 

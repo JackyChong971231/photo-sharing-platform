@@ -12,7 +12,7 @@ import pro_pic from "../../../assets/images/user_pro_pic.jpg";
 import "./myProfile.css";
 import { StudioCard } from "../../../components/studioCard/studioCard";
 
-import rosewoodLogo from '../../../assets/dummy/studio_logo.png'
+import defaultStudioLogo from '../../../assets/dummy/default_studio_logo.png'
 import goldenHourLogo from '../../../assets/dummy/goldenHourPhoto.jpeg'
 import shutterworksLogo from '../../../assets/dummy/shutterworksStudio_logo.png'
 
@@ -30,65 +30,13 @@ const profile_detail = {
   bio: "Experienced photographer specializing in portrait and event photography. Passionate about capturing life's most memorable moments.",
 };
 
-// Mock studio data
-const studio_list = [
-  {
-    id: 1,
-    name: "Rosewood Studios",
-    location: "Toronto, Canada",
-    description: "A premium studio specializing in portrait and event photography.",
-    services: ["Portrait Photography", "Event Photography", "Videography"],
-    email: "contact@rosewoodstudios.com",
-    phone: "+1 (437) 660 9876",
-    website: "https://rosewoodstudios.com",
-    logo: rosewoodLogo
-  },
-  {
-    id: 2,
-    name: "Golden Hour Photography",
-    location: "Vancouver, Canada",
-    description: "Known for capturing stunning outdoor and natural light photos.",
-    services: ["Outdoor Photography", "Wedding Photography", "Lifestyle Shoots"],
-    email: "info@goldenhourphotography.com",
-    phone: "+1 (604) 555 1234",
-    website: "https://goldenhourphotography.com",
-    logo: goldenHourLogo
-  },
-  {
-    id: 3,
-    name: "Shutterworks Studio",
-    location: "Montreal, Canada",
-    description: "Expert in commercial photography and high-end product shoots.",
-    services: ["Commercial Photography", "Product Shoots", "Food Photography"],
-    email: "support@shutterworksstudio.com",
-    phone: "+1 (514) 789 5678",
-    website: "https://shutterworksstudio.com",
-    logo: shutterworksLogo
-  },
-];
-
-export const MyProfile = () => {
-  const [userDetail, setUserDetail] = useState({});
-  const [editedDetails, setEditedDetails] = useState({});
-  const [newProfilePicture, setNewProfilePicture] = useState(null);
+export const MyProfile = ({userInfoLongTemp}) => {
   const [selectedStudio, setSelectedStudio] = useState(null);
-
-  useEffect(() => {
-    // Load user details into state
-    setUserDetail(profile_detail);
-    setEditedDetails(profile_detail);
-
-    // Set default studio details
-    const defaultStudio = studio_list.find(
-      (studio) => studio.name === profile_detail.studio_name
-    );
-    setSelectedStudio(defaultStudio);
-  }, []);
 
   // Handle field change
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedDetails({ ...editedDetails, [name]: value });
+    // const { name, value } = e.target;
+    // setEditedDetails({ ...editedDetails, [name]: value });
   };
 
   // Handle profile picture upload
@@ -97,26 +45,19 @@ export const MyProfile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        setNewProfilePicture(event.target.result); // Base64 encoded image
+        // setNewProfilePicture(event.target.result); // Base64 encoded image
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Handle studio selection
-  const handleStudioChange = (e) => {
-    const studio = studio_list.find((studio) => studio.name === e.target.value);
-    setSelectedStudio(studio);
-    setEditedDetails({ ...editedDetails, studio_name: studio.name });
-  };
-
   // Save changes (dummy save logic for now)
   const handleSave = () => {
-    setUserDetail({
-      ...editedDetails,
-      profile_picture: newProfilePicture || userDetail.profile_picture,
-    });
-    alert("Profile updated successfully!");
+    // setUserDetail({
+    //   ...editedDetails,
+    //   profile_picture: newProfilePicture || userDetail.profile_picture,
+    // });
+    console.log("Profile updated successfully!");
   };
 
   return (
@@ -127,7 +68,7 @@ export const MyProfile = () => {
         <h4>Profile Picture</h4>
         <div className="profile-picture-wrapper">
           <img
-            src={userDetail.profile_picture}
+            src={userInfoLongTemp.profile_picture}
             alt="Profile"
             className="profile-picture"
           />
@@ -151,7 +92,7 @@ export const MyProfile = () => {
         <h4>Bio</h4>
         <textarea
           name="bio"
-          value={editedDetails.bio || ""}
+          value={userInfoLongTemp.bio || ""}
           onChange={handleChange}
           className="form-control"
           rows="5"
@@ -168,7 +109,7 @@ export const MyProfile = () => {
             <input
               type="text"
               name="first_name"
-              value={editedDetails.first_name || ""}
+              value={userInfoLongTemp.first_name || ""}
               onChange={handleChange}
               className="form-control form-control--short"
             />
@@ -178,7 +119,7 @@ export const MyProfile = () => {
             <input
               type="text"
               name="last_name"
-              value={editedDetails.last_name || ""}
+              value={userInfoLongTemp.last_name || ""}
               onChange={handleChange}
               className="form-control form-control--short"
             />
@@ -190,7 +131,7 @@ export const MyProfile = () => {
               <input
                 type="email"
                 name="email"
-                value={editedDetails.email || ""}
+                value={userInfoLongTemp.email || ""}
                 onChange={handleChange}
                 className="form-control form-control--short ps-5"
               />
@@ -201,7 +142,7 @@ export const MyProfile = () => {
             <input
               type="text"
               name="phone"
-              value={editedDetails.phone || ""}
+              value={userInfoLongTemp.phone || ""}
               onChange={handleChange}
               className="form-control form-control--short"
             />
@@ -213,44 +154,49 @@ export const MyProfile = () => {
       <div className="section mb-5">
         <h4>Studio and Role Information</h4>
 
-        <div className="d-flex gap-5">
-          <div>
-            {/* Dropdown Menu */}
-            <div className="form-group studio-select">
-              <label>Select Studio</label>
-              <select
-                name="studio_name"
-                value={editedDetails.studio_name || ""}
-                onChange={handleStudioChange}
-                className="form-control"
-              >
-                {studio_list.map((studio) => (
-                  <option key={studio.id} value={studio.name}>
-                    {studio.name}
-                  </option>
-                ))}
-              </select>
-            </div>
 
-            {/* Role */}
-            <div className="form-group mt-4">
-              <label>Role</label>
-              <input
-                type="text"
-                name="role"
-                value={editedDetails.role || ""}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </div>
+
+        <div className="d-flex gap-5">
+          {/* List of Studios */}
+          <div className="studio-list flex-shrink-0" style={{ minWidth: "200px" }}>
+            {userInfoLongTemp.studios.map((studio) => (
+              <div
+                key={studio.id}
+                className={`studio-item p-2 mb-2 border rounded ${selectedStudio?.id === studio.id ? "bg-light" : ""}`}
+                style={{ cursor: "pointer" }}
+                onClick={() => setSelectedStudio(studio)}
+              >
+                <div className="d-flex align-items-center gap-3">
+                  <img
+                    src={studio.logo || defaultStudioLogo}
+                    alt={studio.name}
+                    style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "4px" }}
+                  />
+                  <div>
+                    <span>{studio.name}</span>
+                    <div>
+                      {studio.tags.length > 0 && (
+                        <div className="studio-tags mt-1">
+                          {studio.tags.join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Studio Details */}
-
-          {selectedStudio && (
-            <StudioCard selectedStudio={selectedStudio}/>
-          )}
+          {/* Studio Details Card */}
+          <div className="studio-details flex-grow-1">
+            {selectedStudio ? (
+              <StudioCard selectedStudio={selectedStudio} userInfoLongTemp={userInfoLongTemp} />
+            ) : (
+              <div className="text-muted">Select a studio to view details</div>
+            )}
+          </div>
         </div>
+
 
 
 
@@ -261,7 +207,7 @@ export const MyProfile = () => {
         <h4>Account Information</h4>
         <p>
           <FontAwesomeIcon icon={faCalendar} className="me-2" />
-          <strong>Date Joined:</strong> {userDetail.date_joined}
+          <strong>Date Joined:</strong> {userInfoLongTemp.created_at}
         </p>
       </div>
 

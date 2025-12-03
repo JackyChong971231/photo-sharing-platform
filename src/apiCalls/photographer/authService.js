@@ -22,6 +22,7 @@ export const userRegister = async (formData) => {
         form.append("first_name", formData.firstName);
         form.append("last_name", formData.lastName);
         form.append("email", formData.email);
+        form.append("phone", formData.phone);
         form.append("password_hash", password_hash);
         form.append("role", formData.isStudioMember ? "photographer" : "customer");
 
@@ -66,4 +67,21 @@ export const fetchUserInfoShort = async (userId) => {
     console.error("Error in fetchUserInfoShort:", error);
     return { statusCode: 500, body: { error: "Failed to fetch user info" } };
   }
+};
+
+export const fetchUserInfoLong = async (userId) => {
+    try {
+        if (!userId) throw new Error("userId is required");
+
+        const { statusCode, body } = await apiGateway(
+            GET,
+            `/core/auth/userInfo/long/${userId}/`,
+            null
+        );
+
+        return { statusCode, body };
+    } catch (error) {
+        console.error("Error in fetchUserInfoLong:", error);
+        return { statusCode: 500, body: { error: "Failed to fetch user info" } };
+    }
 };

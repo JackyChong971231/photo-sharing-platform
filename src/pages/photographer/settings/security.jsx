@@ -4,7 +4,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 import "./security.css";
 
-export const Security = () => {
+export const Security = ({userInfoLongTemp}) => {
   const [passwordDetails, setPasswordDetails] = useState({
     currentPassword: "",
     newPassword: "",
