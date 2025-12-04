@@ -107,7 +107,7 @@ export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, set
     return (
         <div>
             <div className='px-3 py-3 d-flex justify-content-between gap-5 position-sticky top-0'
-            style={{overflowX: 'auto'}}>
+            >
                 <div className='d-flex gap-5'>
                     <div className='d-flex align-items-center gap-2'>
                         <FontAwesomeIcon icon={faImage} style={{fontSize: '1.3rem'}}/>

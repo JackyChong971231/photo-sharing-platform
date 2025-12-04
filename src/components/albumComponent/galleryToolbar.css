@@ -1,4 +1,5 @@
 .filter-by-face-container {
+    position: absolute;
     width: 32rem;
     border-radius: 1rem;
 }

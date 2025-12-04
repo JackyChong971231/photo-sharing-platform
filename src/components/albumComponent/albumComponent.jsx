@@ -174,7 +174,7 @@ export const AlbumComponent = ({albumId}) => {
         <div className='album-component-outer-container' ref={outerRef}>
           <div className='d-flex flex-column h-100 w-100'
           >
-            <div style={{borderBottom: '1px solid #ccc', zIndex: '100'}}>
+            <div style={{borderBottom: '1px solid #ccc', zIndex: '100', overflowY: 'visible'}}>
               <GalleryToolbar 
               imagesPerRow = {imagesPerRow}
               setImagesPerRow = {setImagesPerRow}
