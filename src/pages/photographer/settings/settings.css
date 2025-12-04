@@ -57,3 +57,16 @@
     flex: 1;
     overflow-y: auto;
 }
+
+.photographer-settings-bar > button {
+    background: black;
+    color: white;
+    padding-inline: 1rem;
+    padding-block: 0.3rem;
+    width: 100%;
+    border-radius: 1rem;
+}
+
+.photographer-settings-bar > button:hover {
+    background-color: rgb(82, 82, 82);
+}

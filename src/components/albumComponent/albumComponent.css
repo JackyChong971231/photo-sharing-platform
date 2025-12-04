@@ -109,14 +109,6 @@
     height: 100%;
 }
 
-.empty-folder-container {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  text-align: center;
-  padding-block: 2rem;
-}
-
 .no-photos-yet-container {
   display: flex;
   flex-direction: column;

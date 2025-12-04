@@ -34,8 +34,8 @@ const PhotographerNavbar = () => {
     <nav className="photographer-navbar">
       <div className="photographer-navbar-studio">
         {userInfoShort.studio ? (userInfoShort.studio.map(studio => (
-          <div>
-            <div key={studio.id} className="d-flex align-items-center gap-2">
+          <div key={studio.id} >
+            <div className="d-flex align-items-center gap-2">
               <img src={studio.logo?studio.logo:default_studio_logo}></img>
               <div>
                 <p style={{fontSize: '1.2rem', margin: '0', fontWeight: 'bold'}}>{studio.name}</p>

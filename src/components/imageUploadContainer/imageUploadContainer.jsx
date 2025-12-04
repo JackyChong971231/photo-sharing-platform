@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function ImageUploadContainer({ textOnContainer = <p className="fw-semibold m-0">Click or drag to upload image</p>, width = '15rem', height = '15rem', onImageChange }) {
+export default function ImageUploadContainer({ textOnContainer = <p className="fw-semibold m-0">Click or drag to upload image</p>, width = '15rem', height = '15rem', aspectRatio='1 / 1', onImageChange }) {
   const [preview, setPreview] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
@@ -221,7 +221,7 @@ export default function ImageUploadContainer({ textOnContainer = <p className="f
       <div
         ref={containerRef}
         className="position-relative border border-secondary border-1 border-dashed rounded-4 overflow-hidden bg-light d-flex justify-content-center align-items-center text-secondary"
-        style={{ width: width, height: height, cursor: preview ? 'grab' : 'pointer' }}
+        style={{ width: width, aspectRatio: aspectRatio, cursor: preview ? 'grab' : 'pointer' }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
         onClick={!preview ? onClickUpload : undefined}

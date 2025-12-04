@@ -1,4 +1,4 @@
-import { apiGateway, GET, POST } from "../apiMaster"
+import { apiGateway, GET, POST, PUT } from "../apiMaster"
 import { hashPassword } from '../../utils/common';
 
 export const userLogin = async (credentials) => {
@@ -84,4 +84,41 @@ export const fetchUserInfoLong = async (userId) => {
         console.error("Error in fetchUserInfoLong:", error);
         return { statusCode: 500, body: { error: "Failed to fetch user info" } };
     }
+};
+
+export const updateUserInfo = async (editedUser) => {
+  try {
+    if (!editedUser?.id) throw new Error("User ID is required");
+
+    const form = new FormData();
+
+    // Append all editable fields
+    const fields = ["first_name", "last_name", "email", "phone", "short_bio"];
+    fields.forEach(field => {
+      if (editedUser[field] !== undefined && editedUser[field] !== null) {
+        form.append(field, editedUser[field]);
+      }
+    });
+
+    // Handle profile picture file if it’s a File object
+    // If it's just a URL string, skip (we don't want to send base64 string to backend)
+    if (editedUser.profile_picture) {
+        console.log('there is a file')
+      form.append("profile_picture", editedUser.profile_picture);
+    }
+
+    console.log(form)
+
+    const { statusCode, body } = await apiGateway(
+      PUT, // Use POST for FormData, your backend can accept PUT too
+      `/core/auth/users/${editedUser.id}/update/`,
+      form,
+      {} // important for files
+    );
+
+    return { statusCode, body };
+  } catch (err) {
+    console.error("Error in updateUserInfo:", err);
+    return { statusCode: 500, body: { error: "Failed to update user info" } };
+  }
 };

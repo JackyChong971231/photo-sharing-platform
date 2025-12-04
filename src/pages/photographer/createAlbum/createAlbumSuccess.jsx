@@ -41,22 +41,29 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, albumCreatedMetad
                     </div>
                     <div className="py-2">
                         <p className='mb-1' style={{fontSize: '1.1rem', fontWeight: '600', textDecoration: 'underline'}}>Client Information:</p>
-                        <div className="d-flex">
-                            <div className="me-2 client-info-text-container">
-                                <p>Client Name:</p>
-                                <p>Client Email:</p>
-                                <p>Client Phone:</p>
-                            </div>
-                            <div className="client-info-text-container">
-                                <p>{albumCreatedMetadata.client_first_name} {albumCreatedMetadata.client_last_name}</p>
-                                <p>{albumCreatedMetadata.client_email}</p>
-                                <p>{albumCreatedMetadata.client_phone}</p>
-                            </div>
+                        <div
+                        className="client-info-grid"
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '150px 1fr', // first column fixed width, second takes remaining
+                            gap: '0.5rem' // spacing between columns
+                        }}
+                        >
+                        <div className="client-info-text-container">
+                            <p>Client Name:</p>
+                            <p>Client Email:</p>
+                            <p>Client Phone:</p>
+                        </div>
+                        <div className="client-info-text-container">
+                            <p>{albumCreatedMetadata.client_first_name} {albumCreatedMetadata.client_last_name}</p>
+                            <p>{albumCreatedMetadata.client_email}</p>
+                            <p>{albumCreatedMetadata.client_phone}</p>
+                        </div>
                         </div>
                         <p></p>
                     </div>
                 </div>
-                <div className="d-flex gap-4">
+                <div className="d-flex gap-4" style={{ width: '100%' }}>
                     <div>
                         <img
                         className="create-album-success-thumbnail"
@@ -68,19 +75,28 @@ export const CreateAlbumSuccess = ({ isFormCollapsed, albumID, albumCreatedMetad
                     <div>
                         <p className='mb-1' style={{fontSize: '1.1rem', fontWeight: '600', textDecoration: 'underline'}}>Album Information:</p>
 
-                        <div className="d-flex gap-3">
-                            <div className="me-2 client-info-text-container">
-                                <p>Description: </p>
-                                <p>Location: </p>
-                                <p>Date: </p>
-                                <p>Created on: </p>
-                            </div>
-                            <div className="me-2 client-info-text-container">
-                                <p>{albumCreatedMetadata.description}</p>
-                                <p>{albumCreatedMetadata.event_location}</p>
-                                <p>{albumCreatedMetadata.event_date}</p>
-                                <p>{albumCreatedMetadata.created_at}</p>
-                            </div>
+                        <div
+                            className="album-info-grid"
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: '120px 1fr', // label | value
+                                rowGap: '0.25rem',
+                                columnGap: '0.5rem',
+                                alignItems: 'start', // aligns multi-line text to top
+                                width: '100%' // <--- ensure it stretches
+                            }}
+                        >
+                            <p>Description:</p>
+                            <p>{albumCreatedMetadata.description}</p>
+
+                            <p>Location:</p>
+                            <p>{albumCreatedMetadata.event_location}</p>
+
+                            <p>Date:</p>
+                            <p>{albumCreatedMetadata.event_date}</p>
+
+                            <p>Created on:</p>
+                            <p>{new Date(albumCreatedMetadata.created_at).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>

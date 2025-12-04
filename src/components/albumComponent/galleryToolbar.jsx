@@ -73,7 +73,7 @@ const FilterByFaceComponent = ({setIsShowFaceFilterComponent, filterFaces, setFi
     )
 }
 
-export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, setImgMaxHeight, selectedImages, handlePhotosUpload, handlePhotosDownload, handlePhotosDelete}) => {
+export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, setImgMaxHeight, currentFolderID, selectedImages, handlePhotosUpload, handlePhotosDownload, handlePhotosDelete}) => {
     const [isShowFaceFilterComponent, setIsShowFaceFilterComponent] = useState(false)
     const filterByFaceRef = useRef(null)
     const [filterFaces, setFilterFaces] = useState([])
@@ -152,20 +152,24 @@ export const GalleryToolbar = ({imagesPerRow, setImagesPerRow, imgMaxHeight, set
                     />
 
                     <div onClick={() => {openFileDialog()}}>
-                        <FontAwesomeIcon icon={faCloudArrowUp} style={{color:'rgba(58, 58, 58, 1)', fontSize: '1.3rem', cursor: 'pointer'}}/>    
+                        <FontAwesomeIcon icon={faCloudArrowUp} style={{
+                            color:currentFolderID?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)', 
+                            fontSize: '1.3rem', 
+                            cursor: 'pointer'
+                        }}/>    
                     </div>
                     <div onClick={() => {handlePhotosDelete()}}>
                         <FontAwesomeIcon icon={faTrash} style={{
-                        color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
-                        cursor: selectedImages.length>0?'pointer':'',
-                        fontSize: '1.3rem'
+                            color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
+                            cursor: selectedImages.length>0?'pointer':'',
+                            fontSize: '1.3rem'
                         }}/>
                     </div>
                     <div onClick={() => {handlePhotosDownload()}}>
                         <FontAwesomeIcon icon={faCloudArrowDown} style={{
-                        color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
-                        cursor: selectedImages.length>0?'pointer':'',
-                        fontSize: '1.3rem'
+                            color: selectedImages.length>0?'rgba(58, 58, 58, 1)':'rgba(233, 233, 233, 1)',
+                            cursor: selectedImages.length>0?'pointer':'',
+                            fontSize: '1.3rem'
                         }}/>
                     </div>
                 </div>

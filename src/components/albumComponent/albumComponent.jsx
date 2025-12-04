@@ -181,6 +181,7 @@ export const AlbumComponent = ({albumId}) => {
               imgMaxHeight={imgMaxHeight} 
               setImgMaxHeight={setImgMaxHeight} 
               selectedImages={selectedImages} 
+              currentFolderID={currentFolderID} 
               handlePhotosUpload={handlePhotosUpload}
               handlePhotosDownload={handlePhotosDownload}
               handlePhotosDelete={handlePhotosDelete}

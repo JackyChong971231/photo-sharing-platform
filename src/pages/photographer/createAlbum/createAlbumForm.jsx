@@ -86,7 +86,7 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
             <div>
                 <div className='sticky-header'>
                     <div className='d-flex flex-wrap gap-3 align-items-center justify-content-between px-3 py-4'>
-                        <h3 className='m-0 text-nowrap' style={{color: 'var(--text-color)', fontSize: '1.7rem'}}>Create New Album</h3>
+                        <h3 className='m-0 text-nowrap' style={{color: 'var(--text-color)', fontSize: '1.7rem'}}>{formData.album_title?formData.album_title:'Create New Album'}</h3>
                         <div className='position-relative d-flex justify-content-between'
                         style={{flex: '0 0 auto'}}>
                             <span></span>
@@ -99,8 +99,7 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                     </div>
                 </div>
                 <div className='p-4'
-                    style={{overflow: 'auto', flex: '1 1 auto', color: 'var(--text-color)',
-                        borderTop: '1px solid gray'
+                    style={{overflow: 'auto', flex: '1 1 auto', color: 'var(--text-color)'
                     }}>
                     <div className='mx-4 mt-1' style={{
                         minWidth: '40rem', maxWidth: '50rem'
@@ -119,7 +118,9 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                         </div>
                         <div className='w-100 mt-2'>
                             <label className='custom-input-label-2'>Album Cover Photo *</label>
-                            <ImageUploadContainer textOnContainer={<p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>cover photo</span></p>} height='12rem' width='100%' onImageChange={onCoverPhotoChange}/>
+                            <ImageUploadContainer textOnContainer={
+                                <p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>cover photo</span></p>
+                            } height='12rem' width='100%' aspectRatio='10 / 4' onImageChange={onCoverPhotoChange}/>
                         </div>
                         <div className='d-flex gap-4 my-3'>
                             <div className='form-input-group flex-grow-1'>
@@ -172,7 +173,9 @@ export const CreateAlbumForm = ({ formData, setFormData, submitCreateAlbum, phot
                             </div>
                             <div className='d-flex justify-content-between gap-5'>
                                 <div className='flex-grow-0'>
-                                    <ImageUploadContainer textOnContainer={<p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>thumbnail</span></p>} width='13rem' height='13rem' onImageChange={onThumbnailChange}/>
+                                    <ImageUploadContainer textOnContainer={
+                                        <p className="fw-semibold m-0">Click or drag to upload <span className='fw-bold text-decoration-underline'>thumbnail</span></p>
+                                    } width='13rem' height='13rem' aspectRatio='1 / 1' onImageChange={onThumbnailChange}/>
                                 </div>
                                 <div className='flex-grow-1'>
                                     <label className='custom-input-label-2'>Album Description *</label>

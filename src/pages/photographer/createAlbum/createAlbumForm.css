@@ -16,9 +16,11 @@
 .sticky-header {
     position: sticky;
     top: 0;
-    margin-inline: 1.5rem;
+    padding-inline: 1.5rem;
     /* border-bottom: 1px solid rgb(188, 188, 188); */
+    border-bottom: 1px solid gray;
     flex-grow: 1;
     z-index: 10; /* make sure it's on top */
-    backdrop-filter: blur(10px); /* apply blur */
+    background: #f8f8f8ff;
+    /* backdrop-filter: blur(10px);  */
 }
