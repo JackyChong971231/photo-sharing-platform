@@ -1,6 +1,6 @@
 .studio-card-container {
     position: relative;
-    height: 17rem;
+    aspect-ratio: 3.5/2;
     width: 30rem;
     background: white;
     border-radius: 1rem;

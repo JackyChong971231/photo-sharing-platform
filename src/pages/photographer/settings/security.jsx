@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
@@ -20,8 +20,7 @@ export const Security = ({userInfoLongTemp}) => {
     setPasswordDetails({ ...passwordDetails, [name]: value });
   };
 
-  // Handle form submission
-  const handleSave = () => {
+  const validatePassword = () => {
     const { currentPassword, newPassword, confirmPassword } = passwordDetails;
 
     // Validate inputs
@@ -43,15 +42,27 @@ export const Security = ({userInfoLongTemp}) => {
       return;
     }
 
+    setErrorMessage("");
+    setSuccessMessage("");
+  }
+
+  
+
+  // Handle form submission
+  const handleSave = () => {
     // Simulate saving changes (in a real-world app, this would involve sending the data to the backend)
     setErrorMessage("");
     setSuccessMessage("Password updated successfully!");
     setPasswordDetails({ currentPassword: "", newPassword: "", confirmPassword: "" });
   };
 
+  useEffect(() => {
+    validatePassword();
+  },[passwordDetails])
+
   return (
     <div className="security-container p-4">
-      <h2 className="mb-4">Security Settings</h2>
+      {/* <h2 className="mb-4">Security Settings</h2> */}
 
       {/* Password Change Section */}
       <div className="section">

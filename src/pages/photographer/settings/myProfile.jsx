@@ -5,6 +5,7 @@ import {
   faBuilding,
   faCalendar,
   faUpload,
+  faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 
 import pro_pic from "../../../assets/images/user_pro_pic.jpg";
@@ -90,7 +91,7 @@ export const MyProfile = ({userInfoLongTemp}) => {
 
       {/* Profile Picture Section */}
       <div className="section profile-picture-section">
-        <h4>Profile Picture</h4>
+        <h4 className="m-0">Profile Picture</h4>
         <div className="profile-picture-wrapper">
           <img
             src={editedUser.profile_picture || ""}
@@ -164,13 +165,16 @@ export const MyProfile = ({userInfoLongTemp}) => {
           </div>
           <div className="form-group">
             <label>Phone Number</label>
-            <input
-              type="text"
-              name="phone"
-              value={editedUser.phone || ""}
-              onChange={handleChange}
-              className={`form-control form-control--short ${isChanged("phone") ? "input-changed" : ""}`}
-            />
+            <div className="position-relative d-flex align-items-center">
+              <FontAwesomeIcon className='position-absolute ms-3' icon={faPhone} />
+              <input
+                type="text"
+                name="phone"
+                value={editedUser.phone || ""}
+                onChange={handleChange}
+                className={`form-control form-control--short ${isChanged("phone") ? "input-changed" : ""} ps-5`}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -187,8 +191,8 @@ export const MyProfile = ({userInfoLongTemp}) => {
             {editedUser.studios ? (editedUser.studios.map((studio) => (
               <div
                 key={studio.id}
-                className={`studio-item p-2 mb-2 border rounded ${selectedStudio?.id === studio.id ? "bg-light" : ""}`}
-                style={{ cursor: "pointer" }}
+                className={`studio-item py-2 px-3 mb-2 ${selectedStudio?.id === studio.id ? "bg-light" : ""}`}
+                style={{ cursor: "pointer", borderRadius: '0.8rem' }}
                 onClick={() => setSelectedStudio(studio)}
               >
                 <div className="d-flex align-items-center gap-3">

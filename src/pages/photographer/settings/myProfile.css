@@ -1,13 +1,13 @@
 /* General Container */
 .profile-settings-container {
-  background: #ffffff;
+  position: relative;
+  max-height: 100%;
+  min-height: 100%;
   padding: 35px;
-  border-radius: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  border-radius: 1rem;
   color: #1c1c1e;
   /* max-width: 600px; */
-  margin: auto;
-  overflow-x: auto;
+  overflow: auto;
   /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); */
 }
 
@@ -63,6 +63,7 @@
 
 .profile-picture-wrapper {
   display: flex;
+  padding-top: 1rem;
   align-items: center;
   gap: 25px;
 }
@@ -165,7 +166,7 @@
   /* background: #fff; */
   border-radius: 16px;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
   /* border: 1px solid #f2f2f7; */
 }

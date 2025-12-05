@@ -82,42 +82,42 @@ export const Settings = () => {
     }
     
     return (
-        <div className='p-4 h-100 d-flex flex-column'>
-            <h2>Account Settings</h2>
-            <div className='photographer-setting-container-outer'>
-                <div className='photographer-setting-container'>
-                    <div className='d-flex w-100'>
-                        <div className='photographer-settings-bar'>
-                            <p onClick={() => setCurrentPage("profile")}>My Profile</p>
-                            <p onClick={() => setCurrentPage("security")}>Security</p>
-                            {/* <p>Notifications</p>
-                            <p>Billing</p>
-                            <p>Data Export</p> */}
-                            <button onClick={logoutHandler}>Sign Out</button>
-                        </div>
-                        {/* Divider */}
-                        <div
-                            className="divider"
-                            style={{
-                                cursor: "col-resize",
-                                paddingInline: '1rem',
-                            }}
-                        >
-                            <div 
-                                className="divider"
-                                style={{
-                                    width: 1,
-                                    background: "#ccc",
-                                    height: '100%'
-                                }}
-                            />
-                        </div>
-                        <div className='photographer-settings-content'>
-                            {renderCurrentPage()}
-                        </div>
-                    </div>
+        <div className='p-4 d-flex flex-column'
+        style={{height: '100vh'}}>
+        <h2 className='pb-2 flex-shrink-0'>Account Settings</h2>
+        
+        <div className='photographer-setting-container-outer' style={{flex: '1 1 auto', overflow: 'hidden'}}>
+            <div className='photographer-setting-container' style={{height: '100%', overflow: 'hidden'}}>
+            <div className='position-relative d-flex w-100 flex-row h-100'>
+                
+                <div className='photographer-settings-bar' style={{flex: '0 0 auto'}}>
+                <p onClick={() => setCurrentPage("profile")}>My Profile</p>
+                <p onClick={() => setCurrentPage("security")}>Security</p>
+                <button onClick={logoutHandler}>Sign Out</button>
                 </div>
+
+                <div className="divider" style={{
+                cursor: "col-resize",
+                padding: '1rem',
+                flex: '0 0 auto'
+                }}>
+                <div style={{
+                    width: 1,
+                    background: "#ccc",
+                    height: '100%'
+                }}/>
+                </div>
+
+                <div className='photographer-settings-content' style={{
+                flex: '1 1 auto',
+                overflow: 'auto'
+                }}>
+                {renderCurrentPage()}
+                </div>
+
             </div>
+            </div>
+        </div>
         </div>
     )
 }
