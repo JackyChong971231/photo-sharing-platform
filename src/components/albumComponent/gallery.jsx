@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo  } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faCloudArrowUp, faCloudArrowDown, faTrash, faEllipsis, faExpand, faFolder } from "@fortawesome/free-solid-svg-icons"
@@ -15,6 +15,10 @@ import { ImageOptionMenu } from './imageOptionMenu';
 export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, currentFolderID, setCurrentFolderID, imagesInFolder, setImagesInFolder, imgRefs, imagesPerRow, setImagesPerRow, imgMaxHeight, selectedImages, setSelectedImages, folderStructureArray}) => {
     const [folderChildren, setFolderChildren] = useState([])
 
+    // Pagination / incremental render settings
+    const CHUNK_SIZE = 24; // you can tune this (24 ~ 4 rows of 6 columns)
+    const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
+    const isLoadingMore = useRef(false);
 
     // For image selection
     const [imageWidth, setImageWidth] = useState(0);
@@ -41,7 +45,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
 
     useEffect(() => {
         if (!galleryRef.current || imagesPerRow <= 0) return;
-        
+
         const updateWidth = () => {
             const gap = 16; // 1rem gap
             const totalGap = gap * (imagesPerRow - 1);
@@ -65,29 +69,60 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
         }
     },[selectedImages])
 
-    // For downloading images from this folder
+    // For downloading images from this folder: fetch all images metadata once,
+    // then render only a chunk at a time.
     useEffect(() => {
-        if (!currentFolderID) return;
+        if (!currentFolderID) {
+            setImagesInFolder([]); // clear
+            return;
+        }
 
         const fetchImages = async () => {
+            // reset visible count while loading new folder
+            setVisibleCount(CHUNK_SIZE);
+            isLoadingMore.current = false;
+
             await setSelectedImages([]);
             const images = await getAllImagesByFolderID(currentFolderID);
             if (images) {
+                // Keep the same behavior as before: create refs sized to images length
                 imgRefs.current = images.map(
                     (_, i) => imgRefs.current[i] ?? React.createRef()
                 );
             }
             setImagesInFolder(images);
         };
-        
+
         fetchImages();
     }, [currentFolderID]);
+
+    // Load more when user scrolls near bottom of the gallery container
+    const handleScroll = (e) => {
+        const el = galleryRef.current;
+        if (!el) return;
+
+        const thresholdPx = 300; // load more when within 300px of bottom
+        if (el.scrollHeight - el.scrollTop - el.clientHeight < thresholdPx) {
+            // load next chunk
+            if (!isLoadingMore.current && visibleCount < (imagesInFolder?.length || 0)) {
+                isLoadingMore.current = true;
+                // small delay to avoid rapid-fire increments
+                setTimeout(() => {
+                    setVisibleCount(prev => {
+                        const next = Math.min((imagesInFolder?.length || 0), prev + CHUNK_SIZE);
+                        return next;
+                    });
+                    isLoadingMore.current = false;
+                }, 200);
+            }
+        }
+    };
 
     // For images dragging in effect
     const handleDragEnter = (e) => {
         e.preventDefault();
         dragCounter.current += 1;
-        
+
         if (e.dataTransfer?.items?.length) {
             const files = Array.from(e.dataTransfer.items)
             setDragOverFiles(files);
@@ -176,9 +211,9 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             ) ? i : null;
         })
         .filter(i => i !== null);
-        
+
         setSelectedImages(selected);
-        if (selectedImages.length===1) {
+        if (selected.length === 1) {
             setHoveredIndex(selected)   // set the image to hovered if there is only one image is selected DURING selection stage
         }
     }
@@ -244,7 +279,6 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
         e.stopPropagation(); // prevent triggering gallery mouse events
         const prevOptionMenuIndex = optionMenuIndex
         setOptionMenuIndex(prev_image_idx => prev_image_idx===image_idx?null:image_idx);
-        // setHoveredIndex(prevHoveredIndex => [...prevHoveredIndex.filter(index => index !== prevOptionMenuIndex), image_idx]); // keep hover active while menu is open
     };
 
     // remove all hover or option menu effect if clicked outside
@@ -271,6 +305,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
     return (
         <div className='gallery-container'
             ref={galleryRef}
+            onScroll={handleScroll}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -305,25 +340,25 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                         :
                         <p>Create the first folder to get started</p>
                         }
-                        {/* <button>+ Create Your First Folder</button> */}
                     </div>
                 </div>
             : 
                 <div
-                // style={gridStyle}
                 style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${imagesPerRow}, 1fr)`,
                     gap: `${(2/imagesPerRow)+0.03*imagesPerRow}rem`,
                     width: '100%',
                     boxSizing: 'border-box',
-                    gridAutoRows: 'auto',  // rows grow naturally
-                    height: 'auto',        // important: let grid content determine height
+                    gridAutoRows: 'auto',
+                    height: 'auto',
                 }}
-                // ref={galleryRef}
                 >
+                        {imagesInFolder.map((img, i) => {
+                            // only render up to visibleCount, but keep original index (i)
+                            if (i >= visibleCount) return null;
 
-                        {imagesInFolder.map((img, i) => (
+                            return (
                             <div
                                 className={`image-container ${hoveredIndex===i ? 'image-container--hovered' : ''}`}
                                 key={i}
@@ -371,7 +406,8 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                                     </button>
                                 </div>
                             </div>
-                        ))}
+                            )
+                        })}
                     
                     {isDragging && (
                         <div
@@ -383,7 +419,7 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
                             height: Math.abs(dragCurrent.y - dragStart.y),
                             backgroundColor: "rgba(0, 123, 255, 0.2)",
                             border: "1px solid #007bff",
-                            pointerEvents: "none", // so it doesn’t block mouse events
+                            pointerEvents: "none",
                             zIndex: 1000
                         }}
                         />
@@ -396,14 +432,6 @@ export const Gallery = ({albumId, handlePhotosUpload, handlePhotosDownload, curr
             {isFilesDragging && dragOverFiles.length > 0 && (
                 <div className="drag-overlay">
                 <h3>Uploading {dragOverFiles.length} files</h3>
-                {/* <ul>
-                    {dragOverFiles.slice(0, 5).map((file, idx) => (
-                        file ? (
-                            <li key={idx}>{file.name} ({Math.round(file.size / 1024)} KB)</li>
-                        ) : null
-                    ))}
-                    {dragOverFiles.length > 5 && <li>+ {dragOverFiles.length - 5} more…</li>}
-                </ul> */}
                 </div>
             )}
 
